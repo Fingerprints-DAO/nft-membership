@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "declaration": true,
+    "incremental": true,
+    "composite": true,
+    "noImplicitThis":true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "target": "es2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "es5", "es6", "dom", "dom.iterable"
+    ],
+    "rootDirs": ["src", "typechain-types", "abi/**/*.json", "logs"],
+    "outDir": "dist",
+  },
+  "include": [
+    "utils.ts",
+    "./tasks",
+    "./src",
+    "./test",
+    "./typechain-types",
+    "./abi/**/*.json",
+    "./files/*.json",
+    "./logs/*.json"
+  ],
+  "files": ["./hardhat.config.ts"],
+}

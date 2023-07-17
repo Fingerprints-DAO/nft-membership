@@ -1,0 +1,28 @@
+node_modules
+.env
+coverage
+coverage.json
+typechain
+
+#Hardhat files
+cache
+artifacts
+
+*.code-workspace
+
+# Dist files
+dist
+node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+
+#Hardhat files
+cache
+artifacts
+
+docs/
+
+abi/@openzeppelin

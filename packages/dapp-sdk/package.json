@@ -1,0 +1,28 @@
+{
+  "name": "@dapp/sdk",
+  "version": "1.0.0",
+  "description": "Useful tooling for interacting with the arod.studio dapp protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "git@github.com:arodstudio/dApp-react-ts-template.git",
+  "author": "arod.studio <arod.mail@proton.me>",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "tsc -p tsconfig.json",
+    "prepare": "yarn build"
+  },
+  "devDependencies": {
+    "@dapp/contracts": "^1.0.0",
+    "typescript": "^5.1.6"
+  },
+  "peerDependencies": {
+    "@wagmi/core": ">=1.3.0",
+    "viem": ">=1.2.0"
+    
+  },
+  "dependencies": {
+    "@wagmi/core": "^1.3.7",
+    "viem": "^1.2.14"
+  }
+}
