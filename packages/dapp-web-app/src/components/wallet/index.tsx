@@ -26,13 +26,21 @@ const Wallet = ({ variant }: WalletProps) => {
 
   const buttonColor = useMemo(
     () => (isConnected: boolean) => {
+      if (isDrawer && isConnected) {
+        return 'gray.900'
+      }
+
+      if (isDrawer && !isConnected) {
+        return 'gray.50'
+      }
+
       if (isConnected) {
         return 'gray.50'
       }
 
       return !isHeader ? 'gray.50' : undefined
     },
-    [isHeader]
+    [isHeader, isDrawer]
   )
 
   const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => (isConnected ? disconnect() : show?.())
@@ -53,7 +61,7 @@ const Wallet = ({ variant }: WalletProps) => {
             w="full"
             onClick={handleConnectWallet(isConnected, show)}
           >
-            {!isConnected ? 'Connect' : 'Disconnect'}
+            {isConnected ? 'Disconnect wallet' : 'Connect'}
           </Button>
         )
       }}
