@@ -10,15 +10,14 @@ describe('Membership', function () {
   let otherAccount: SignerWithAddress
   let minterRole: string
   let defaultAdminRole: string
-  let auction: SignerWithAddress
 
   async function deployMembership() {
-    const [owner, otherAccount, auction] = await ethers.getSigners()
+    const [owner, otherAccount] = await ethers.getSigners()
 
     const MembershipFactory = (await ethers.getContractFactory(
       'Membership',
     )) as Membership__factory
-    const membership = await MembershipFactory.deploy(auction.address)
+    const membership = await MembershipFactory.deploy()
 
     const minterRole = await membership.MINTER_ROLE()
     const defaultAdminRole = await membership.DEFAULT_ADMIN_ROLE()
@@ -29,14 +28,12 @@ describe('Membership', function () {
       otherAccount,
       minterRole,
       defaultAdminRole,
-      auction,
     }
   }
 
   beforeEach(async function () {
     ;({
       membership,
-      auction,
       owner,
       otherAccount,
       minterRole,
@@ -50,7 +47,6 @@ describe('Membership', function () {
       expect(await membership.symbol()).to.be.equal('MBSP')
       expect(await membership.MAX_SUPPLY()).to.be.equal(2000)
       expect(await membership.paused()).to.be.equal(false)
-      expect(await membership.balanceOf(auction.address)).to.be.equal(1)
     })
   })
 

@@ -26,11 +26,11 @@ contract Membership is
 
   uint16 public constant MAX_SUPPLY = 2000;
 
-  constructor(address auctionContract) ERC721('Membership', 'MBSP') EIP712('Membership', '1') {
+  constructor() ERC721('Membership', 'MBSP') EIP712('Membership', '1') {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(MINTER_ROLE, msg.sender);
     _setDefaultRoyalty(msg.sender, 1000);
-    safeMint(auctionContract, 1);
+    _tokenIdCounter.increment(); // start token id from 1
   }
 
   /// @notice Only Admin can pauses all token transfers.
