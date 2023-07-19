@@ -1,25 +1,14 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
 
-const containerTheme = defineStyleConfig({
-  baseStyle: {
-    maxWidth: {
-      base: '90%',
-      sm: '90%',
-      xl: '1160px',
-      '2xl': '1280px',
-    },
-  },
-})
-
 const hugeVariants = ['white', 'solid']
 
 const components = {
-  Container: containerTheme,
   Button: defineStyleConfig({
     sizes: {
       lg: defineStyle((props) => ({
         fontWeight: 'bold',
         height: hugeVariants.includes(props.variant) ? 16 : 12,
+        px: 4,
       })),
     },
     variants: {
@@ -49,25 +38,25 @@ const components = {
       },
     },
   }),
-  Input: {
-    sizes: {
-      lg: {
-        field: {
-          borderRadius: '8px',
-        },
-      },
-    },
-    variants: {
-      outline: defineStyle(({ colorScheme = 'gray' }) => ({
-        field: {
-          background: `${colorScheme}.50`,
-          borderColor: `${colorScheme}.100`,
-          color: `${colorScheme}.900`,
-          borderWidth: 2,
-        },
-      })),
-    },
-  },
+  //   Input: {
+  //     sizes: {
+  //       lg: {
+  //         field: {
+  //           borderRadius: '8px',
+  //         },
+  //       },
+  //     },
+  //     variants: {
+  //       outline: defineStyle(({ colorScheme = 'gray' }) => ({
+  //         field: {
+  //           background: `${colorScheme}.50`,
+  //           borderColor: `${colorScheme}.100`,
+  //           color: `${colorScheme}.900`,
+  //           borderWidth: 2,
+  //         },
+  //       })),
+  //     },
+  //   },
 }
 
 export default components

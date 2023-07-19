@@ -4,6 +4,7 @@ import styles from './styles'
 import components from './components'
 import colors from './colors'
 import fontSizes from './font-sizes'
+import breakpoints from './breakpoints'
 
 const config: ThemeConfig = {
   useSystemColorMode: false,
@@ -17,6 +18,7 @@ const theme = extendTheme({
   fonts,
   components,
   fontSizes,
+  breakpoints,
 })
 
 export default theme
