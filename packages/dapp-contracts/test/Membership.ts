@@ -1,7 +1,5 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
-import {
-  loadFixture,
-} from '@nomicfoundation/hardhat-toolbox/network-helpers'
+import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import { Membership, Membership__factory } from '../typechain-types'
@@ -89,10 +87,14 @@ describe('Membership', function () {
   })
 
   describe('Pause', function () {
-    it('Owner can pause', async function () {
+    it('Owner can pause and unpause', async function () {
       await expect(membership.connect(owner).pause()).to.emit(
         membership,
         'Paused',
+      )
+      await expect(membership.connect(owner).unpause()).to.emit(
+        membership,
+        'Unpaused',
       )
     })
 
@@ -122,6 +124,24 @@ describe('Membership', function () {
       ).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
+    })
+  })
+
+  describe('Burn', function () {
+    it('Owner can burn', async function () {
+      await membership.safeMint(otherAccount.address, 1)
+
+      await membership.connect(otherAccount).burn(1)
+
+      expect(await membership.balanceOf(otherAccount.address)).to.be.equal(0)
+    })
+  })
+
+  describe('Support interface', function () {
+    it('Return true for 721, 165 and 2981', async function () {
+      expect(await membership.supportsInterface('0x80ac58cd')).to.be.equal(true) // 721
+      expect(await membership.supportsInterface('0x01ffc9a7')).to.be.equal(true) // 165
+      expect(await membership.supportsInterface('0x2a55205a')).to.be.equal(true) // 2981
     })
   })
 })
