@@ -31,6 +31,9 @@ contract Migration is Pausable, AccessControl {
     _pause();
   }
 
+  /// @notice Migrate membership from ERC20 to ERC721, locks print and mint NFT.
+  /// @param to The address of the future owner of the token.
+  /// @param amount The amount of tokens to migrate.
   function migrate(address to, uint16 amount) public whenNotPausedOrAdmin {
     require(amount > 0, 'Migration: amount must be greater than 0');
     require(to != address(0), 'Migration: cannot migrate to zero address');
