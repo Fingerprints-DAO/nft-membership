@@ -144,4 +144,16 @@ describe('Membership', function () {
       expect(await membership.supportsInterface('0x2a55205a')).to.be.equal(true) // 2981
     })
   })
+
+  describe('Votes', function () {
+    it('Can delegate votes', async function () {
+      const amount = 2
+      await membership.safeMint(owner.address, amount)
+      await membership.connect(owner).delegate(otherAccount.address)
+
+      expect(await membership.getVotes(otherAccount.address)).to.be.equal(
+        amount,
+      )
+    })
+  })
 })
