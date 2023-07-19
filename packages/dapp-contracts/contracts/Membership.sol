@@ -49,12 +49,12 @@ contract Membership is
   /// @param amount The amount of tokens to mint.
   function safeMint(address to, uint16 amount) public onlyRole(MINTER_ROLE) {
     uint256 tokenId = _tokenIdCounter.current();
-
     require(tokenId + amount <= MAX_SUPPLY, 'Membership: MAX_SUPPLY exceeded');
 
     for (uint16 i = 0; i < amount; i++) {
+      uint256 mintedTokenId = _tokenIdCounter.current();
       _tokenIdCounter.increment();
-      _safeMint(to, tokenId);
+      _safeMint(to, mintedTokenId);
     }
   }
 

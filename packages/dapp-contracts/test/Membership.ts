@@ -43,6 +43,25 @@ describe('Membership', function () {
           `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${minterRole}`,
         )
       })
+
+      it('Minter can mint multiple', async function () {
+        const { membership, otherAccount } = await loadFixture(deployMembership)
+
+        expect(await membership.safeMint(otherAccount.address, 2)).to.emit(
+          membership,
+          'Transfer',
+        )
+
+        expect(await membership.balanceOf(otherAccount.address)).to.be.equal(2)
+      })
+
+      it('Can not mint more than token supply', async function () {
+        const { membership, otherAccount } = await loadFixture(deployMembership)
+
+        await expect(
+          membership.safeMint(otherAccount.address, 2001),
+        ).to.be.revertedWith('Membership: MAX_SUPPLY exceeded')
+      })
     })
 
     describe('Pause', function () {
@@ -68,17 +87,26 @@ describe('Membership', function () {
     })
 
     describe('Royalties', function () {
-
       it('Calculate royalty info', async function () {
-        const { membership, owner, otherAccount } = await loadFixture(deployMembership)
+        const { membership, owner, otherAccount } = await loadFixture(
+          deployMembership,
+        )
 
-        await membership.connect(owner).setTokenRoyalty(1, otherAccount.address, 10)
+        expect(
+          await membership
+            .connect(owner)
+            .royaltyInfo(otherAccount.address, 1000),
+        ).to.be.deep.equal([owner.address, 100])
       })
 
       it('Owner can set royalties', async function () {
-        const { membership, owner, otherAccount } = await loadFixture(deployMembership)
+        const { membership, owner, otherAccount } = await loadFixture(
+          deployMembership,
+        )
 
-        expect(await membership.connect(owner).royaltyInfo(1, 1000)).to.be.deep.equal([owner.address, 100])
+        await membership
+          .connect(owner)
+          .setDefaultRoyalty(otherAccount.address, 1)
       })
 
       it('Only owner can set royalties', async function () {
@@ -86,7 +114,9 @@ describe('Membership', function () {
           await loadFixture(deployMembership)
 
         await expect(
-          membership.connect(otherAccount).setTokenRoyalty(1, otherAccount.address, 10),
+          membership
+            .connect(otherAccount)
+            .setDefaultRoyalty(otherAccount.address, 10),
         ).to.be.revertedWith(
           `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
         )
