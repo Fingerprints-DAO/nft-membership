@@ -36,12 +36,12 @@ task(
   console.log(
     `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
   )
-  console.log(`Lock address: ${await contracts.Lock.instance.getAddress()}`)
+  console.log(`Membership address: ${await contracts.Membership.instance.getAddress()}`)
 
   writeLogs(
     network.chainId,
     await contracts.ERC20Mock.instance?.getAddress(),
-    await contracts.Lock.instance?.getAddress(),
+    await contracts.Membership.instance?.getAddress(),
   )
 
   // Set local node mining interval

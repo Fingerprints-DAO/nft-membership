@@ -2,7 +2,7 @@ import { task } from 'hardhat/config'
 import { BaseContract, Contract as EthersContract } from 'ethers'
 import dayjs from 'dayjs'
 
-type LocalContractName = 'ERC20Mock' | 'Lock'
+type LocalContractName = 'ERC20Mock' | 'Membership'
 type CombinedContract = Contract & BaseContract;
 
 
@@ -29,9 +29,9 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
     ERC20Mock: {
       args: [deployer.address, 'arod.studio Tokens', '$ARST', 1_000_000],
     },
-    Lock: {
-      args: [lockTime],
-    },
+    Membership: {
+      args: [],
+    }
   }
 
   for (const [name, contract] of Object.entries(contracts)) {
@@ -44,7 +44,6 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
     if (contract.waitForConfirmation) {
       await deployedContract.waitForDeployment()
     }
-    
     contracts[name as LocalContractName].instance = deployedContract
 
     console.log(`${name} contract deployed to ${await deployedContract.getAddress()}`)
