@@ -50,8 +50,8 @@ const Wallet = ({ variant }: WalletProps) => {
       {({ isConnected, show }) => {
         return (
           <Button
-            //   borderColor={isCard ? 'gray.50' : undefined}
-            //   borderWidth={isCard ? 2 : undefined}
+            borderColor={isCard ? 'gray.50' : undefined}
+            borderWidth={isCard ? 2 : undefined}
             h={isHeader ? '44px' : 16}
             color={buttonColor(isConnected)}
             size="lg"

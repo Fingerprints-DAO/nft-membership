@@ -1,11 +1,11 @@
 'use client'
 
 import { useNetwork } from 'wagmi'
-import { ConnectKitButton } from 'components/ConnectKitButton'
 import { Connected } from 'components/Connected'
 import { Account } from 'components/Account'
 import { Balance } from 'components/Balance'
 import { getContractsDataForChainOrThrow } from '@dapp/sdk'
+import Wallet from 'components/wallet'
 
 export default function Home() {
   const { chain } = useNetwork()
@@ -14,7 +14,7 @@ export default function Home() {
   }
   return (
     <div>
-      <ConnectKitButton />
+      <Wallet variant="card" />
       <Connected>
         <h2>Account</h2>
         <Account />

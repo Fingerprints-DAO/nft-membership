@@ -21,7 +21,7 @@ const Header = () => {
     const arr = [{ href: '/', label: 'home' }]
 
     if (isMobile) {
-      arr.push({ href: '/auction', label: 'auction' }, { href: 'mailto:a@a.com', label: 'contact us' })
+      arr.push({ href: '/auction', label: 'auction' }, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' })
     } else {
       arr.push({ href: '#about', label: 'about' }, { href: '#faq', label: 'FAQ' }, { href: '/auction', label: 'auction' })
     }
