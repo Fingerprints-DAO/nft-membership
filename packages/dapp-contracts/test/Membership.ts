@@ -1,126 +1,127 @@
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import {
-  time,
   loadFixture,
 } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { Membership__factory } from '../typechain-types'
+import { Membership, Membership__factory } from '../typechain-types'
 
 describe('Membership', function () {
+  let membership: Membership
+  let owner: SignerWithAddress
+  let otherAccount: SignerWithAddress
+  let minterRole: string
+  let defaultAdminRole: string
+  let auction: SignerWithAddress
+
   async function deployMembership() {
-    const [owner, otherAccount] = await ethers.getSigners()
+    const [owner, otherAccount, auction] = await ethers.getSigners()
 
     const MembershipFactory = (await ethers.getContractFactory(
       'Membership',
     )) as Membership__factory
-    const membership = await MembershipFactory.deploy()
+    const membership = await MembershipFactory.deploy(auction.address)
 
     const minterRole = await membership.MINTER_ROLE()
     const defaultAdminRole = await membership.DEFAULT_ADMIN_ROLE()
 
-    return { membership, owner, otherAccount, minterRole, defaultAdminRole }
+    return {
+      membership,
+      owner,
+      otherAccount,
+      minterRole,
+      defaultAdminRole,
+      auction,
+    }
   }
 
-  describe('Membership', function () {
-    describe('Mint', function () {
-      it('Minter can mint', async function () {
-        const { membership, otherAccount } = await loadFixture(deployMembership)
+  beforeEach(async function () {
+    ;({
+      membership,
+      auction,
+      owner,
+      otherAccount,
+      minterRole,
+      defaultAdminRole,
+    } = await loadFixture(deployMembership))
+  })
 
-        expect(await membership.safeMint(otherAccount.address, 1)).to.emit(
-          membership,
-          'Transfer',
-        )
-      })
+  describe('Deploy', function () {
+    it('Deployed', async function () {
+      expect(await membership.name()).to.be.equal('Membership')
+      expect(await membership.symbol()).to.be.equal('MBSP')
+      expect(await membership.MAX_SUPPLY()).to.be.equal(2000)
+      expect(await membership.paused()).to.be.equal(false)
+      expect(await membership.balanceOf(auction.address)).to.be.equal(1)
+    })
+  })
 
-      it('Only minter can mint', async function () {
-        const { membership, otherAccount, minterRole } = await loadFixture(
-          deployMembership,
-        )
-
-        await expect(
-          membership.connect(otherAccount).safeMint(otherAccount.address, 1),
-        ).to.be.revertedWith(
-          `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${minterRole}`,
-        )
-      })
-
-      it('Minter can mint multiple', async function () {
-        const { membership, otherAccount } = await loadFixture(deployMembership)
-
-        expect(await membership.safeMint(otherAccount.address, 2)).to.emit(
-          membership,
-          'Transfer',
-        )
-
-        expect(await membership.balanceOf(otherAccount.address)).to.be.equal(2)
-      })
-
-      it('Can not mint more than token supply', async function () {
-        const { membership, otherAccount } = await loadFixture(deployMembership)
-
-        await expect(
-          membership.safeMint(otherAccount.address, 2001),
-        ).to.be.revertedWith('Membership: MAX_SUPPLY exceeded')
-      })
+  describe('Mint', function () {
+    it('Minter can mint', async function () {
+      expect(await membership.safeMint(otherAccount.address, 1)).to.emit(
+        membership,
+        'Transfer',
+      )
     })
 
-    describe('Pause', function () {
-      it('Owner can pause', async function () {
-        const { membership, owner } = await loadFixture(deployMembership)
-
-        await expect(membership.connect(owner).pause()).to.emit(
-          membership,
-          'Paused',
-        )
-      })
-
-      it('Only owner can pause', async function () {
-        const { membership, otherAccount, defaultAdminRole } =
-          await loadFixture(deployMembership)
-
-        await expect(
-          membership.connect(otherAccount).pause(),
-        ).to.be.revertedWith(
-          `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
-        )
-      })
+    it('Only minter can mint', async function () {
+      await expect(
+        membership.connect(otherAccount).safeMint(otherAccount.address, 1),
+      ).to.be.revertedWith(
+        `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${minterRole}`,
+      )
     })
 
-    describe('Royalties', function () {
-      it('Calculate royalty info', async function () {
-        const { membership, owner, otherAccount } = await loadFixture(
-          deployMembership,
-        )
+    it('Minter can mint multiple', async function () {
+      expect(await membership.safeMint(otherAccount.address, 2)).to.emit(
+        membership,
+        'Transfer',
+      )
 
-        expect(
-          await membership
-            .connect(owner)
-            .royaltyInfo(otherAccount.address, 1000),
-        ).to.be.deep.equal([owner.address, 100])
-      })
+      expect(await membership.balanceOf(otherAccount.address)).to.be.equal(2)
+    })
 
-      it('Owner can set royalties', async function () {
-        const { membership, owner, otherAccount } = await loadFixture(
-          deployMembership,
-        )
+    it('Can not mint more than token supply', async function () {
+      await expect(
+        membership.safeMint(otherAccount.address, 2001),
+      ).to.be.revertedWith('Membership: MAX_SUPPLY exceeded')
+    })
+  })
 
-        await membership
-          .connect(owner)
-          .setDefaultRoyalty(otherAccount.address, 1)
-      })
+  describe('Pause', function () {
+    it('Owner can pause', async function () {
+      await expect(membership.connect(owner).pause()).to.emit(
+        membership,
+        'Paused',
+      )
+    })
 
-      it('Only owner can set royalties', async function () {
-        const { membership, otherAccount, defaultAdminRole } =
-          await loadFixture(deployMembership)
+    it('Only owner can pause', async function () {
+      await expect(membership.connect(otherAccount).pause()).to.be.revertedWith(
+        `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
+    })
+  })
 
-        await expect(
-          membership
-            .connect(otherAccount)
-            .setDefaultRoyalty(otherAccount.address, 10),
-        ).to.be.revertedWith(
-          `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
-        )
-      })
+  describe('Royalties', function () {
+    it('Calculate royalty info', async function () {
+      expect(
+        await membership.connect(owner).royaltyInfo(otherAccount.address, 1000),
+      ).to.be.deep.equal([owner.address, 100])
+    })
+
+    it('Owner can set royalties', async function () {
+      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 1)
+    })
+
+    it('Only owner can set royalties', async function () {
+      await expect(
+        membership
+          .connect(otherAccount)
+          .setDefaultRoyalty(otherAccount.address, 10),
+      ).to.be.revertedWith(
+        `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
     })
   })
 })
