@@ -34,14 +34,19 @@ contract Membership is
     _setDefaultRoyalty(msg.sender, 1000);
   }
 
+  /// @notice Only Admin can pauses all token transfers.
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _pause();
   }
 
+  /// @notice Only Admin can unpauses all token transfers.
   function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
   }
 
+  /// @notice Only Admin can mint new tokens.
+  /// @param to The address of the future owner of the token.
+  /// @param amount The amount of tokens to mint.
   function safeMint(address to, uint16 amount) public onlyRole(MINTER_ROLE) {
     uint256 tokenId = _tokenIdCounter.current();
 
@@ -53,6 +58,9 @@ contract Membership is
     }
   }
 
+  /// @notice Only Admin can set the default royalty.
+  /// @param receiver The address of the royalty receiver.
+  /// @param royalty The royalty amount.
   function setDefaultRoyalty(
     address receiver,
     uint96 royalty
@@ -60,13 +68,7 @@ contract Membership is
     _setDefaultRoyalty(receiver, royalty);
   }
 
-  function setTokenRoyalty(
-    uint256 tokenId,
-    address receiver,
-    uint96 royalty
-  ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _setTokenRoyalty(tokenId, receiver, royalty);
-  }
+  // The following functions are overrides required by Solidity.
 
   function _beforeTokenTransfer(
     address from,
@@ -76,8 +78,6 @@ contract Membership is
   ) internal override whenNotPaused {
     super._beforeTokenTransfer(from, to, tokenId, batchSize);
   }
-
-  // The following functions are overrides required by Solidity.
 
   function _afterTokenTransfer(
     address from,
