@@ -47,6 +47,11 @@ task(
   // Set local node mining interval
   await ethers.provider.send('evm_setIntervalMining', [12_000])
 
+  await run('grant-role', {
+    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    role: 'MINTER_ROLE'
+  })
+
   await new Promise(() => {
     /* keep node alive until this process is killed */
   })
