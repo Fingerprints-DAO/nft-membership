@@ -109,7 +109,7 @@ contract Membership is
   /// @dev Only users with the 'MINTER_ROLE' are allowed to call this function.
   /// @param _to The address of the future owner of the token.
   /// @param _amount The amount of tokens to mint.
-  function safeMint(address _to, uint16 _amount) public onlyRole(MINTER_ROLE) {
+  function safeMint(address _to, uint16 _amount) external onlyRole(MINTER_ROLE) {
     uint256 tokenId = _tokenIdCounter.current();
     if (tokenId + _amount > MAX_SUPPLY) {
       revert MaxSupplyExceeded();
