@@ -19,18 +19,21 @@ contract Membership is
   EIP712,
   ERC721Votes
 {
+  error MaxSupplyExceeded();
   using Counters for Counters.Counter;
 
+  string public baseURIValue;
   bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
   Counters.Counter private _tokenIdCounter;
-
   uint16 public constant MAX_SUPPLY = 2000;
 
-  constructor() ERC721('Membership', 'MBSP') EIP712('Membership', '1') {
+  constructor(
+    string memory _baseURIValue
+  ) ERC721('Membership', 'MBSP') EIP712('Membership', '1') {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(MINTER_ROLE, msg.sender);
     _setDefaultRoyalty(msg.sender, 1000);
-    _tokenIdCounter.increment(); // start token id from 1
+    baseURIValue = _baseURIValue;
   }
 
   /// @notice Only Admin can pauses all token transfers.
@@ -48,11 +51,13 @@ contract Membership is
   /// @param amount The amount of tokens to mint.
   function safeMint(address to, uint16 amount) public onlyRole(MINTER_ROLE) {
     uint256 tokenId = _tokenIdCounter.current();
-    require(tokenId + amount <= MAX_SUPPLY, 'Membership: MAX_SUPPLY exceeded');
+    if (tokenId + amount > MAX_SUPPLY) {
+      revert MaxSupplyExceeded();
+    }
 
     for (uint16 i = 0; i < amount; i++) {
-      uint256 mintedTokenId = _tokenIdCounter.current();
       _tokenIdCounter.increment();
+      uint256 mintedTokenId = _tokenIdCounter.current();
       _safeMint(to, mintedTokenId);
     }
   }
@@ -65,6 +70,29 @@ contract Membership is
     uint96 royalty
   ) public onlyRole(DEFAULT_ADMIN_ROLE) {
     _setDefaultRoyalty(receiver, royalty);
+  }
+
+  function _baseURI() internal view override returns (string memory) {
+    return baseURIValue;
+  }
+
+  function setBaseURI(
+    string memory newBaseURI
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    baseURIValue = newBaseURI;
+  }
+
+  function tokenURI(
+    uint256 tokenId
+  ) public view override returns (string memory) {
+    _requireMinted(tokenId);
+
+    string memory baseURI = _baseURI();
+
+    return
+      bytes(baseURI).length > 0
+        ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
+        : '';
   }
 
   // The following functions are overrides required by Solidity.
@@ -87,20 +115,13 @@ contract Membership is
     super._afterTokenTransfer(from, to, tokenId, batchSize);
   }
 
-  function _burn(
-    uint256 tokenId
-  ) internal override(ERC721, ERC721Royalty) {
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721Royalty) {
     super._burn(tokenId);
   }
 
   function supportsInterface(
     bytes4 interfaceId
-  )
-    public
-    view
-    override(ERC721, AccessControl, ERC721Royalty)
-    returns (bool)
-  {
+  ) public view override(ERC721, AccessControl, ERC721Royalty) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 }

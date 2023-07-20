@@ -10,6 +10,7 @@ describe('Membership', function () {
   let otherAccount: SignerWithAddress
   let minterRole: string
   let defaultAdminRole: string
+  const baseURI = 'https://example.com/'
 
   async function deployMembership() {
     const [owner, otherAccount] = await ethers.getSigners()
@@ -17,7 +18,7 @@ describe('Membership', function () {
     const MembershipFactory = (await ethers.getContractFactory(
       'Membership',
     )) as Membership__factory
-    const membership = await MembershipFactory.deploy()
+    const membership = await MembershipFactory.deploy(baseURI)
 
     const minterRole = await membership.MINTER_ROLE()
     const defaultAdminRole = await membership.DEFAULT_ADMIN_ROLE()
@@ -32,13 +33,8 @@ describe('Membership', function () {
   }
 
   beforeEach(async function () {
-    ;({
-      membership,
-      owner,
-      otherAccount,
-      minterRole,
-      defaultAdminRole,
-    } = await loadFixture(deployMembership))
+    ;({ membership, owner, otherAccount, minterRole, defaultAdminRole } =
+      await loadFixture(deployMembership))
   })
 
   describe('Deploy', function () {
@@ -76,9 +72,11 @@ describe('Membership', function () {
     })
 
     it('Can not mint more than token supply', async function () {
+      await membership.safeMint(otherAccount.address, 1000)
+      await membership.safeMint(otherAccount.address, 1000)
       await expect(
-        membership.safeMint(otherAccount.address, 2001),
-      ).to.be.revertedWith('Membership: MAX_SUPPLY exceeded')
+        membership.safeMint(otherAccount.address, 1),
+      ).to.be.revertedWithCustomError(membership, 'MaxSupplyExceeded')
     })
   })
 
@@ -98,6 +96,13 @@ describe('Membership', function () {
       await expect(membership.connect(otherAccount).pause()).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
+    })
+
+    it('Cannot mint when paused', async function () {
+      await membership.connect(owner).pause()
+      await expect(
+        membership.safeMint(otherAccount.address, 1),
+      ).to.be.revertedWith('Pausable: paused')
     })
   })
 
@@ -131,6 +136,14 @@ describe('Membership', function () {
 
       expect(await membership.balanceOf(otherAccount.address)).to.be.equal(0)
     })
+
+    it('Not Owner can not burn', async function () {
+      await membership.safeMint(otherAccount.address, 1)
+
+      await expect(membership.connect(owner).burn(1)).to.be.revertedWith(
+        `ERC721: caller is not token owner or approved`,
+      )
+    })
   })
 
   describe('Support interface', function () {
@@ -150,6 +163,20 @@ describe('Membership', function () {
       expect(await membership.getVotes(otherAccount.address)).to.be.equal(
         amount,
       )
+    })
+  })
+
+  describe('Base Uri', function () {
+    it('Can set token uri', async function () {
+      const tokenUri = 'https://example2.com/'
+      await membership.setBaseURI(tokenUri)
+
+      expect(await membership.baseURIValue()).to.be.equal(tokenUri)
+    })
+
+    it('Return token id concatenated with base uri', async function () {
+      await membership.safeMint(owner.address, 1)
+      expect(await membership.tokenURI(1)).to.be.equal(baseURI + '1')
     })
   })
 })
