@@ -6,7 +6,6 @@ const gridConfig = {
     base: 'repeat(4, 1fr)',
     sm: 'repeat(6, 1fr)',
     md: 'repeat(12, 1fr)',
-    lg: 'repeat(12, 1fr)',
   },
   gap: {
     base: 4,
@@ -23,7 +22,7 @@ const gridConfig = {
 
 const Grid = ({ children, ...props }: PropsWithChildren<GridProps>) => {
   return (
-    <CKGrid {...gridConfig} {...props}>
+    <CKGrid {...props} {...gridConfig}>
       {children}
     </CKGrid>
   )

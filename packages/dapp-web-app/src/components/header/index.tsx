@@ -32,12 +32,12 @@ const Header = () => {
   return (
     <>
       <Grid as="header" py={8}>
-        <GridItem colSpan={[3, 1]} colStart={[1, 1, 1, 2]}>
+        <GridItem colSpan={[3, 1]} colStart={[1, 1, 2]}>
           <Link href="/">
             <Image src={logoFP} alt="Fingerprints DAO" />
           </Link>
         </GridItem>
-        <GridItem as={Flex} justifyContent="end" alignItems="center" colSpan={[1, 5, 11, 9]}>
+        <GridItem as={Flex} justifyContent="end" alignItems="center" colSpan={[1, 5, 9]}>
           {isMobile ? (
             <Box as="button" p={4} mr={-4} onClick={onOpen}>
               <HamburgerIcon display="block" w={4} />

@@ -2,6 +2,7 @@
 
 import { Link, Box, Flex, Icon, Text, GridItem } from '@chakra-ui/react'
 import Grid from 'components/grid'
+import useMediaQuery from 'hooks/use-media-query'
 import { BsDiscord } from 'react-icons/bs'
 import { BsTwitter } from 'react-icons/bs'
 import { SiOpensea } from 'react-icons/si'
@@ -11,11 +12,13 @@ type FooterProps = {
 }
 
 const Footer = ({ isHome = false }: FooterProps) => {
+  const [isMobile] = useMediaQuery('(max-width: 767px)')
+
   return (
     <Box as="footer" py={[8, 6]} mt={[25]} bg="gray.900">
-      <Grid gridTemplateColumns="none">
-        <GridItem colSpan={4}>
-          <Flex mb={[6, 'unset']} flexDirection={['column', 'row']} alignItems={['', 'center']}>
+      <Grid gridTemplateColumns={isMobile ? 'none' : undefined} alignItems={'center'}>
+        <GridItem colSpan={[4, 4, 8]} colStart={[1, 1, 2]}>
+          <Flex mb={[6, 'unset']} flexDirection={['column', 'column']} alignItems={['', 'flex-start']}>
             <Link
               href="mailto:contact@fingerprintsdao.xyz"
               fontSize="lg"
@@ -23,7 +26,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
               fontWeight="bold"
               lineHeight="24px"
               mb={[6, 8]}
-              display="block"
+              display={'block'}
               textAlign={['center', 'unset']}
             >
               contact us
@@ -48,7 +51,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
           </Flex>
         </GridItem>
         <GridItem colSpan={[4, 2]}>
-          <Flex justifyContent="center" gap={4}>
+          <Flex justifyContent={['center', 'flex-end']} gap={4}>
             <Link
               href="https://twitter.com/FingerprintsDAO"
               title="Twitter"
