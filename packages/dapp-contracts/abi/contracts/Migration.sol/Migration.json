@@ -13,7 +13,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_pricePerMembership",
+        "name": "_pricePerMembershipInWei",
         "type": "uint256"
       }
     ],

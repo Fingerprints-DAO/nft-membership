@@ -22,12 +22,12 @@ contract Migration is Pausable, AccessControl {
   constructor(
     address _membershipAddress,
     address _printAddress,
-    uint256 _pricePerMembership
+    uint256 _pricePerMembershipInWei
   ) {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     membershipAddress = _membershipAddress;
     printAddress = _printAddress;
-    pricePerMembership = _pricePerMembership;
+    pricePerMembership = _pricePerMembershipInWei;
     _pause();
   }
 

@@ -11,10 +11,10 @@ import {
   Migration__factory,
 } from '../typechain-types'
 
-describe('Migration', function () {
-  const printMinted = 1000000
-  const printPrice = 5000
 
+describe('Migration', function () {
+  const printMinted = ethers.parseEther("100000")
+  const printPrice = ethers.parseEther("5000")
   let migration: Migration
   let owner: SignerWithAddress
   let user: SignerWithAddress
@@ -109,7 +109,7 @@ describe('Migration', function () {
     })
 
     it('Can migrate more than one', async function () {
-      const amount = 3
+      const amount = 3n
       await erc20Mock
         .connect(user)
         .approve(await migration.getAddress(), printPrice * amount)
