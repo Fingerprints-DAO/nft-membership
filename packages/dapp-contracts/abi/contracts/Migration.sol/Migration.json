@@ -8,7 +8,7 @@
       },
       {
         "internalType": "address",
-        "name": "_printAddress",
+        "name": "_printsAddress",
         "type": "address"
       },
       {
@@ -19,6 +19,31 @@
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalPrintPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "Migrated",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -248,7 +273,7 @@
   },
   {
     "inputs": [],
-    "name": "pricePerMembership",
+    "name": "pricePerMembershipInWei",
     "outputs": [
       {
         "internalType": "uint256",
@@ -261,7 +286,7 @@
   },
   {
     "inputs": [],
-    "name": "printAddress",
+    "name": "printsAddress",
     "outputs": [
       {
         "internalType": "address",

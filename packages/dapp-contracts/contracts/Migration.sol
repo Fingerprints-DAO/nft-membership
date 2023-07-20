@@ -7,9 +7,11 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './IMembership.sol';
 
 contract Migration is Pausable, AccessControl {
+  event Migrated(address indexed to, uint16 amount, uint256 totalPrintPrice);
+
   address public immutable membershipAddress;
-  address public immutable printAddress;
-  uint256 public immutable pricePerMembership;
+  address public immutable printsAddress;
+  uint256 public immutable pricePerMembershipInWei;
 
   modifier whenNotPausedOrAdmin() {
     require(
@@ -21,13 +23,13 @@ contract Migration is Pausable, AccessControl {
 
   constructor(
     address _membershipAddress,
-    address _printAddress,
+    address _printsAddress,
     uint256 _pricePerMembershipInWei
   ) {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     membershipAddress = _membershipAddress;
-    printAddress = _printAddress;
-    pricePerMembership = _pricePerMembershipInWei;
+    printsAddress = _printsAddress;
+    pricePerMembershipInWei = _pricePerMembershipInWei;
     _pause();
   }
 
@@ -38,17 +40,23 @@ contract Migration is Pausable, AccessControl {
     require(amount > 0, 'Migration: amount must be greater than 0');
     require(to != address(0), 'Migration: cannot migrate to zero address');
 
-    uint256 totalPrintPrice = amount * pricePerMembership;
-    uint256 balance = IERC20(printAddress).balanceOf(msg.sender);
+    uint256 totalPrintPrice = amount * pricePerMembershipInWei;
+    uint256 balance = IERC20(printsAddress).balanceOf(msg.sender);
     require(balance >= totalPrintPrice, 'Migration: insufficient balance');
 
-    IERC20(printAddress).transferFrom(
-      msg.sender,
-      address(this),
-      totalPrintPrice
+    IERC20 token = IERC20(printsAddress);
+
+    (bool success, bytes memory data) = address(token).call(
+      abi.encodeWithSelector(token.transferFrom.selector, msg.sender, address(this), totalPrintPrice)
+    );
+    require(
+      success && (data.length == 0 || abi.decode(data, (bool))),
+      'Migration: token transfer from sender failed'
     );
 
     IMembership(membershipAddress).safeMint(to, amount);
+
+    emit Migrated(to, amount, totalPrintPrice);
   }
 
   /// @notice Only Admin can pauses all token transfers.

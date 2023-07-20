@@ -87,7 +87,9 @@ describe('Migration', function () {
       await erc20Mock
         .connect(user)
         .approve(await migration.getAddress(), printPrice)
-      await migration.connect(user).migrate(owner.address, 1)
+      await expect(migration.connect(user).migrate(owner.address, 1))
+        .to.emit(migration, 'Migrated')
+        .withArgs(owner.address, 1, printPrice)
       expect(await erc20Mock.balanceOf(user.address)).to.equal(
         printMinted - printPrice,
       )
