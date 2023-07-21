@@ -9,8 +9,8 @@ import Link from 'next/link'
 import useMediaQuery from 'hooks/use-media-query'
 import { usePathname } from 'next/navigation'
 import Grid from 'components/grid'
-import { useMemo } from 'react'
 import Wallet from 'components/wallet'
+import { useMemo } from 'react'
 
 const Header = () => {
   const pathname = usePathname()
@@ -18,12 +18,15 @@ const Header = () => {
   const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   const nav = useMemo(() => {
-    const arr = [{ href: '/', label: 'home' }]
+    const arr = [
+      { href: '/', label: 'home' },
+      { href: '/about', label: 'about' },
+      { href: '/faq', label: 'FAQ' },
+      { href: '/auction', label: 'auction' },
+    ]
 
     if (isMobile) {
-      arr.push({ href: '/auction', label: 'auction' }, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' })
-    } else {
-      arr.push({ href: '#about', label: 'about' }, { href: '#faq', label: 'FAQ' }, { href: '/auction', label: 'auction' })
+      arr.push({ href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' })
     }
 
     return arr
@@ -31,19 +34,21 @@ const Header = () => {
 
   return (
     <>
-      <Grid as="header" py={8}>
+      <Grid as="header" py={8} position="relative" zIndex={10}>
         <GridItem colSpan={[3, 1]} colStart={[1, 1, 2]}>
           <Link href="/">
             <Image src={logoFP} alt="Fingerprints DAO" />
           </Link>
         </GridItem>
-        <GridItem as={Flex} justifyContent="end" alignItems="center" colSpan={[1, 5, 9]}>
+        <GridItem colSpan={[1, 5, 9]}>
           {isMobile ? (
-            <Box as="button" p={4} mr={-4} onClick={onOpen}>
-              <HamburgerIcon display="block" w={4} />
-            </Box>
+            <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
+              <Box as="button" p={4} mr={-4} onClick={onOpen}>
+                <HamburgerIcon display="block" w={4} />
+              </Box>
+            </Flex>
           ) : (
-            <Flex as="nav" display="flex" alignItems="center">
+            <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
               {nav.map((item, index) => {
                 const isActive = pathname === item.href
 
@@ -66,7 +71,7 @@ const Header = () => {
                   </Box>
                 )
               })}
-              <Wallet variant="header" />
+              <Wallet variant="header" buttonWidth="auto" />
             </Flex>
           )}
         </GridItem>

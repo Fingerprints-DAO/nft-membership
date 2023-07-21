@@ -3,12 +3,23 @@ import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
 const hugeVariants = ['white', 'solid']
 
 const components = {
+  Container: {
+    baseStyle: {
+      maxWidth: {
+        base: '100%',
+        sm: '100%',
+        lg: '1440px',
+      },
+      paddingLeft: '32px',
+      paddingRight: '32px',
+    },
+  },
   Button: defineStyleConfig({
     sizes: {
       lg: defineStyle((props) => ({
         fontWeight: 'bold',
         height: hugeVariants.includes(props.variant) ? 16 : 12,
-        px: 4,
+        px: 7,
       })),
     },
     variants: {

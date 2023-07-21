@@ -6,10 +6,11 @@ import { useDisconnect } from 'wagmi'
 import { ConnectKitButton } from 'connectkit'
 
 type WalletProps = {
+  buttonWidth?: string
   variant: 'header' | 'drawer' | 'card'
 }
 
-const Wallet = ({ variant }: WalletProps) => {
+const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
   const { disconnect } = useDisconnect()
 
   const isDrawer = variant === 'drawer'
@@ -58,7 +59,7 @@ const Wallet = ({ variant }: WalletProps) => {
             fontSize="18px"
             colorScheme={buttonColorScheme}
             variant={isCard || isConnected ? 'outline' : 'solid'}
-            w="full"
+            w={buttonWidth}
             onClick={handleConnectWallet(isConnected, show)}
           >
             {isConnected ? 'Disconnect wallet' : 'Connect'}

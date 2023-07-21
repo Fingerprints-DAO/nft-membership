@@ -1,8 +1,8 @@
+import '../assets/styles/global.css'
+
 import type { Metadata } from 'next'
 import Providers from 'contexts/providers'
 import { PropsWithChildren } from 'react'
-import Header from 'components/header'
-import Footer from 'components/footer'
 
 export const metadata: Metadata = {
   title: 'NFT Membership',
@@ -14,9 +14,7 @@ function RootLayout({ children }: PropsWithChildren) {
     <html lang="en">
       <body>
         <Providers>
-          <Header />
-          {children}
-          <Footer />
+          <main id="main">{children}</main>
         </Providers>
       </body>
     </html>
