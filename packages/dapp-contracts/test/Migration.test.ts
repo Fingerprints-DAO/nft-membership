@@ -29,7 +29,8 @@ describe('Migration', function () {
     const MembershipFactory = (await ethers.getContractFactory(
       'Membership',
     )) as Membership__factory
-    const membership = await MembershipFactory.deploy()
+    const baseUri = 'https://example.com/'
+    const membership = await MembershipFactory.deploy(baseUri)
 
     const ERC20MockFactory = (await ethers.getContractFactory(
       'ERC20Mock',
