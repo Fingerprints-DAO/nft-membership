@@ -1,6 +1,16 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
 
-const hugeVariants = ['white', 'solid']
+const customColor = (colorScheme: any) => {
+  if (colorScheme === 'blackAlpha') {
+    return 'gray.50'
+  }
+
+  if (colorScheme === 'whiteAlpha') {
+    return 'gray.900'
+  }
+
+  return `${colorScheme}.500`
+}
 
 const components = {
   Container: {
@@ -16,25 +26,27 @@ const components = {
   },
   Button: defineStyleConfig({
     sizes: {
-      lg: defineStyle((props) => ({
+      lg: {
         fontWeight: 'bold',
-        height: hugeVariants.includes(props.variant) ? 16 : 12,
+        height: 16,
         px: 7,
-      })),
+      },
     },
     variants: {
       solid: defineStyle(({ colorScheme }) => ({
         bg: `${colorScheme}.900`,
         background: `${colorScheme}.900`,
+        color: customColor(colorScheme),
         _hover: {
           background: `${colorScheme}.900`,
         },
       })),
       outline: defineStyle(({ colorScheme }) => ({
-        borderColor: `${colorScheme}.900`,
+        borderColor: `${colorScheme}.500`,
         borderWidth: 2,
+        color: `${colorScheme}.500`,
         _hover: {
-          background: 'transparent',
+          background: `${colorScheme}.100`,
         },
       })),
       white: {

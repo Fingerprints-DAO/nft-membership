@@ -35,3 +35,11 @@ body,
 #main {
   height: 100%;
 }
+
+::-moz-selection {
+  background: #8dc3ff;
+}
+
+::selection {
+  background: #8dc3ff;
+}

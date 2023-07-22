@@ -18,6 +18,8 @@ const nav = [
   { href: '/auction', label: 'auction' },
 ]
 
+const mobileNav = [...nav, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' }]
+
 const Header = () => {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -62,7 +64,7 @@ const Header = () => {
                   </Box>
                 )
               })}
-              {/* <Wallet variant="header" buttonWidth="auto" /> */}
+              <Wallet variant="header" buttonWidth="auto" />
             </Flex>
           )}
         </GridItem>
@@ -80,8 +82,8 @@ const Header = () => {
             </GridItem>
           </Grid>
           <DrawerBody mt={8} px={8}>
-            {[...nav, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' }].map((item, index) => {
-              const isLastChild = nav.length - 1 === index
+            {mobileNav.map((item, index) => {
+              const isLastChild = mobileNav.length - 1 === index
               const isActive = pathname === item.href
 
               return (
