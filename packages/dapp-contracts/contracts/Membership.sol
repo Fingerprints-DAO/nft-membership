@@ -6,8 +6,8 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
-import '@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol';
-import '@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol';
+import '@openzeppelin/contracts/utils/cryptography/EIP712.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Votes.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 
 contract Membership is
