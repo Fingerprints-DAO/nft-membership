@@ -11,10 +11,9 @@ import {
   Migration__factory,
 } from '../typechain-types'
 
-
 describe('Migration', function () {
-  const printMinted = ethers.parseEther("100000")
-  const printPrice = ethers.parseEther("5000")
+  const printMinted = ethers.parseEther('100000000')
+  const printPrice = ethers.parseEther('5000')
   let migration: Migration
   let owner: SignerWithAddress
   let user: SignerWithAddress
@@ -99,6 +98,18 @@ describe('Migration', function () {
       )
     })
 
+    it('Can not migrate without funds', async function () {
+      await expect(
+        migration.connect(otherAccount).migrate(owner.address, 1),
+      ).to.be.revertedWith('Migration: insufficient balance')
+    })
+
+    it('Can not migrate with token not approved', async function () {
+      await expect(
+        migration.connect(user).migrate(owner.address, 1),
+      ).to.be.revertedWith('Migration: token transfer from sender failed')
+    })
+
     it('Can not migrate 0', async function () {
       await expect(migration.migrate(owner.address, 0)).to.be.revertedWith(
         'Migration: amount must be greater than 0',
@@ -156,6 +167,18 @@ describe('Migration', function () {
 
       expect(await membership.balanceOf(owner.address)).to.equal(1)
     })
+
+    it('Can migrate all supply and revert on next', async function () {
+      await erc20Mock
+        .connect(user)
+        .approve(await migration.getAddress(), printPrice * 2001n)
+      for (let i = 0; i < 100; i++) {
+        await migration.connect(user).migrate(user.address, 20)
+      }
+      await expect(
+        migration.connect(user).migrate(user.address, 1),
+      ).to.be.revertedWithCustomError(membership, 'MaxSupplyExceeded')
+    })
   })
 
   describe('Pause', function () {
@@ -170,8 +193,11 @@ describe('Migration', function () {
       )
     })
 
-    it('Only owner can pause', async function () {
+    it('Only owner can pause and unpause', async function () {
       await expect(membership.connect(user).pause()).to.be.revertedWith(
+        `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
+      await expect(membership.connect(user).unpause()).to.be.revertedWith(
         `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })

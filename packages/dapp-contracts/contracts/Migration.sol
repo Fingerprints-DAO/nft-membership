@@ -13,24 +13,26 @@ contract Migration is Pausable, AccessControl {
   address public immutable printsAddress;
   uint256 public immutable pricePerMembershipInWei;
 
-  modifier whenNotPausedOrAdmin() {
-    require(
-      !paused() || hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-      'Pausable: paused'
-    );
-    _;
-  }
-
   constructor(
     address _membershipAddress,
     address _printsAddress,
     uint256 _pricePerMembershipInWei
   ) {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+
     membershipAddress = _membershipAddress;
     printsAddress = _printsAddress;
     pricePerMembershipInWei = _pricePerMembershipInWei;
+
     _pause();
+  }
+
+  modifier whenNotPausedOrAdmin() {
+    require(
+      !paused() || hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
+      'Pausable: paused'
+    );
+    _;
   }
 
   /// @notice Migrate membership from ERC20 to ERC721, locks print and mint NFT.
@@ -42,12 +44,18 @@ contract Migration is Pausable, AccessControl {
 
     uint256 totalPrintPrice = amount * pricePerMembershipInWei;
     uint256 balance = IERC20(printsAddress).balanceOf(msg.sender);
+    // console.log(balance);
     require(balance >= totalPrintPrice, 'Migration: insufficient balance');
 
     IERC20 token = IERC20(printsAddress);
 
     (bool success, bytes memory data) = address(token).call(
-      abi.encodeWithSelector(token.transferFrom.selector, msg.sender, address(this), totalPrintPrice)
+      abi.encodeWithSelector(
+        token.transferFrom.selector,
+        msg.sender,
+        address(this),
+        totalPrintPrice
+      )
     );
     require(
       success && (data.length == 0 || abi.decode(data, (bool))),
