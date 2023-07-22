@@ -15,7 +15,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
   const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   return (
-    <Box as="footer" py={[8, 6]} bg="gray.900" position="relative" zIndex={10}>
+    <Box as="footer" py={[8, 6]} position="relative" zIndex={10}>
       <Grid gridTemplateColumns={isMobile ? 'none' : undefined} alignItems={'center'}>
         <GridItem colSpan={[4, 4, 8]} colStart={[1, 1, 2]}>
           <Flex mb={[6, 'unset']} flexDirection={['column', 'column']} alignItems={['', 'flex-start']}>
