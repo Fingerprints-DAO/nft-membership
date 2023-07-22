@@ -9,6 +9,7 @@ const gridConfig = {
   },
   gap: {
     base: 4,
+    md: 8,
     lg: 8,
   },
   px: { base: 8 },
