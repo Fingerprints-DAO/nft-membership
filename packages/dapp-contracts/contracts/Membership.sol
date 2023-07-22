@@ -9,7 +9,8 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 import '@openzeppelin/contracts/utils/cryptography/EIP712.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Votes.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import 'operator-filter-registry/src/DefaultOperatorFilterer.sol';
 
 contract Membership is
   ERC721,
@@ -19,7 +20,8 @@ contract Membership is
   AccessControl,
   ERC721Burnable,
   EIP712,
-  ERC721Votes
+  ERC721Votes,
+  DefaultOperatorFilterer
 {
   error MaxSupplyExceeded();
   using Counters for Counters.Counter;
@@ -74,16 +76,21 @@ contract Membership is
     _setDefaultRoyalty(receiver, royalty);
   }
 
+  /// @notice Returns the base URI for all token IDs.
   function _baseURI() internal view override returns (string memory) {
     return baseURIValue;
   }
 
+  /// @notice Only Admin can set the base URI.
+  /// @param newBaseURI The new base URI.
   function setBaseURI(
     string memory newBaseURI
   ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     baseURIValue = newBaseURI;
   }
 
+  /// @notice Returns the URI for a given token ID.
+  /// @param tokenId The ID of the token to retrieve the URI for.
   function tokenURI(
     uint256 tokenId
   ) public view override returns (string memory) {
@@ -98,7 +105,6 @@ contract Membership is
   }
 
   // The following functions are overrides required by Solidity.
-
   function _beforeTokenTransfer(
     address from,
     address to,
@@ -123,7 +129,51 @@ contract Membership is
 
   function supportsInterface(
     bytes4 interfaceId
-  ) public view override(ERC721, AccessControl, ERC721Royalty, ERC721Enumerable) returns (bool) {
+  )
+    public
+    view
+    override(ERC721, AccessControl, ERC721Royalty, ERC721Enumerable)
+    returns (bool)
+  {
     return super.supportsInterface(interfaceId);
+  }
+
+  function setApprovalForAll(
+    address operator,
+    bool approved
+  ) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
+    super.setApprovalForAll(operator, approved);
+  }
+
+  function approve(
+    address operator,
+    uint256 tokenId
+  ) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
+    super.approve(operator, tokenId);
+  }
+
+  function transferFrom(
+    address from,
+    address to,
+    uint256 tokenId
+  ) public override(ERC721, IERC721) onlyAllowedOperator(from) {
+    super.transferFrom(from, to, tokenId);
+  }
+
+  function safeTransferFrom(
+    address from,
+    address to,
+    uint256 tokenId
+  ) public override(ERC721, IERC721) onlyAllowedOperator(from) {
+    super.safeTransferFrom(from, to, tokenId);
+  }
+
+  function safeTransferFrom(
+    address from,
+    address to,
+    uint256 tokenId,
+    bytes memory data
+  ) public override(ERC721, IERC721) onlyAllowedOperator(from) {
+    super.safeTransferFrom(from, to, tokenId, data);
   }
 }

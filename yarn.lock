@@ -2609,7 +2609,12 @@
   dependencies:
     "@octokit/openapi-types" "^18.0.0"
 
-"@openzeppelin/contracts@^4.9.2":
+"@openzeppelin/contracts-upgradeable@^4.8.2":
+  version "4.9.2"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.2.tgz#a817c75688f8daede420052fbcb34e52482e769e"
+  integrity sha512-siviV3PZV/fHfPaoIC51rf1Jb6iElkYWnNYZ0leO23/ukXuvOyoC/ahy8jqiV7g+++9Nuo3n/rk5ajSN/+d/Sg==
+
+"@openzeppelin/contracts@^4.7.3", "@openzeppelin/contracts@^4.9.2":
   version "4.9.2"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.2.tgz#1cb2d5e4d3360141a17dbc45094a8cad6aac16c1"
   integrity sha512-mO+y6JaqXjWeMh9glYVzVu8HYPGknAAnWyxTRhGeckOruyXQMNnlcW6w/Dx9ftLeIQk6N+ZJFuVmTwF7lEIFrg==
@@ -10251,6 +10256,14 @@ open@^9.1.0:
     define-lazy-prop "^3.0.0"
     is-inside-container "^1.0.0"
     is-wsl "^2.2.0"
+
+operator-filter-registry@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/operator-filter-registry/-/operator-filter-registry-1.4.2.tgz#55a3aa8d360b4bc69e53cfe7259453fd25495f7e"
+  integrity sha512-BwbzpYUtYePAotSV+TMT0r4TU/eGjlhYKohbhu9sf1g/T3KLRMIfUau6bJp8QyLSCBODr6ega34lj4RakbredQ==
+  dependencies:
+    "@openzeppelin/contracts" "^4.7.3"
+    "@openzeppelin/contracts-upgradeable" "^4.8.2"
 
 optionator@^0.8.1:
   version "0.8.3"
