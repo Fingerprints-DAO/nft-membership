@@ -93,8 +93,13 @@ describe('Membership', function () {
       )
     })
 
-    it('Only owner can pause', async function () {
+    it('Only owner can pause and unpause', async function () {
       await expect(membership.connect(otherAccount).pause()).to.be.revertedWith(
+        `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
+      await expect(
+        membership.connect(otherAccount).unpause(),
+      ).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })
@@ -173,6 +178,15 @@ describe('Membership', function () {
       await membership.setBaseURI(tokenUri)
 
       expect(await membership.baseURIValue()).to.be.equal(tokenUri)
+    })
+
+    it('Only admin can set token uri', async function () {
+      const tokenUri = 'https://example2.com/'
+      await expect(
+        membership.connect(otherAccount).setBaseURI(tokenUri),
+      ).to.be.revertedWith(
+        `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
     })
 
     it('Return token id concatenated with base uri', async function () {
