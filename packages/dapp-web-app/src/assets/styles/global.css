@@ -1,3 +1,30 @@
+@font-face {
+  font-family: 'helvetica';
+  src:
+    url('../../../public/fonts/helvetica-light.woff2') format('woff2'),
+    url('../../../public/fonts/helvetica-light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'helvetica';
+  src:
+    url('../../../public/fonts/helvetica.woff2') format('woff2'),
+    url('../../../public/fonts/helvetica.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'helvetica';
+  src:
+    url('../../../public/fonts/helvetica-bold.woff2') format('woff2'),
+    url('../../../public/fonts/helvetica-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
 html,
 body {
   min-height: 100%;

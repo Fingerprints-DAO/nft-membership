@@ -4,7 +4,6 @@ import { Box, GridItem, Link, Text, Img } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'
 import Header from 'components/header'
-import NextImage from 'next/image'
 import about1 from '../../../public/images/about-1.png'
 import about2 from '../../../public/images/about-2.png'
 
