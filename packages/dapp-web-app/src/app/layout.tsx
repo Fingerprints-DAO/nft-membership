@@ -1,4 +1,4 @@
-import '../assets/styles/global.css'
+import '../../public/styles/global.css'
 
 import { Metadata } from 'next'
 import Providers from 'contexts/providers'

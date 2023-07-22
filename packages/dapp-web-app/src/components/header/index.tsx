@@ -62,7 +62,7 @@ const Header = () => {
                   </Box>
                 )
               })}
-              <Wallet variant="header" buttonWidth="auto" />
+              {/* <Wallet variant="header" buttonWidth="auto" /> */}
             </Flex>
           )}
         </GridItem>
