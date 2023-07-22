@@ -1,0 +1,10 @@
+html,
+body {
+  min-height: 100%;
+}
+
+html,
+body,
+#main {
+  height: 100%;
+}
