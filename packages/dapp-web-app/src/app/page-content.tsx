@@ -60,7 +60,7 @@ const Home = ({ pageState }: HomeProps) => {
           )}
         </Box>
       </Container>
-      <Footer />
+      <Footer isHome={true} />
     </Box>
   )
 }
