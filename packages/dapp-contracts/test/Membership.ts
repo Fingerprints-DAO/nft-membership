@@ -72,8 +72,9 @@ describe('Membership', function () {
     })
 
     it('Can not mint more than token supply', async function () {
-      await membership.safeMint(otherAccount.address, 1000)
-      await membership.safeMint(otherAccount.address, 1000)
+      for (let i = 0; i < 100; i++) {
+        await membership.safeMint(otherAccount.address, 20)
+      }
       await expect(
         membership.safeMint(otherAccount.address, 1),
       ).to.be.revertedWithCustomError(membership, 'MaxSupplyExceeded')

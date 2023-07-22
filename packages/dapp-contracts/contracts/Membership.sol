@@ -9,9 +9,11 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 import '@openzeppelin/contracts/utils/cryptography/EIP712.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Votes.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract Membership is
   ERC721,
+  ERC721Enumerable,
   ERC721Royalty,
   Pausable,
   AccessControl,
@@ -102,7 +104,7 @@ contract Membership is
     address to,
     uint256 tokenId,
     uint256 batchSize
-  ) internal override whenNotPaused {
+  ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
     super._beforeTokenTransfer(from, to, tokenId, batchSize);
   }
 
@@ -121,7 +123,7 @@ contract Membership is
 
   function supportsInterface(
     bytes4 interfaceId
-  ) public view override(ERC721, AccessControl, ERC721Royalty) returns (bool) {
+  ) public view override(ERC721, AccessControl, ERC721Royalty, ERC721Enumerable) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 }
