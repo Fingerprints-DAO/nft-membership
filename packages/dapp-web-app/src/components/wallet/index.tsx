@@ -22,7 +22,7 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
       return
     }
 
-    return isDrawer ? 'gray' : 'whiteAlpha'
+    return isDrawer ? 'blackAlpha' : 'whiteAlpha'
   }, [isDrawer, isCard])
 
   const buttonColor = useMemo(
@@ -44,6 +44,29 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
     [isHeader, isDrawer]
   )
 
+  const buttonBorderColor = useMemo(
+    () => (isConnected: boolean) => {
+      if (isHeader) {
+        return 'gray.50'
+      }
+
+      if (isDrawer && !isConnected) {
+        return 'gray.50'
+      }
+
+      if (isDrawer && isConnected) {
+        return 'gray.900'
+      }
+
+      if (isConnected) {
+        return 'gray.50'
+      }
+
+      return undefined
+    },
+    [isHeader, isDrawer]
+  )
+
   const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => (isConnected ? disconnect() : show?.())
 
   return (
@@ -51,18 +74,19 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
       {({ isConnected, show }) => {
         return (
           <Button
-            borderColor={isCard ? 'gray.50' : undefined}
+            borderColor={buttonBorderColor(isConnected)}
             borderWidth={isCard ? 2 : undefined}
             h={isHeader ? '44px' : 16}
             color={buttonColor(isConnected)}
             size="lg"
-            fontSize="18px"
+            fontSize={isHeader ? 'md' : 'lg'}
             colorScheme={buttonColorScheme}
             variant={isCard || isConnected ? 'outline' : 'solid'}
             w={buttonWidth}
+            overflow="hidden"
             onClick={handleConnectWallet(isConnected, show)}
           >
-            {isConnected ? 'Disconnect wallet' : 'Connect'}
+            {isConnected ? 'Disconnect' : 'Connect'}
           </Button>
         )
       }}

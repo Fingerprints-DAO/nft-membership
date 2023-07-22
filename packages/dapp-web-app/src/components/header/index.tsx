@@ -10,27 +10,20 @@ import useMediaQuery from 'hooks/use-media-query'
 import { usePathname } from 'next/navigation'
 import Grid from 'components/grid'
 import Wallet from 'components/wallet'
-import { useMemo } from 'react'
+
+const nav = [
+  { href: '/', label: 'home' },
+  { href: '/about', label: 'about' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/auction', label: 'auction' },
+]
+
+const mobileNav = [...nav, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' }]
 
 const Header = () => {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 767px)')
-
-  const nav = useMemo(() => {
-    const arr = [
-      { href: '/', label: 'home' },
-      { href: '/about', label: 'about' },
-      { href: '/faq', label: 'FAQ' },
-      { href: '/auction', label: 'auction' },
-    ]
-
-    if (isMobile) {
-      arr.push({ href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' })
-    }
-
-    return arr
-  }, [isMobile])
 
   return (
     <>
@@ -89,8 +82,8 @@ const Header = () => {
             </GridItem>
           </Grid>
           <DrawerBody mt={8} px={8}>
-            {nav.map((item, index) => {
-              const isLastChild = nav.length - 1 === index
+            {mobileNav.map((item, index) => {
+              const isLastChild = mobileNav.length - 1 === index
               const isActive = pathname === item.href
 
               return (
@@ -112,7 +105,6 @@ const Header = () => {
             })}
           </DrawerBody>
           <DrawerFooter px={8} pb={12}>
-            {/* <ConnectKitButton /> */}
             <Wallet variant="drawer" />
           </DrawerFooter>
         </DrawerContent>

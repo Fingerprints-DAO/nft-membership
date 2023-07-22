@@ -13,7 +13,9 @@ const colors = {
     '900': '#171923',
   },
   secondary: {
+    100: '#ffeef2',
     500: '#F76B8B',
+    900: '#F76B8B',
   },
   links: {
     500: '#6ECCDD',

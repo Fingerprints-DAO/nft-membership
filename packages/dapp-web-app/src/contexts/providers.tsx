@@ -1,17 +1,19 @@
 'use client'
 
-import * as React from 'react'
 import { ConnectKitProvider } from 'connectkit'
 import { WagmiConfig } from 'wagmi'
 import { ChakraProvider } from '@chakra-ui/react'
 import { CacheProvider } from '@chakra-ui/next-js'
 import { config } from '../settings/wagmi'
 import theme from 'settings/theme'
+import { PropsWithChildren, useEffect, useState } from 'react'
+import PageTransition from 'components/page-transition'
+import { ModalProvider } from './modal'
 
-function Providers({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = React.useState(false)
+const Providers = ({ children }: PropsWithChildren) => {
+  const [mounted, setMounted] = useState(false)
 
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true)
   }, [])
 
@@ -19,8 +21,9 @@ function Providers({ children }: { children: React.ReactNode }) {
     <CacheProvider>
       <ChakraProvider theme={theme}>
         <WagmiConfig config={config}>
-          {!mounted && <p>Loading</p>}
-          <ConnectKitProvider mode="light">{mounted && children}</ConnectKitProvider>
+          <ModalProvider>
+            <PageTransition>{mounted ? <ConnectKitProvider mode="light">{children}</ConnectKitProvider> : <p>Loading</p>}</PageTransition>
+          </ModalProvider>
         </WagmiConfig>
       </ChakraProvider>
     </CacheProvider>

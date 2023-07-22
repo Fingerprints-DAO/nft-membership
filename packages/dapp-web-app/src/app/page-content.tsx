@@ -2,6 +2,7 @@ import { Box, Button, Container, Heading, Text } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Header from 'components/header'
 import { ConnectKitButton } from 'connectkit'
+import { ModalElement, useModalContext } from 'contexts/modal'
 import { PageState } from 'types/page'
 
 type HomeProps = {
@@ -9,7 +10,9 @@ type HomeProps = {
 }
 
 const Home = ({ pageState }: HomeProps) => {
-  const handleCTAClick = (isConnected: boolean, show?: () => void) => () => (isConnected ? () => null : show?.())
+  const { handleOpenModal } = useModalContext()
+
+  const handleCTAClick = (isConnected: boolean, show?: () => void) => () => (isConnected ? handleOpenModal(ModalElement.ConvertPrints)() : show?.())
 
   return (
     <Box
