@@ -25,7 +25,6 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
 
   address public highestBidder;
   uint public highestBid;
-  mapping(address => uint) public bids;
 
   uint8 public minBidIncrementPercentage;
   uint256 public timeBuffer;
@@ -36,32 +35,27 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
     uint _nftId,
     uint _startingBid,
     uint8 _minBidIncrementPercentage,
-    uint _duration
+    uint _duration,
+    uint _timeBuffer
   ) {
     highestBid = _startingBid;
     nftId = _nftId;
     minBidIncrementPercentage = _minBidIncrementPercentage;
     duration = _duration;
+    timeBuffer = _timeBuffer;
     nft = IERC721(_nft);
     seller = payable(msg.sender);
 
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
-  function start() external whenNotPaused {
-    require(!started, 'started');
-    require(msg.sender == seller, 'not seller');
-
-    startTime = block.timestamp;
-    endTime = startTime + duration;
-
-    started = true;
-
-    emit Start(startTime, endTime);
-  }
-
+  /**
+   * @dev Allows a bidder to place a bid on the auction.
+   * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment percentage.
+   */
   function bid() external payable whenNotPaused {
     require(started, 'not started');
+    require(block.timestamp < endTime, 'auction expired');
     require(!ended, 'ended');
     require(
       msg.value >=
@@ -70,7 +64,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
     );
 
     if (highestBidder != address(0)) {
-      bids[highestBidder] += highestBid;
+      (bool success, ) = highestBidder.call{value: highestBid}('');
+      require(success, 'Transfer failed.');
     }
 
     highestBidder = msg.sender;
@@ -79,24 +74,17 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
     // Extend the auction if the bid was received within `timeBuffer` of the auction end time
     bool extended = endTime - block.timestamp < timeBuffer;
     if (extended) {
-      endTime = endTime = block.timestamp + timeBuffer;
+      endTime = block.timestamp + timeBuffer;
       emit AuctionExtended(endTime);
     }
 
     emit Bid(msg.sender, msg.value);
   }
 
-  function withdraw() external whenNotPaused {
-    require(bids[msg.sender] > 0, 'no bid');
-
-    uint amount = bids[msg.sender];
-    bids[msg.sender] = 0;
-
-    payable(msg.sender).transfer(amount);
-
-    emit Withdraw(msg.sender, amount);
-  }
-
+  /**
+   * @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller.
+   * @notice The auction must have started and not have ended. The current time must be greater than or equal to the end time.
+   */
   function end() external whenNotPaused {
     require(started, 'not started');
     require(!ended, 'ended');
@@ -114,12 +102,34 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
     }
   }
 
-  /// @notice Only Admin can pauses all token transfers.
+  /**
+   * @dev Starts the auction.
+   * @notice The auction must not have started and the caller must be the seller.
+   */
+  function start() external whenNotPaused {
+    require(!started, 'started');
+    require(msg.sender == seller, 'not seller');
+
+    startTime = block.timestamp;
+    endTime = startTime + duration;
+
+    started = true;
+
+    emit Start(startTime, endTime);
+  }
+
+  /**
+   * @dev Pauses the contract.
+   * @notice Only the contract admin can pause the contract.
+   */
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _pause();
   }
 
-  /// @notice Only Admin can unpauses all token transfers.
+  /**
+   * @dev Unpauses the contract.
+   * @notice Only the contract admin can unpause the contract.
+   */
   function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
   }
