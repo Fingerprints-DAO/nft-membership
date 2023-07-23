@@ -11,6 +11,7 @@ describe('Auction', function () {
   let bidder2: SignerWithAddress
   let startingBid = 100
   let defaultAdminRole: string
+
   describe('Auction', function () {
     const nftId = 1
     const minBidIncrementPercentage = 10 // 10%
@@ -43,12 +44,15 @@ describe('Auction', function () {
       it('Start the auction', async function () {
         await auction.connect(seller).start()
 
-        expect(await auction.started()).to.be.true
+        expect((await auction.auctionData()).started).to.be.true
         const blockTime = await ethers.provider.getBlock(
           await ethers.provider.getBlockNumber(),
         )
         const expectedEndTime = blockTime!.timestamp + duration
-        expect(await auction.endTime()).to.be.closeTo(expectedEndTime, 1000)
+        expect((await auction.auctionData()).endTime).to.be.closeTo(
+          expectedEndTime,
+          1000,
+        )
       })
 
       it('Cannot start the auction if it has already started', async function () {
@@ -81,10 +85,10 @@ describe('Auction', function () {
 
         await auction.connect(bidder1).bid({ value: bid })
 
-        expect(await auction.highestBidder()).to.equal(
+        expect((await auction.auctionData()).highestBidder).to.equal(
           await bidder1.getAddress(),
         )
-        expect(await auction.highestBid()).to.equal(bid)
+        expect((await auction.auctionData()).highestBid).to.equal(bid)
       })
 
       it('Must send more than last by minBidIncrementPercentage', async function () {
@@ -93,10 +97,10 @@ describe('Auction', function () {
 
         await auction.connect(bidder1).bid({ value: bid })
 
-        expect(await auction.highestBidder()).to.equal(
+        expect((await auction.auctionData()).highestBidder).to.equal(
           await bidder1.getAddress(),
         )
-        expect(await auction.highestBid()).to.equal(bid)
+        expect((await auction.auctionData()).highestBid).to.equal(bid)
 
         await expect(
           auction.connect(bidder2).bid({ value: bid + 1 }),
@@ -110,10 +114,10 @@ describe('Auction', function () {
         await auction.connect(seller).start()
 
         await auction.connect(bidder1).bid({ value: bid })
-        expect(await auction.highestBidder()).to.equal(
+        expect((await auction.auctionData()).highestBidder).to.equal(
           await bidder1.getAddress(),
         )
-        expect(await auction.highestBid()).to.equal(bid)
+        expect((await auction.auctionData()).highestBid).to.equal(bid)
 
         const balanceBefore = await ethers.provider.getBalance(
           await bidder1.getAddress(),
@@ -145,7 +149,7 @@ describe('Auction', function () {
           await ethers.provider.getBlockNumber(),
         )
 
-        expect(await auction.endTime()).to.be.closeTo(
+        expect((await auction.auctionData()).endTime).to.be.closeTo(
           blockTime!.timestamp + timeBuffer,
           10,
         )
@@ -154,7 +158,7 @@ describe('Auction', function () {
         await forward10MinutesBeforeEndTime()
 
         await auction.connect(seller).end()
-        expect(await auction.ended()).to.be.true
+        expect((await auction.auctionData()).ended).to.be.true
         expect(await membership.ownerOf(nftId)).to.equal(
           await bidder1.getAddress(),
         )
@@ -208,7 +212,7 @@ describe('Auction', function () {
         await forwardEndTime()
 
         await auction.connect(seller).end()
-        expect(await auction.ended()).to.be.true
+        expect((await auction.auctionData()).ended).to.be.true
         expect(await membership.ownerOf(nftId)).to.equal(
           await bidder1.getAddress(),
         )
@@ -242,7 +246,7 @@ describe('Auction', function () {
         await forwardEndTime()
 
         await auction.connect(seller).end()
-        expect(await auction.ended()).to.be.true
+        expect((await auction.auctionData()).ended).to.be.true
         expect(await membership.ownerOf(nftId)).to.equal(
           await seller.getAddress(),
         )
