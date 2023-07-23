@@ -9,8 +9,6 @@ import '@openzeppelin/contracts/access/AccessControl.sol';
 struct AuctionData {
   uint startTime;
   uint endTime;
-  bool started;
-  bool ended;
   address highestBidder;
   uint highestBid;
   uint8 minBidIncrementPercentage;
@@ -21,7 +19,6 @@ struct AuctionData {
 contract Auction is ERC721Holder, Pausable, AccessControl {
   event Start(uint startTime, uint endTime);
   event Bid(address indexed sender, uint amount);
-  event Withdraw(address indexed bidder, uint amount);
   event End(address winner, uint amount);
   event AuctionExtended(uint endTime);
 
@@ -56,9 +53,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
    * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment percentage.
    */
   function bid() external payable whenNotPaused {
-    require(auctionData.started, 'Auction has not started');
+    require(auctionData.startTime != 0 && auctionData.startTime <= block.timestamp, 'Auction has not started');
     require(block.timestamp < auctionData.endTime, 'Auction has expired');
-    require(!auctionData.ended, 'Auction has ended');
     require(
       msg.value >=
         auctionData.highestBid +
@@ -93,11 +89,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
    * @notice The auction must have started and not have ended. The current time must be greater than or equal to the end time.
    */
   function end() external whenNotPaused {
-    require(auctionData.started, 'Auction has not started');
-    require(!auctionData.ended, 'Auction has already ended');
+    require(auctionData.startTime != 0, 'Auction has not started');
     require(block.timestamp >= auctionData.endTime, 'Auction has not ended');
-
-    auctionData.ended = true;
 
     if (auctionData.highestBidder != address(0)) {
       nft.safeTransferFrom(address(this), auctionData.highestBidder, nftId);
@@ -115,9 +108,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
    * @notice The auction must not have started and the caller must be the seller.
    */
   function start() external whenNotPaused onlyRole(DEFAULT_ADMIN_ROLE) {
-    require(!auctionData.started, 'Auction already started');
+    require(auctionData.startTime == 0, 'Auction already started');
 
-    auctionData.started = true;
     auctionData.startTime = block.timestamp;
     auctionData.endTime = auctionData.startTime + auctionData.duration;
 
