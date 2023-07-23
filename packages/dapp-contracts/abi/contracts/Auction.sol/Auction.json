@@ -258,16 +258,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "started",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "ended",
-        "type": "bool"
-      },
-      {
         "internalType": "address",
         "name": "highestBidder",
         "type": "address"

@@ -50,7 +50,6 @@ describe('Auction', function () {
     it('Start the auction', async function () {
       await auction.connect(seller).start()
 
-      expect((await auction.auctionData()).started).to.be.true
       const blockTime = await ethers.provider.getBlock(
         await ethers.provider.getBlockNumber(),
       )
@@ -164,7 +163,6 @@ describe('Auction', function () {
       await forward10MinutesBeforeEndTime()
 
       await auction.connect(seller).end()
-      expect((await auction.auctionData()).ended).to.be.true
       expect(await membership.ownerOf(nftId)).to.equal(
         await bidder1.getAddress(),
       )
@@ -178,7 +176,7 @@ describe('Auction', function () {
       ).to.be.revertedWith('Auction has not started')
     })
 
-    it('Cannot bid if the auction has ended', async function () {
+    it('Cannot bid if the auction has expired', async function () {
       const bid = startingBid + 10
       await auction.connect(seller).start()
       await forwardEndTime()
@@ -234,7 +232,6 @@ describe('Auction', function () {
         treasury,
         bid,
       )
-      expect((await auction.auctionData()).ended).to.be.true
       expect(await membership.ownerOf(nftId)).to.equal(
         await bidder1.getAddress(),
       )
@@ -243,16 +240,6 @@ describe('Auction', function () {
     it('Cannot end the auction if it has Auction has not started', async function () {
       await expect(auction.connect(seller).end()).to.be.revertedWith(
         'Auction has not started',
-      )
-    })
-
-    it('Cannot end the auction if it has already ended', async function () {
-      await auction.connect(seller).start()
-      await forwardEndTime()
-      await auction.connect(seller).end()
-
-      await expect(auction.connect(seller).end()).to.be.revertedWith(
-        'Auction has already ended',
       )
     })
 
@@ -278,7 +265,6 @@ describe('Auction', function () {
       await forwardEndTime()
 
       await auction.connect(seller).end()
-      expect((await auction.auctionData()).ended).to.be.true
       expect(await membership.ownerOf(nftId)).to.equal(
         await treasury.getAddress(),
       )
