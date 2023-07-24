@@ -5,6 +5,7 @@ import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
 struct AuctionData {
   uint startTime;
@@ -16,7 +17,7 @@ struct AuctionData {
   uint256 duration;
 }
 
-contract Auction is ERC721Holder, Pausable, AccessControl {
+contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   event Start(uint startTime, uint endTime);
   event Bid(address indexed sender, uint amount);
   event End(address winner, uint amount);
@@ -52,7 +53,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
    * @dev Allows a bidder to place a bid on the auction.
    * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment percentage.
    */
-  function bid() external payable whenNotPaused {
+  function bid() external payable whenNotPaused nonReentrant {
     require(auctionData.startTime != 0 && auctionData.startTime <= block.timestamp, 'Auction has not started');
     require(block.timestamp < auctionData.endTime, 'Auction has expired');
     require(
@@ -88,7 +89,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl {
    * @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller.
    * @notice The auction must have started and not have ended. The current time must be greater than or equal to the end time.
    */
-  function end() external whenNotPaused {
+  function end() external whenNotPaused nonReentrant {
     require(auctionData.startTime != 0, 'Auction has not started');
     require(block.timestamp >= auctionData.endTime, 'Auction has not ended');
 
