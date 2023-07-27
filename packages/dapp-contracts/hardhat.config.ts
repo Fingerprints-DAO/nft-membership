@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
-import { HardhatUserConfig, task } from "hardhat/config";
+import { HardhatUserConfig, task } from 'hardhat/config'
 import 'dotenv/config'
-import "@nomicfoundation/hardhat-toolbox";
+import '@nomicfoundation/hardhat-toolbox'
 import 'hardhat-watcher'
 import 'hardhat-contract-sizer'
 // import 'hardhat-docgen'
@@ -26,7 +26,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 const accounts = {
-  mnemonic: process.env.MNEMONIC || 'abc abc abc abc abc abc abc abc abc abc abc abc',
+  mnemonic:
+    process.env.MNEMONIC || 'abc abc abc abc abc abc abc abc abc abc abc abc',
 }
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -48,7 +49,7 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts: { mnemonic: process.env.MNEMONIC },
+      accounts,
       chainId: 1,
       gasMultiplier: 1,
       gas: 'auto',
@@ -90,6 +91,6 @@ const config: HardhatUserConfig = {
   //   clear: true,
   //   runOnCompile: true,
   // },
-};
+}
 
-export default config;
+export default config
