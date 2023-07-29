@@ -1,18 +1,17 @@
 import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
-import useGetPrintsBalance from 'services/web3/prints/use-get-prints-balance'
+import { Balance } from 'services/web3/prints/use-get-prints-balance'
 
 export type Action = '' | 'top-up' | 'convert'
 
 type ConvertDefaultProps = {
+  printsBalance: Balance
   onClose?: () => void
   onAction: (action: Action) => void
 }
 
-const ConvertDefault = ({ onAction, onClose }: ConvertDefaultProps) => {
-  const printsBalance = useGetPrintsBalance()
-
+const ConvertDefault = ({ printsBalance, onAction, onClose }: ConvertDefaultProps) => {
   const handleAction = (action: Action) => () => onAction(action)
 
   return (

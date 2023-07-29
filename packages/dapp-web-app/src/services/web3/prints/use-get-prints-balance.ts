@@ -4,7 +4,7 @@ import { Address, useAccount, useBalance } from 'wagmi'
 
 const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ''
 
-type Balance = {
+export type Balance = {
   formatted: string
   value: BigNumber
 }
