@@ -12,7 +12,7 @@ type HomeProps = {
 const Home = ({ pageState }: HomeProps) => {
   const { push } = useRouter()
 
-  const handleCTAClick = (isConnected: boolean, show?: () => void) => () => (isConnected ? push('/convert') : show?.())
+  const handleCTAClick = (isConnected: boolean, show?: () => void) => () => (isConnected ? push('convert') : show?.())
 
   return (
     <Box
