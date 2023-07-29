@@ -7,7 +7,6 @@ import { CacheProvider } from '@chakra-ui/next-js'
 import { config } from '../settings/wagmi'
 import theme from 'settings/theme'
 import { PropsWithChildren, useEffect, useState } from 'react'
-import PageTransition from 'components/page-transition'
 import { ModalProvider } from './modal'
 
 const Providers = ({ children }: PropsWithChildren) => {
@@ -21,9 +20,7 @@ const Providers = ({ children }: PropsWithChildren) => {
     <CacheProvider>
       <ChakraProvider theme={theme}>
         <WagmiConfig config={config}>
-          <ModalProvider>
-            <PageTransition>{mounted ? <ConnectKitProvider mode="light">{children}</ConnectKitProvider> : <p>Loading</p>}</PageTransition>
-          </ModalProvider>
+          <ModalProvider>{mounted ? <ConnectKitProvider mode="light">{children}</ConnectKitProvider> : <p>Loading</p>}</ModalProvider>
         </WagmiConfig>
       </ChakraProvider>
     </CacheProvider>

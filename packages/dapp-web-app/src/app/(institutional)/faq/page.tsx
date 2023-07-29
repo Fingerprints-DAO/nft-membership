@@ -56,33 +56,29 @@ const questions = [
 
 const FaqPage = () => {
   return (
-    <>
-      <Header />
-      <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
-        <Grid>
-          <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 6, md: 10 }}>
-            <Text as="h1" fontSize="3xl" fontWeight="bold" mb={8}>
-              FAQ
-            </Text>
-            <Box>
-              {questions.map((item, index) => {
-                const isLastChild = questions.length - 1 === index
+    <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
+      <Grid>
+        <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 6, md: 10 }}>
+          <Text as="h1" fontSize="3xl" fontWeight="bold" mb={8}>
+            FAQ
+          </Text>
+          <Box>
+            {questions.map((item, index) => {
+              const isLastChild = questions.length - 1 === index
 
-                return (
-                  <Box py={8} borderBottomColor="gray.700" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`}>
-                    <Text as="strong" fontSize="lg" display="block" color="gray.100">
-                      {item.question}
-                    </Text>
-                    <Text color="gray.300">{item.answer}</Text>
-                  </Box>
-                )
-              })}
-            </Box>
-          </GridItem>
-        </Grid>
-      </Box>
-      <Footer />
-    </>
+              return (
+                <Box py={8} borderBottomColor="gray.700" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`}>
+                  <Text as="strong" fontSize="lg" display="block" color="gray.100">
+                    {item.question}
+                  </Text>
+                  <Text color="gray.300">{item.answer}</Text>
+                </Box>
+              )
+            })}
+          </Box>
+        </GridItem>
+      </Grid>
+    </Box>
   )
 }
 

@@ -3,7 +3,7 @@ import '../../public/styles/global.css'
 import { Metadata } from 'next'
 import Providers from 'contexts/providers'
 import { PropsWithChildren } from 'react'
-import Modal from 'components/modal'
+import AppContent from './page-content'
 
 export const metadata: Metadata = {
   title: 'NFT Membership',
@@ -16,8 +16,7 @@ function RootLayout({ children }: PropsWithChildren) {
       <body>
         <main id="main">
           <Providers>
-            {children}
-            <Modal />
+            <AppContent>{children}</AppContent>
           </Providers>
         </main>
       </body>
