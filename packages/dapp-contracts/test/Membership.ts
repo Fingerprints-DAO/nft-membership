@@ -18,7 +18,15 @@ describe('Membership', function () {
     const MembershipFactory = (await ethers.getContractFactory(
       'Membership',
     )) as Membership__factory
-    const membership = await MembershipFactory.deploy(baseURI)
+    const adminAddress = await owner.getAddress()
+    const payoutAddress = await owner.getAddress()
+    const royaltyFee = 1000 // 10%
+    const membership = await MembershipFactory.deploy(
+      baseURI,
+      adminAddress,
+      payoutAddress,
+      royaltyFee,
+    )
 
     const minterRole = await membership.MINTER_ROLE()
     const defaultAdminRole = await membership.DEFAULT_ADMIN_ROLE()
@@ -39,8 +47,8 @@ describe('Membership', function () {
 
   describe('Deploy', function () {
     it('Deployed', async function () {
-      expect(await membership.name()).to.be.equal('Membership')
-      expect(await membership.symbol()).to.be.equal('MBSP')
+      expect(await membership.name()).to.be.equal('Voxelglyph')
+      expect(await membership.symbol()).to.be.equal('#')
       expect(await membership.MAX_SUPPLY()).to.be.equal(2000)
       expect(await membership.paused()).to.be.equal(false)
     })
@@ -120,7 +128,9 @@ describe('Membership', function () {
     })
 
     it('Owner can set royalties', async function () {
-      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 1)
+      await expect(
+        membership.connect(owner).setDefaultRoyalty(otherAccount.address, 1),
+      ).to.emit(membership, 'DefaultRoyaltySet')
     })
 
     it('Only owner can set royalties', async function () {
@@ -175,7 +185,10 @@ describe('Membership', function () {
   describe('Base Uri', function () {
     it('Can set token uri', async function () {
       const tokenUri = 'https://example2.com/'
-      await membership.setBaseURI(tokenUri)
+      await expect(membership.setBaseURI(tokenUri)).to.emit(
+        membership,
+        'BaseURIChanged',
+      )
 
       expect(await membership.baseURIValue()).to.be.equal(tokenUri)
     })

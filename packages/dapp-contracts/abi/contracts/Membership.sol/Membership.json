@@ -5,6 +5,21 @@
         "internalType": "string",
         "name": "_baseURIValue",
         "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_adminAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_payoutAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_royaltyFee",
+        "type": "uint96"
       }
     ],
     "stateMutability": "nonpayable",
@@ -90,6 +105,38 @@
       }
     ],
     "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newBaseURI",
+        "type": "string"
+      }
+    ],
+    "name": "BaseURIChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payoutAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "royaltyFee",
+        "type": "uint96"
+      }
+    ],
+    "name": "DefaultRoyaltySet",
     "type": "event"
   },
   {
@@ -356,12 +403,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "operator",
+        "name": "_operator",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
@@ -847,12 +894,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "to",
+        "name": "_to",
         "type": "address"
       },
       {
         "internalType": "uint16",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint16"
       }
     ],
@@ -865,17 +912,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "_from",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "to",
+        "name": "_to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
@@ -888,22 +935,22 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "_from",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "to",
+        "name": "_to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "_data",
         "type": "bytes"
       }
     ],
@@ -916,12 +963,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "operator",
+        "name": "_operator",
         "type": "address"
       },
       {
         "internalType": "bool",
-        "name": "approved",
+        "name": "_approved",
         "type": "bool"
       }
     ],
@@ -934,7 +981,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "newBaseURI",
+        "name": "_newBaseURI",
         "type": "string"
       }
     ],
@@ -947,12 +994,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "receiver",
+        "name": "_payoutAddress",
         "type": "address"
       },
       {
         "internalType": "uint96",
-        "name": "royalty",
+        "name": "_royaltyFee",
         "type": "uint96"
       }
     ],
@@ -1040,7 +1087,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
@@ -1072,17 +1119,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "_from",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "to",
+        "name": "_to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
