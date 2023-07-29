@@ -29,7 +29,15 @@ describe('Migration', function () {
       'Membership',
     )) as Membership__factory
     const baseUri = 'https://example.com/'
-    const membership = await MembershipFactory.deploy(baseUri)
+    const adminAddress = await owner.getAddress()
+    const payoutAddress = await owner.getAddress()
+    const royaltyFee = 1000 // 10%
+    const membership = await MembershipFactory.deploy(
+      baseUri,
+      adminAddress,
+      payoutAddress,
+      royaltyFee,
+    )
 
     const ERC20MockFactory = (await ethers.getContractFactory(
       'ERC20Mock',
@@ -45,6 +53,7 @@ describe('Migration', function () {
       'Migration',
     )) as Migration__factory
     const migration = await MigrationFactory.deploy(
+      adminAddress,
       await membership.getAddress(),
       await erc20Mock.getAddress(),
       printPrice,
@@ -89,7 +98,7 @@ describe('Migration', function () {
         .approve(await migration.getAddress(), printPrice)
       await expect(migration.connect(user).migrate(owner.address, 1))
         .to.emit(migration, 'Migrated')
-        .withArgs(owner.address, 1, printPrice)
+        .withArgs(owner.address, 1)
       expect(await erc20Mock.balanceOf(user.address)).to.equal(
         printMinted - printPrice,
       )
@@ -168,7 +177,7 @@ describe('Migration', function () {
       expect(await membership.balanceOf(owner.address)).to.equal(1)
     })
 
-    it('Can migrate all supply and revert on next', async function () {
+    it('Migrates all and returns error after reached max supply', async function () {
       await erc20Mock
         .connect(user)
         .approve(await migration.getAddress(), printPrice * 2001n)

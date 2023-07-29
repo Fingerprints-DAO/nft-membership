@@ -3,7 +3,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_membershipAddress",
+        "name": "_adminAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_nftAddress",
         "type": "address"
       },
       {
@@ -34,12 +39,6 @@
         "internalType": "uint16",
         "name": "amount",
         "type": "uint16"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "totalPrintPrice",
-        "type": "uint256"
       }
     ],
     "name": "Migrated",
@@ -221,8 +220,26 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_amount",
+        "type": "uint16"
+      }
+    ],
+    "name": "migrate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "membershipAddress",
+    "name": "nftAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -231,24 +248,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint16",
-        "name": "amount",
-        "type": "uint16"
-      }
-    ],
-    "name": "migrate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -347,6 +346,19 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "token",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
