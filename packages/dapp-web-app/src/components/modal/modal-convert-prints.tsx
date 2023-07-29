@@ -1,9 +1,13 @@
 import { CloseButton, Modal, ModalContent, ModalHeader, ModalOverlay, Text, Box, Button } from '@chakra-ui/react'
 import { ModalProps } from 'contexts/modal'
 import useMediaQuery from 'hooks/use-media-query'
+import useGetPrintsBalance from 'services/web3/prints/use-get-prints-balance'
 
 const ModalConvertPrints = ({ isOpen, onClose }: ModalProps) => {
+  const printsBalance = useGetPrintsBalance()
   const [isMobile] = useMediaQuery('(max-width: 479px)')
+
+  console.log('printsBalance', printsBalance)
 
   return (
     <Modal
