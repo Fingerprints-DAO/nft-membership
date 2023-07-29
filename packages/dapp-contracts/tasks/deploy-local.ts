@@ -28,15 +28,16 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
       args: [deployer.address, 'arod.studio Tokens', '$ARST', 1_000_000],
     },
     Membership: {
-      args: [baseUri],
+      args: [baseUri, deployer.address, deployer.address, 1000],
     },
     Migration: {
       args: [
-        async () => (await contracts.Membership.instance!.getAddress()),
-        async () => (await contracts.ERC20Mock.instance!.getAddress()),
+        deployer.address,
+        async () => await contracts.Membership.instance!.getAddress(),
+        async () => await contracts.ERC20Mock.instance!.getAddress(),
         5000,
-      ]
-    }
+      ],
+    },
   }
 
   for (const [name, contract] of Object.entries(contracts)) {
