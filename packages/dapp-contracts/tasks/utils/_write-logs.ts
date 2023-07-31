@@ -4,7 +4,7 @@ import fs from 'fs'
 export const writeLogs = (
   chainId: bigint,
   ERC20Mock: Addressable,
-  Lock: Addressable,
+  Membership: Addressable,
 ) => {
   if (!fs.existsSync('logs')) {
     fs.mkdirSync('logs')
@@ -14,7 +14,7 @@ export const writeLogs = (
   const newKey = chainId.toString()
   const newValue = {
     ERC20Mock,
-    Lock,
+    Membership,
     chainId: Number(chainId),
   }
 
