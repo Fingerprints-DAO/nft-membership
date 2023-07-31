@@ -36,16 +36,21 @@ task(
   console.log(
     `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
   )
-  console.log(`Lock address: ${await contracts.Lock.instance.getAddress()}`)
+  console.log(`Membership address: ${await contracts.Membership.instance.getAddress()}`)
 
   writeLogs(
     network.chainId,
     await contracts.ERC20Mock.instance?.getAddress(),
-    await contracts.Lock.instance?.getAddress(),
+    await contracts.Membership.instance?.getAddress(),
   )
 
   // Set local node mining interval
   await ethers.provider.send('evm_setIntervalMining', [12_000])
+
+  await run('grant-role', {
+    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    role: 'MINTER_ROLE'
+  })
 
   await new Promise(() => {
     /* keep node alive until this process is killed */
