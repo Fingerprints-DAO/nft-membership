@@ -11,6 +11,7 @@ import {
   Migration__factory,
 } from '../typechain-types'
 
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 describe('Migration', function () {
   const printMinted = ethers.parseEther('100000000')
   const printPrice = ethers.parseEther('5000')
@@ -218,6 +219,22 @@ describe('Migration', function () {
       await membership.pause()
       await expect(
         migration.connect(user).migrate(owner.address, 1),
+      ).to.be.revertedWith('Pausable: paused')
+    })
+
+    it('should revert when contract is paused', async function () {
+      await migration.pause()
+      await expect(
+        migration.connect(user).migrate(owner.address, 1),
+      ).to.be.revertedWith('Pausable: paused')
+    })
+
+    it('should revert when user is not admin', async function () {
+      await migration.connect(owner).pause()
+      await membership.revokeRole(defaultAdminRole, await owner.getAddress())
+
+      await expect(
+        migration.connect(otherAccount).migrate(owner.address, 1),
       ).to.be.revertedWith('Pausable: paused')
     })
   })
