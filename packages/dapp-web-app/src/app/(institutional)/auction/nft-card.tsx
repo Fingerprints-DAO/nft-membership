@@ -1,6 +1,8 @@
 'use client'
 
-import { AspectRatio, Box, Card, CardBody, Flex, Heading, Link, Text } from '@chakra-ui/react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { AspectRatio, Box, Button, Card, CardBody, Flex, Heading, Input, Link, Text, Tooltip } from '@chakra-ui/react'
+import { Avatar } from 'connectkit'
 import Image from 'next/image'
 
 const NftCard = () => {
@@ -58,6 +60,48 @@ const NftCard = () => {
               1 hour
             </Text>
           </Box>
+        </Flex>
+        <Box mt={10} mb={6}>
+          <Text fontSize="md" color="gray.400" mb={2}>
+            Auction winner
+          </Text>
+          <Flex alignItems="center">
+            <Box rounded="full" border="2px" borderColor="gray.700" bg="gray.300" mr={2}>
+              <Avatar size={40} />
+            </Box>
+            <Tooltip label="0x135DE65DE65DE65DE65DE65DE65DE65DE65DE65DE6" placement="top">
+              <Button
+                as="a"
+                fontWeight="bold"
+                rightIcon={<ExternalLinkIcon color="links.500" transition="ease" transitionProperty="color" transitionDuration="0.2s" />}
+                bg="transparent"
+                variant="link"
+                href="#"
+                fontSize="2xl"
+                title="View in Etherscan"
+                target="_blank"
+                color="gray.100"
+                _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
+                transition="ease"
+                transitionProperty="color"
+                transitionDuration="0.2s"
+              >
+                0x13...5DE6
+              </Button>
+            </Tooltip>
+          </Flex>
+        </Box>
+        <Box>
+          <Text fontSize="md" color="gray.400" mb={2}>
+            Winning bid
+          </Text>
+          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
+            1.9795 ETH
+          </Text>
+        </Box>
+        <Flex mt={6}>
+          <Input variant="outline" placeholder="1.9795 ETH or more" mr={4} flex={1} />
+          <Button colorScheme="whiteAlpha">Place bid</Button>
         </Flex>
       </CardBody>
     </Card>
