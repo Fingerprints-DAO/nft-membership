@@ -59,6 +59,7 @@
     "typechain": "^8.2.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.2"
+    "@openzeppelin/contracts": "^4.9.2",
+    "operator-filter-registry": "^1.4.2"
   }
 }
