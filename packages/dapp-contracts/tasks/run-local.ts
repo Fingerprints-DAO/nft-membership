@@ -36,12 +36,18 @@ task(
   console.log(
     `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
   )
-  console.log(`Membership address: ${await contracts.Membership.instance.getAddress()}`)
+  console.log(
+    `Membership address: ${await contracts.Membership.instance.getAddress()}`,
+  )
+  console.log(
+    `Migration address: ${await contracts.Migration.instance.getAddress()}`,
+  )
 
   writeLogs(
     network.chainId,
     await contracts.ERC20Mock.instance?.getAddress(),
     await contracts.Membership.instance?.getAddress(),
+    await contracts.Migration.instance?.getAddress(),
   )
 
   // Set local node mining interval
@@ -49,7 +55,7 @@ task(
 
   await run('grant-role', {
     address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    role: 'MINTER_ROLE'
+    role: 'MINTER_ROLE',
   })
 
   await new Promise(() => {
