@@ -57,7 +57,7 @@ const ConvertFirstStep = ({ onConvert, onClose }: ConvertFirstStepProps) => {
       )}
       <Box>
         {printsBalance.value.lte(BigNumber(0)) ? (
-          <Button as={Link} href="https://opensea.io" target="_blank" colorScheme="blackAlpha" w="full" size="lg">
+          <Button as={Link} href="https://opensea.io" target="_blank" colorScheme="black" w="full" size="lg">
             Buy on OpenSea
           </Button>
         ) : (
@@ -65,7 +65,7 @@ const ConvertFirstStep = ({ onConvert, onClose }: ConvertFirstStepProps) => {
             <Button colorScheme="secondary" w="full" size="lg" variant="outline" mb={6}>
               Top up $PRINTS
             </Button>
-            <Button colorScheme="blackAlpha" w="full" size="lg" onClick={onConvert}>
+            <Button colorScheme="black" w="full" size="lg" onClick={onConvert}>
               Convert $PRINTS to NFT
             </Button>
           </>

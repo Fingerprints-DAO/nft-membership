@@ -101,7 +101,7 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
           </Box>
         </Collapse>
       </Box>
-      <Button colorScheme="blackAlpha" w="full" size="lg" onClick={() => null}>
+      <Button colorScheme="black" w="full" size="lg" onClick={() => null}>
         Buy 3.000 $PRINTS
       </Button>
       <Text fontSize="xs" color="gray.500" textAlign="center" mt={6}>

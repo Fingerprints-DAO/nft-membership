@@ -19,7 +19,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
       <Grid gridTemplateColumns={isMobile ? 'none' : undefined} alignItems={'center'}>
         <GridItem colSpan={{ base: 4, sm: 4, md: 9, xl: 8 }} colStart={{ base: 1, xl: 2 }}>
           <Flex mb={{ base: 6, sm: 'unset' }} flexDirection="column" alignItems={{ base: '', sm: 'flex-start' }}>
-            <Text fontSize="xs" color="#7a7a7a" textAlign={['center', 'unset']} mb={[3, 1]}>
+            <Text fontSize="xs" color="#7a7a7a" textAlign={{ base: 'center', sm: 'left' }} mb={[3, 1]}>
               By Fingerprints DAO & developed by{' '}
               <Link
                 color="links.500"
@@ -33,7 +33,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
                 arod.studio
               </Link>
             </Text>
-            <Text fontSize="xs" color="#7a7a7a" textAlign={['center', 'unset']}>
+            <Text fontSize="xs" color="#7a7a7a" textAlign={{ base: 'center', sm: 'left' }}>
               Fingerprints Foundation, Cricket Square, Hutchins Drive, P.O. Box 2681, Grand Cayman
             </Text>
           </Flex>
