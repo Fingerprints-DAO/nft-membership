@@ -16,25 +16,38 @@ describe('Auction', function () {
 
   const nftId = 1
   const minBidIncrementPercentage = 10 // 10%
-  const duration = 7 * 24 * 60 * 60 // 7 days
   const timeBuffer = 15 * 60 // 15 minutes
+  const startTime = Math.floor(Date.now() / 1000) - 100 // now - 100 seconds
+  const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
 
   async function deployAuction() {
     ;[seller, bidder1, bidder2, treasury] = await ethers.getSigners()
 
     const MembershipFactory = await ethers.getContractFactory('Membership')
-    membership = await MembershipFactory.deploy('https://example.com/')
+    const baseURI = 'https://example.com/'
+
+    const adminAddress = await seller.getAddress()
+    const payoutAddress = await seller.getAddress()
+    const royaltyFee = 1000 // 10%
+    membership = await MembershipFactory.deploy(
+      baseURI,
+      adminAddress,
+      payoutAddress,
+      royaltyFee,
+    )
 
     const auctionFactory = (await ethers.getContractFactory(
       'Auction',
     )) as Auction__factory
     const address = await membership.getAddress()
+
     auction = await auctionFactory.deploy(
       address,
       nftId,
       startingBid,
       minBidIncrementPercentage,
-      duration,
+      startTime,
+      endTimeIn3Days,
       timeBuffer,
       treasury.address,
     )
@@ -46,47 +59,9 @@ describe('Auction', function () {
     await loadFixture(deployAuction)
   })
 
-  describe('Commands', function () {
-    it('Start the auction', async function () {
-      await auction.connect(seller).start()
-
-      const blockTime = await ethers.provider.getBlock(
-        await ethers.provider.getBlockNumber(),
-      )
-      const expectedEndTime = blockTime!.timestamp + duration
-      expect((await auction.auctionData()).endTime).to.be.closeTo(
-        expectedEndTime,
-        1000,
-      )
-    })
-
-    it('Cannot start the auction if it has already started', async function () {
-      await auction.connect(seller).start()
-
-      await expect(auction.connect(seller).start()).to.be.revertedWith(
-        'Auction already started',
-      )
-    })
-
-    it('Cannot start the auction if not the owner of the NFT', async function () {
-      await expect(auction.connect(bidder1).start()).to.be.revertedWith(
-        `AccessControl: account ${bidder1.address.toLowerCase()} is missing role ${defaultAdminRole}`,
-      )
-    })
-
-    it('Cannot start the auction if the contract is paused', async function () {
-      await auction.connect(seller).pause()
-
-      await expect(auction.connect(seller).start()).to.be.revertedWith(
-        'Pausable: paused',
-      )
-    })
-  })
-
   describe('Bid', function () {
     it('Place a bid', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
 
       await auction.connect(bidder1).bid({ value: bid })
 
@@ -98,7 +73,6 @@ describe('Auction', function () {
 
     it('Must send more than last by minBidIncrementPercentage', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
 
       await auction.connect(bidder1).bid({ value: bid })
 
@@ -116,7 +90,6 @@ describe('Auction', function () {
 
     it('Refund last bidder', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
 
       await auction.connect(bidder1).bid({ value: bid })
       expect((await auction.auctionData()).highestBidder).to.equal(
@@ -140,7 +113,6 @@ describe('Auction', function () {
 
     it('Extend time if in bid time buffer', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
       await auction.connect(bidder1).bid({ value: bid })
 
       await forward10MinutesBeforeEndTime()
@@ -162,7 +134,7 @@ describe('Auction', function () {
       await auction.connect(bidder1).bid({ value: bid + 40 })
       await forward10MinutesBeforeEndTime()
 
-      await auction.connect(seller).end()
+      await auction.connect(seller).settleAuction()
       expect(await membership.ownerOf(nftId)).to.equal(
         await bidder1.getAddress(),
       )
@@ -178,7 +150,6 @@ describe('Auction', function () {
 
     it('Cannot bid if the auction has expired', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
       await forwardEndTime()
 
       await expect(
@@ -198,10 +169,8 @@ describe('Auction', function () {
     it('Cannot bid if auction has ended', async function () {
       const bid = startingBid + 10
 
-      await auction.connect(seller).start()
-
       await forwardEndTime()
-      await auction.connect(seller).end()
+      await auction.connect(seller).settleAuction()
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
@@ -210,7 +179,6 @@ describe('Auction', function () {
 
     it('Cannot bid if the value is less than the starting bid', async function () {
       const bid = startingBid - 1
-      await auction.connect(seller).start()
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
@@ -223,48 +191,37 @@ describe('Auction', function () {
   describe('End', function () {
     it('Transfer to winner if there is bid and treasury to get funds', async function () {
       const bid = startingBid + 10
-      await auction.connect(seller).start()
       await auction.connect(bidder1).bid({ value: bid })
 
       await forwardEndTime()
 
-      await expect(auction.connect(seller).end()).to.changeEtherBalance(
-        treasury,
-        bid,
-      )
+      await expect(
+        auction.connect(seller).settleAuction(),
+      ).to.changeEtherBalance(treasury, bid)
       expect(await membership.ownerOf(nftId)).to.equal(
         await bidder1.getAddress(),
       )
     })
 
-    it('Cannot end the auction if it has Auction has not started', async function () {
-      await expect(auction.connect(seller).end()).to.be.revertedWith(
-        'Auction has not started',
-      )
-    })
-
     it('Cannot end the auction if time did not pass', async function () {
-      await auction.connect(seller).start()
       await forward10MinutesBeforeEndTime()
-      await expect(auction.connect(seller).end()).to.be.revertedWith(
+      await expect(auction.connect(seller).settleAuction()).to.be.revertedWith(
         'Auction has not ended',
       )
     })
 
     it('Cannot end the auction if the contract is paused', async function () {
-      await auction.connect(seller).start()
       await auction.connect(seller).pause()
 
-      await expect(auction.connect(seller).end()).to.be.revertedWith(
+      await expect(auction.connect(seller).settleAuction()).to.be.revertedWith(
         'Pausable: paused',
       )
     })
 
     it('End the auction with no bids and transfer back to treasury', async function () {
-      await auction.connect(seller).start()
       await forwardEndTime()
 
-      await auction.connect(seller).end()
+      await auction.connect(seller).settleAuction()
       expect(await membership.ownerOf(nftId)).to.equal(
         await treasury.getAddress(),
       )
