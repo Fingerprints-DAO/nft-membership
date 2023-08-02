@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, GridItem, Heading, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, GridItem, Heading, Text } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'
 import Header from 'components/header'
@@ -8,9 +8,10 @@ import { PageState } from 'types/page'
 
 type HomeProps = {
   pageState: PageState
+  bgImage: string
 }
 
-const Home = ({ pageState }: HomeProps) => {
+const Home = ({ bgImage, pageState }: HomeProps) => {
   const { push } = useRouter()
 
   const handleCTAClick = (isConnected: boolean, show?: () => void) => () => (isConnected ? push('convert') : show?.())
@@ -21,7 +22,7 @@ const Home = ({ pageState }: HomeProps) => {
       h={{ base: 'initial', sm: '100%' }}
       minH="100%"
       pos="relative"
-      bg={`url('/images/bg-hero.jpg')`}
+      bg={`url(${bgImage})`}
       bgSize="cover"
       bgPos="center"
       bgRepeat="no-repeat"
