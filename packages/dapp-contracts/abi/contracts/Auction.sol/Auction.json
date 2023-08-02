@@ -23,7 +23,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "_duration",
+        "name": "_startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_endTime",
         "type": "uint256"
       },
       {
@@ -229,16 +234,6 @@
     "name": "auctionData",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "highestBidder",
         "type": "address"
@@ -260,7 +255,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "duration",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime",
         "type": "uint256"
       }
     ],
@@ -272,13 +272,6 @@
     "name": "bid",
     "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "end",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -460,7 +453,7 @@
   },
   {
     "inputs": [],
-    "name": "start",
+    "name": "settleAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
