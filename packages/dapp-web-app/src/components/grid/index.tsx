@@ -1,13 +1,6 @@
 import { PropsWithChildren } from 'react'
 import { Grid as CKGrid, GridProps } from '@chakra-ui/react'
 
-// const breakpoints = {
-//     sm: '768px',
-//     md: '1024px',
-//     lg: '1280px',
-//     xl: '1440px',
-//   }
-
 const gridConfig = {
   gridTemplateColumns: {
     base: 'repeat(4, 1fr)',
