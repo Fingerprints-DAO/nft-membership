@@ -36,7 +36,7 @@ const Header = () => {
         <GridItem colSpan={{ base: 1, sm: 5, md: 11, xl: 9 }}>
           {isMobile ? (
             <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
-              <Box as="button" boxSize={[6, 25]} onClick={onOpen}>
+              <Box color="gray.50" as="button" boxSize={[6, 25]} onClick={onOpen}>
                 <HamburgerIcon display="block" boxSize="100%" />
               </Box>
             </Flex>

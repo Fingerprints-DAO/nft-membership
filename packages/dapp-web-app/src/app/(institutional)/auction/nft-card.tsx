@@ -101,7 +101,7 @@ const NftCard = () => {
         </Box>
         <Flex mt={6}>
           <Input variant="outline" placeholder="1.9795 ETH or more" mr={4} flex={1} />
-          <Button colorScheme="whiteAlpha">Place bid</Button>
+          <Button colorScheme="white">Place bid</Button>
         </Flex>
       </CardBody>
     </Card>

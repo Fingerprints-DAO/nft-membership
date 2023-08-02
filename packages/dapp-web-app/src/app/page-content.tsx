@@ -42,10 +42,10 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
       >
         <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
           <Flex alignItems="center" flexDir="column" justifyContent="center" position="relative" zIndex={2} h="100%">
-            <Heading as="h1" mb={6} textAlign={{ sm: 'center' }}>
+            <Heading color="gray.50" as="h1" mb={6} textAlign={{ sm: 'center' }}>
               Mint your Fingerprints Membership NFT using your $PRINTS
             </Heading>
-            <Heading as="h2" size="md" fontWeight="light" mb={10} textAlign={{ sm: 'center' }}>
+            <Heading color="gray.50" as="h2" size="md" fontWeight="light" mb={10} textAlign={{ sm: 'center' }}>
               Fingerprints membership is moving from 5,000 $PRINTS to an NFT designed by Larva Labs.
             </Heading>
             {pageState === PageState.Soon && (
@@ -57,7 +57,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
               <ConnectKitButton.Custom>
                 {({ isConnected, show }) => {
                   return (
-                    <Button size="lg" colorScheme="whiteAlpha" w={{ base: 'full', sm: 'auto' }} onClick={handleCTAClick(isConnected, show)}>
+                    <Button size="lg" colorScheme="white" w={{ base: 'full', sm: 'auto' }} onClick={handleCTAClick(isConnected, show)}>
                       Convert your $PRINTS
                     </Button>
                   )
