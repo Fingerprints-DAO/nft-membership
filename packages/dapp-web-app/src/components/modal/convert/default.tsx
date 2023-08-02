@@ -18,9 +18,7 @@ const ConvertDefault = ({ printsBalance, onAction, onClose }: ConvertDefaultProp
     <>
       <Box position="relative" py="13px" mb={7}>
         <Text fontSize="lg" fontWeight="bold" color="gray.900" textAlign="center" lineHeight="24px">
-          Convert $PRINTS to <br />
-          Fingerprints membership <br />
-          NFT
+          Convert $PRINTS to Fingerprints membership NFT
         </Text>
         {!!onClose && <CloseButton color="gray.500" onClick={onClose} position="absolute" right={0} top={0} w="44px" h="44px" size="lg" />}
       </Box>

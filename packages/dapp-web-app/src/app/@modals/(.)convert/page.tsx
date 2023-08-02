@@ -20,11 +20,11 @@ const ConvertPrintsPage = () => {
       <ModalOverlay height="100vh" />
       <ModalContent
         bg="white"
-        position={['fixed', 'unset']}
-        bottom={['0px', 'unset']}
-        mb={['0', 'auto']}
-        borderRadius={['1rem 1rem 0 0', '1rem']}
-        maxW={['lg', '438px']}
+        position={{ base: 'fixed', sm: 'unset' }}
+        bottom={{ base: '0px', sm: 'unset' }}
+        mb={{ base: '0', sm: 'auto' }}
+        borderRadius={{ base: '1rem 1rem 0 0', sm: '1rem' }}
+        maxW={{ base: 'lg', sm: '438px' }}
         p={6}
       >
         <ConvertPrints isOpen={true} onClose={back} />

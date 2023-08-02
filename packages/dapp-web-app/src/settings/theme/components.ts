@@ -56,9 +56,6 @@ const components = {
     },
     baseStyle: {
       lineHeight: 1,
-      _hover: {
-        opacity: 0.8,
-      },
     },
   }),
   Input: {
