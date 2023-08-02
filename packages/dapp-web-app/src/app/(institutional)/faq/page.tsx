@@ -58,7 +58,7 @@ const FaqPage = () => {
   return (
     <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
       <Grid>
-        <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 6, md: 10 }}>
+        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
           <Text as="h1" fontSize="3xl" fontWeight="bold" mb={8}>
             FAQ
           </Text>

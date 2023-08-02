@@ -9,7 +9,7 @@ const AboutPage = () => {
   return (
     <Box as="section" pt={{ base: 14, md: '88px' }} pb="120px">
       <Grid mb={{ base: 16, sm: '72px' }}>
-        <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 6, md: 10 }}>
+        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
           <Text as="h1" fontSize="3xl" lineHeight="normal" fontWeight="bold" mb={4}>
             FP&apos;s membership in NFT
           </Text>
@@ -22,10 +22,10 @@ const AboutPage = () => {
         </GridItem>
       </Grid>
       <Grid mb={{ base: 16, sm: '72px' }}>
-        <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 2, md: 3 }} mb={{ base: 8, sm: 0 }}>
+        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 2, md: 3 }} mb={{ base: 8, sm: 0 }}>
           <Img src={about1.src} borderRadius={8} alt="NFTs designed by LarvaLabs" />
         </GridItem>
-        <GridItem colStart={{ md: 5 }} colSpan={{ base: 4, sm: 4, md: 7 }}>
+        <GridItem colSpan={{ base: 4, sm: 4, md: 9, xl: 7 }}>
           <Text as="h1" fontSize="3xl" lineHeight="normal" fontWeight="bold" mb={4}>
             NFTs designed by LarvaLabs
           </Text>
@@ -41,10 +41,10 @@ const AboutPage = () => {
         </GridItem>
       </Grid>
       <Grid>
-        <GridItem colStart={{ md: 9 }} colSpan={{ base: 4, sm: 2, md: 3 }} order={{ base: 1, sm: 2, md: 2 }} mb={{ base: 8, sm: 0 }}>
+        <GridItem colSpan={{ base: 4, sm: 2, md: 3 }} order={{ base: 1, sm: 2, md: 2 }} mb={{ base: 8, sm: 0 }}>
           <Img src={about2.src} borderRadius={8} alt="And Fingerprints DAO" />
         </GridItem>
-        <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 4, md: 7 }} order={{ base: 1, sm: 1, md: 1 }}>
+        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 4, md: 9, xl: 7 }} order={{ base: 1, sm: 1, md: 1 }}>
           <Text as="h1" fontSize="3xl" lineHeight="normal" fontWeight="bold" mb={4}>
             And Fingerprints DAO
           </Text>

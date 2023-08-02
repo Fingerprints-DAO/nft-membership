@@ -17,21 +17,9 @@ const Footer = ({ isHome = false }: FooterProps) => {
   return (
     <Box as="footer" py={[8, 6]} bg={isHome ? 'transparent' : 'gray.900'} position="relative" zIndex={10}>
       <Grid gridTemplateColumns={isMobile ? 'none' : undefined} alignItems={'center'}>
-        <GridItem colSpan={[4, 4, 8]} colStart={[1, 1, 2]}>
-          <Flex mb={[6, 'unset']} flexDirection={['column', 'column']} alignItems={['', 'flex-start']}>
-            <Link
-              href="mailto:contact@fingerprintsdao.xyz"
-              fontSize="lg"
-              color="gray.50"
-              fontWeight="bold"
-              lineHeight="24px"
-              mb={[6, 8]}
-              display={'block'}
-              textAlign={['center', 'unset']}
-            >
-              contact us
-            </Link>
-            <Text fontSize="xs" color="gray.500" textAlign={['center', 'unset']} mb={[3, 1]}>
+        <GridItem colSpan={{ base: 4, sm: 4, md: 9, xl: 8 }} colStart={{ base: 1, xl: 2 }}>
+          <Flex mb={{ base: 6, sm: 'unset' }} flexDirection="column" alignItems={{ base: '', sm: 'flex-start' }}>
+            <Text fontSize="xs" color="#7a7a7a" textAlign={['center', 'unset']} mb={[3, 1]}>
               By Fingerprints DAO & developed by{' '}
               <Link
                 color="links.500"
@@ -45,18 +33,18 @@ const Footer = ({ isHome = false }: FooterProps) => {
                 arod.studio
               </Link>
             </Text>
-            <Text fontSize="xs" color="gray.500" textAlign={['center', 'unset']}>
+            <Text fontSize="xs" color="#7a7a7a" textAlign={['center', 'unset']}>
               Fingerprints Foundation, Cricket Square, Hutchins Drive, P.O. Box 2681, Grand Cayman
             </Text>
           </Flex>
         </GridItem>
-        <GridItem colSpan={[4, 2]}>
-          <Flex justifyContent={['center', 'flex-end']} gap={4}>
+        <GridItem colSpan={{ base: 4, sm: 2, md: 3, xl: 2 }}>
+          <Flex justifyContent={{ base: 'center', sm: 'flex-end' }} gap={4}>
             <Link
               href="https://twitter.com/FingerprintsDAO"
               title="Twitter"
               target="_blank"
-              color={isHome ? 'rgba(255,255,255,0.5)' : 'gray.500'}
+              color="#7a7a7a"
               _hover={{ color: 'white' }}
               transition="ease"
               transitionProperty="color"
@@ -68,7 +56,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
               href="https://discord.gg/aePw7mqz6U"
               title="Discord"
               target="_blank"
-              color={isHome ? 'rgba(255,255,255,0.5)' : 'gray.500'}
+              color="#7a7a7a"
               _hover={{ color: 'white' }}
               transition="ease"
               transitionProperty="color"
@@ -80,7 +68,7 @@ const Footer = ({ isHome = false }: FooterProps) => {
               href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/maschine`}
               title="OpenSea"
               target="_blank"
-              color={isHome ? 'rgba(255,255,255,0.5)' : 'gray.500'}
+              color="#7a7a7a"
               _hover={{ color: 'white' }}
               transition="ease"
               transitionProperty="color"
