@@ -19,7 +19,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
   return (
     <Box
       as="section"
-      h={{ base: 'initial', sm: '100%' }}
+      h={{ base: 'initial' }}
       minH="100%"
       pos="relative"
       bg={`url(${bgImage})`}
@@ -31,17 +31,17 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
     >
       <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1} bg="gray.900" opacity={0.8} />
       <Header />
-      <Grid h="full" flex={1}>
-        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }} h="full">
-          <Flex
-            // display={{ base: 'block', sm: 'flex' }}
-            alignItems="center"
-            flexDir="column"
-            justifyContent="center"
-            position="relative"
-            zIndex={2}
-            h="full"
-          >
+      <Grid
+        minH={{
+          base: 'calc(100vh - 330px)',
+          sm: 'calc(100vh - 258px)',
+          md: 'calc(100vh - 236px)',
+          lg: 'calc(100vh - 240px)',
+          xl: 'calc(100vh - 216px)',
+        }}
+      >
+        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
+          <Flex alignItems="center" flexDir="column" justifyContent="center" position="relative" zIndex={2} h="100%">
             <Heading as="h1" mb={6} textAlign={{ sm: 'center' }}>
               Mint your Fingerprints Membership NFT using your $PRINTS
             </Heading>
