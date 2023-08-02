@@ -22,7 +22,7 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
       return
     }
 
-    return isDrawer ? 'blackAlpha' : 'whiteAlpha'
+    return isDrawer ? 'black' : 'white'
   }, [isDrawer, isCard])
 
   const buttonColor = useMemo(

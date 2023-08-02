@@ -19,7 +19,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
   return (
     <Box
       as="section"
-      h={{ base: 'initial', sm: '100%' }}
+      h={{ base: 'initial' }}
       minH="100%"
       pos="relative"
       bg={`url(${bgImage})`}

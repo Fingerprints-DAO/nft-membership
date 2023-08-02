@@ -1,11 +1,11 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
 
 const customColor = (colorScheme: any) => {
-  if (colorScheme === 'blackAlpha') {
+  if (colorScheme === 'black') {
     return 'gray.50'
   }
 
-  if (colorScheme === 'whiteAlpha') {
+  if (colorScheme === 'white') {
     return 'gray.900'
   }
 
@@ -40,6 +40,9 @@ const components = {
         _hover: {
           background: `${colorScheme}.900`,
         },
+        _active: {
+          background: ``,
+        },
       })),
       outline: defineStyle(({ colorScheme }) => ({
         borderColor: `${colorScheme}.500`,
@@ -49,10 +52,6 @@ const components = {
           background: `${colorScheme}.100`,
         },
       })),
-      white: {
-        background: 'white',
-        color: 'gray.900',
-      },
     },
     baseStyle: {
       lineHeight: 1,
