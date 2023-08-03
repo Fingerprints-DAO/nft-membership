@@ -61,10 +61,16 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
               zIndex={2}
               h="100%"
             >
-              <Heading as="h1" mb={6} textAlign={{ sm: 'center' }}>
+              <Heading
+                color="gray.50"
+                as="h1"
+                mb={6}
+                textAlign={{ sm: 'center' }}
+              >
                 Mint your Fingerprints Membership NFT using your $PRINTS
               </Heading>
               <Heading
+                color="gray.50"
                 as="h2"
                 size="md"
                 fontWeight="light"
@@ -90,7 +96,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
                     return (
                       <Button
                         size="lg"
-                        colorScheme="whiteAlpha"
+                        colorScheme="white"
                         w={{ base: 'full', sm: 'auto' }}
                         onClick={handleCTAClick(isConnected, show)}
                       >

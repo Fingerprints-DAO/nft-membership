@@ -12,13 +12,13 @@ const gridConfig = {
     md: 8,
     lg: 8,
   },
-  px: { base: 8 },
+  px: { base: 8, lg: 0 },
   mx: { md: 'auto' },
   w: {
     base: '100%',
     md: '100%',
     lg: '1160px',
-    xl: '1440px',
+    xl: '1360px',
   },
 }
 

@@ -57,25 +57,26 @@ const components = {
       lineHeight: 1,
     },
   }),
-  //   Input: {
-  //     sizes: {
-  //       lg: {
-  //         field: {
-  //           borderRadius: '8px',
-  //         },
-  //       },
-  //     },
-  //     variants: {
-  //       outline: defineStyle(({ colorScheme = 'gray' }) => ({
-  //         field: {
-  //           background: `${colorScheme}.50`,
-  //           borderColor: `${colorScheme}.100`,
-  //           color: `${colorScheme}.900`,
-  //           borderWidth: 2,
-  //         },
-  //       })),
-  //     },
-  //   },
+  Input: {
+    sizes: {
+      lg: {
+        field: {
+          borderRadius: '8px',
+        },
+      },
+    },
+    variants: {
+      outline: defineStyle(({ colorScheme = 'gray' }) => ({
+        field: {
+          background: `${colorScheme}.50`,
+          borderColor: `${colorScheme}.100`,
+          color: `${colorScheme}.900`,
+          borderWidth: 2,
+          _placeholder: { color: 'gray.400' },
+        },
+      })),
+    },
+  },
 }
 
 export default components
