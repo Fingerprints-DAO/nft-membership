@@ -3,37 +3,17 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_adminAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "_nft",
         "type": "address"
       },
       {
         "internalType": "uint256",
         "name": "_nftId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_startingBid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_minBidIncrementPercentage",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_endTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_timeBuffer",
         "type": "uint256"
       },
       {
@@ -46,8 +26,74 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "AuctionNotEnded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ConfigAlreadySet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ConfigNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAmountInWei",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidBidAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidStartEndTime",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "winner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "AuctionSettled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -55,7 +101,7 @@
         "type": "uint256"
       }
     ],
-    "name": "AuctionExtended",
+    "name": "AuctionStarted",
     "type": "event"
   },
   {
@@ -75,25 +121,6 @@
       }
     ],
     "name": "Bid",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "winner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "End",
     "type": "event"
   },
   {
@@ -189,25 +216,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "Start",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -231,37 +239,36 @@
   },
   {
     "inputs": [],
-    "name": "auctionData",
+    "name": "bid",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getConfig",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "highestBidder",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "highestBid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "minBidIncrementPercentage",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timeBuffer",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "minBidIncrementPercentage",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct Auction.Config",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -269,9 +276,27 @@
   },
   {
     "inputs": [],
-    "name": "bid",
-    "outputs": [],
-    "stateMutability": "payable",
+    "name": "getData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "highestBidder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "highestBid",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Auction.AuctionData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -447,6 +472,34 @@
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_minBidIncrementPercentage",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_startAmountInWei",
+        "type": "uint256"
+      }
+    ],
+    "name": "setConfig",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

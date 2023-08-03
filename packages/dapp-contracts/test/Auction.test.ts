@@ -16,20 +16,15 @@ describe('Auction', function () {
 
   const nftId = 1
   const minBidIncrementPercentage = 10 // 10%
-  const timeBuffer = 15 * 60 // 15 minutes
-  const startTime = Math.floor(Date.now() / 1000) - 100 // now - 100 seconds
-  const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
 
-  async function deployAuction() {
-    ;[seller, bidder1, bidder2, treasury] = await ethers.getSigners()
-
+  const deployContracts = async () => {
     const MembershipFactory = await ethers.getContractFactory('Membership')
     const baseURI = 'https://example.com/'
 
     const adminAddress = await seller.getAddress()
     const payoutAddress = await seller.getAddress()
     const royaltyFee = 1000 // 10%
-    membership = await MembershipFactory.deploy(
+    const membership = await MembershipFactory.deploy(
       baseURI,
       adminAddress,
       payoutAddress,
@@ -41,34 +36,136 @@ describe('Auction', function () {
     )) as Auction__factory
     const address = await membership.getAddress()
 
-    auction = await auctionFactory.deploy(
+    const auction = await auctionFactory.deploy(
+      adminAddress,
       address,
       nftId,
-      startingBid,
-      minBidIncrementPercentage,
-      startTime,
-      endTimeIn3Days,
-      timeBuffer,
       treasury.address,
     )
     await membership.safeMint(await auction.getAddress(), 1)
     defaultAdminRole = await membership.DEFAULT_ADMIN_ROLE()
+    return {
+      auction,
+      membership,
+    }
+  }
+
+  async function deployAuctionFixture() {
+    ;[seller, bidder1, bidder2, treasury] = await ethers.getSigners()
+    ;({ auction, membership } = await deployContracts())
+    const startTime = (await ethers.provider.getBlock('latest'))?.timestamp || 0
+    const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+    await auction.setConfig(
+      startTime,
+      endTimeIn3Days,
+      minBidIncrementPercentage,
+      startingBid,
+    )
   }
 
   beforeEach(async function () {
-    await loadFixture(deployAuction)
+    await loadFixture(deployAuctionFixture)
+  })
+
+  describe('Config', function () {
+    it('Get config', async function () {
+      const config = await auction.getConfig()
+      expect(config[0]).to.not.equal(0)
+      expect(config[1]).to.not.equal(0)
+      expect(config[2]).to.equal(minBidIncrementPercentage)
+    })
+
+    it('Can not set config twice', async function () {
+      const startTime =
+        (await ethers.provider.getBlock('latest'))?.timestamp || 0
+      const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+
+      await expect(
+        auction.setConfig(
+          startTime,
+          endTimeIn3Days,
+          minBidIncrementPercentage,
+          startingBid,
+        ),
+      ).to.be.revertedWithCustomError(auction, 'ConfigAlreadySet')
+    })
+
+    it('Only admin can set config', async function () {
+      const startTime =
+        (await ethers.provider.getBlock('latest'))?.timestamp || 0
+      const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+
+      await expect(
+        auction
+          .connect(bidder1)
+          .setConfig(
+            startTime,
+            endTimeIn3Days,
+            minBidIncrementPercentage,
+            startingBid,
+          ),
+      ).to.be.revertedWith(
+        `AccessControl: account ${bidder1.address.toLowerCase()} is missing role ${defaultAdminRole}`,
+      )
+    })
+
+    it('Revert on invalid config', async function () {
+      const { auction: newAuction } = await deployContracts()
+      const startTime = 0
+      const endTimeIn3Days = 7 * 24 * 60 * 60 // 7 days
+
+      await expect(
+        newAuction.setConfig(
+          startTime,
+          endTimeIn3Days,
+          minBidIncrementPercentage,
+          startingBid,
+        ),
+      ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
+
+      const startTime3 = 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn3Days3 = startTime3 - 1 // 7 days - 1
+
+      await expect(
+        newAuction.setConfig(
+          startTime3,
+          endTimeIn3Days3,
+          minBidIncrementPercentage,
+          startingBid,
+        ),
+      ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
+
+      const startTime4 = 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn3Days4 = startTime4 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const startingBid4 = 0
+
+      await expect(
+        newAuction.setConfig(
+          startTime4,
+          endTimeIn3Days4,
+          minBidIncrementPercentage,
+          startingBid4,
+        ),
+      ).to.be.revertedWithCustomError(newAuction, 'InvalidAmountInWei')
+    })
   })
 
   describe('Bid', function () {
+    it('Can not bid if config not set', async function () {
+      const { auction: newAuction } = await deployContracts()
+      await expect(
+        newAuction.connect(bidder1).bid({ value: startingBid }),
+      ).to.be.revertedWithCustomError(auction, 'ConfigNotSet')
+    })
     it('Place a bid', async function () {
       const bid = startingBid + 10
 
       await auction.connect(bidder1).bid({ value: bid })
 
-      expect((await auction.auctionData()).highestBidder).to.equal(
+      expect((await auction.getData()).highestBidder).to.equal(
         await bidder1.getAddress(),
       )
-      expect((await auction.auctionData()).highestBid).to.equal(bid)
+      expect((await auction.getData()).highestBid).to.equal(bid)
     })
 
     it('Must send more than last by minBidIncrementPercentage', async function () {
@@ -76,26 +173,24 @@ describe('Auction', function () {
 
       await auction.connect(bidder1).bid({ value: bid })
 
-      expect((await auction.auctionData()).highestBidder).to.equal(
+      expect((await auction.getData()).highestBidder).to.equal(
         await bidder1.getAddress(),
       )
-      expect((await auction.auctionData()).highestBid).to.equal(bid)
+      expect((await auction.getData()).highestBid).to.equal(bid)
 
       await expect(
         auction.connect(bidder2).bid({ value: bid + 1 }),
-      ).to.be.revertedWith(
-        'Must send more than last bid by minBidIncrementPercentage amount',
-      )
+      ).to.be.revertedWithCustomError(auction, 'InvalidBidAmount')
     })
 
     it('Refund last bidder', async function () {
       const bid = startingBid + 10
 
       await auction.connect(bidder1).bid({ value: bid })
-      expect((await auction.auctionData()).highestBidder).to.equal(
+      expect((await auction.getData()).highestBidder).to.equal(
         await bidder1.getAddress(),
       )
-      expect((await auction.auctionData()).highestBid).to.equal(bid)
+      expect((await auction.getData()).highestBid).to.equal(bid)
 
       const balanceBefore = await ethers.provider.getBalance(
         await bidder1.getAddress(),
@@ -111,41 +206,13 @@ describe('Auction', function () {
       expect(balanceAfter).to.be.gt(balanceBefore)
     })
 
-    it('Extend time if in bid time buffer', async function () {
-      const bid = startingBid + 10
-      await auction.connect(bidder1).bid({ value: bid })
-
-      await forward10MinutesBeforeEndTime()
-
-      await expect(auction.connect(bidder2).bid({ value: bid + 20 })).to.emit(
-        auction,
-        'AuctionExtended',
-      )
-
-      const blockTime = await ethers.provider.getBlock(
-        await ethers.provider.getBlockNumber(),
-      )
-
-      expect((await auction.auctionData()).endTime).to.be.closeTo(
-        blockTime!.timestamp + timeBuffer,
-        10,
-      )
-
-      await auction.connect(bidder1).bid({ value: bid + 40 })
-      await forward10MinutesBeforeEndTime()
-
-      await auction.connect(seller).settleAuction()
-      expect(await membership.ownerOf(nftId)).to.equal(
-        await bidder1.getAddress(),
-      )
-    })
-
     it('Cannot bid if the auction has Auction has not started', async function () {
+      await goBack10Minute()
       const bid = startingBid + 10
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
-      ).to.be.revertedWith('Auction has not started')
+      ).to.be.revertedWithCustomError(auction, 'InvalidStartEndTime')
     })
 
     it('Cannot bid if the auction has expired', async function () {
@@ -154,7 +221,7 @@ describe('Auction', function () {
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
-      ).to.be.revertedWith('Auction has expired')
+      ).to.be.revertedWithCustomError(auction, 'InvalidStartEndTime')
     })
 
     it('Cannot bid if the contract is paused', async function () {
@@ -174,7 +241,7 @@ describe('Auction', function () {
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
-      ).to.be.revertedWith('Auction has expired')
+      ).to.be.revertedWithCustomError(auction, 'InvalidStartEndTime')
     })
 
     it('Cannot bid if the value is less than the starting bid', async function () {
@@ -182,13 +249,11 @@ describe('Auction', function () {
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
-      ).to.be.revertedWith(
-        'Must send more than last bid by minBidIncrementPercentage amount',
-      )
+      ).to.be.revertedWithCustomError(auction, 'InvalidBidAmount')
     })
   })
 
-  describe('End', function () {
+  describe('Settle', function () {
     it('Transfer to winner if there is bid and treasury to get funds', async function () {
       const bid = startingBid + 10
       await auction.connect(bidder1).bid({ value: bid })
@@ -205,9 +270,9 @@ describe('Auction', function () {
 
     it('Cannot end the auction if time did not pass', async function () {
       await forward10MinutesBeforeEndTime()
-      await expect(auction.connect(seller).settleAuction()).to.be.revertedWith(
-        'Auction has not ended',
-      )
+      await expect(
+        auction.connect(seller).settleAuction(),
+      ).to.be.revertedWithCustomError(auction, 'AuctionNotEnded')
     })
 
     it('Cannot end the auction if the contract is paused', async function () {
@@ -216,6 +281,13 @@ describe('Auction', function () {
       await expect(auction.connect(seller).settleAuction()).to.be.revertedWith(
         'Pausable: paused',
       )
+    })
+
+    it('Cannot end the auction if config not set', async function () {
+      const { auction: newAuction } = await deployContracts()
+      await expect(
+        newAuction.connect(seller).settleAuction(),
+      ).to.be.revertedWithCustomError(auction, 'ConfigNotSet')
     })
 
     it('End the auction with no bids and transfer back to treasury', async function () {
@@ -257,6 +329,13 @@ async function forwardEndTime(): Promise<void> {
 
 async function forward10MinutesBeforeEndTime(): Promise<void> {
   const seconds = 7 * 24 * 60 * 60 - 10 * 60
+
+  await network.provider.send('evm_increaseTime', [seconds])
+  await network.provider.send('evm_mine')
+}
+
+async function goBack10Minute(): Promise<void> {
+  const seconds = -10 * 60
 
   await network.provider.send('evm_increaseTime', [seconds])
   await network.provider.send('evm_mine')

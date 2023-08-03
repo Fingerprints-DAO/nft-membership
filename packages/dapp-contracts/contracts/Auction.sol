@@ -27,10 +27,27 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
  * @dev This contract implements an auction for an ERC721 token.
  */
 contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
-  event Start(uint startTime, uint endTime);
+  event AuctionStarted(uint startTime, uint endTime);
   event Bid(address indexed sender, uint amount);
-  event End(address winner, uint amount);
-  event AuctionExtended(uint endTime);
+  event AuctionSettled(address winner, uint amount);
+
+  /// @dev Emitted when trying to set the contract config when it's already been set.
+  error ConfigAlreadySet();
+
+  /// @dev Emitted when the amount of wei provided is invalid.
+  error InvalidAmountInWei();
+
+  /// @dev Emitted when the start or end time is invalid.
+  error InvalidStartEndTime(uint256 startTime, uint256 endTime);
+
+  /// @dev Emitted when the config is not set.
+  error ConfigNotSet();
+
+  /// @dev Emitted when the bid amount is invalid.
+  error InvalidBidAmount();
+
+  /// @dev Emitted when the auction has ended.
+  error AuctionNotEnded();
 
   /// @notice The address of the ERC721 contract for membership.
   /// @dev The address is immutable and is set in the constructor.
@@ -44,67 +61,112 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /// @dev The address is immutable and is set in the constructor.
   address public immutable treasury;
 
+  /// @dev Auction Config
+  Config private _config;
+
+  /// @dev Auction data
+  AuctionData private auctionData;
+
+  /**
+   * @dev Represents the data of the auction, including the highest bidder and their bid.
+   */
   struct AuctionData {
+    /// @notice The address of the highest bidder.
     address highestBidder;
+    /// @notice The highest bid amount in wei.
     uint highestBid;
-    uint8 minBidIncrementPercentage;
-    uint256 timeBuffer;
-    uint256 startTime;
-    uint256 endTime;
   }
 
-  AuctionData public auctionData;
+  /// @dev Represents the auction configuration
+  struct Config {
+    /// @notice The start time of the auction.
+    uint256 startTime;
+    /// @notice The end time of the auction.
+    uint256 endTime;
+    /// @notice The minimum percentage to increase the bid.
+    uint8 minBidIncrementPercentage;
+  }
+
+  modifier validConfig() {
+    if (_config.startTime == 0) revert ConfigNotSet();
+    _;
+  }
+
+  modifier validTime() {
+    Config memory config = _config;
+    if (block.timestamp > config.endTime || block.timestamp < config.startTime)
+      revert InvalidStartEndTime(config.startTime, config.endTime);
+    _;
+  }
 
   /**
    * @dev Initializes the auction contract.
+   * @param _adminAddress The address of the admin.
    * @param _nft The address of the ERC721 token contract.
    * @param _nftId The ID of the token being auctioned.
-   * @param _startingBid The starting bid for the auction.
-   * @param _minBidIncrementPercentage The minimum bid increment percentage.
-   * @param _startTime The timestamp of when the auction should start.
-   * @param _endTime The timestamp of when the auction should end.
-   * @param _timeBuffer The buffer time for extending the auction.
    * @param _treasury The address to receive the auction proceeds.
    */
   constructor(
+    address _adminAddress,
     address _nft,
     uint _nftId,
-    uint _startingBid,
-    uint8 _minBidIncrementPercentage,
-    uint _startTime,
-    uint _endTime,
-    uint _timeBuffer,
     address _treasury
   ) {
-    auctionData.highestBid = _startingBid;
     nftId = _nftId;
-    auctionData.minBidIncrementPercentage = _minBidIncrementPercentage;
-    auctionData.startTime = _startTime;
-    auctionData.endTime = _endTime;
-    auctionData.timeBuffer = _timeBuffer;
     treasury = _treasury;
     nft = IERC721(_nft);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _setupRole(DEFAULT_ADMIN_ROLE, _adminAddress);
+  }
+
+  /// @notice Set auction config
+  /// @dev Only admin can set auction config
+  /// @param _startTime Auction start time
+  /// @param _endTime Auction end time
+  /// @param _minBidIncrementPercentage Auction min bid increment percentage
+  /// @param _startAmountInWei Auction starting bid
+  function setConfig(
+    uint256 _startTime,
+    uint256 _endTime,
+    uint8 _minBidIncrementPercentage,
+    uint256 _startAmountInWei
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (_config.startTime != 0 && _config.startTime <= block.timestamp)
+      revert ConfigAlreadySet();
+
+    if (_startTime == 0 || _startTime >= _endTime)
+      revert InvalidStartEndTime(_startTime, _endTime);
+    if (_startAmountInWei == 0) revert InvalidAmountInWei();
+
+    auctionData.highestBid = _startAmountInWei;
+
+    _config = Config({
+      startTime: _startTime,
+      endTime: _endTime,
+      minBidIncrementPercentage: _minBidIncrementPercentage
+    });
   }
 
   /**
    * @dev Allows a bidder to place a bid on the auction.
    * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment percentage.
    */
-  function bid() external payable whenNotPaused nonReentrant {
-    require(
-      auctionData.startTime != 0 && auctionData.startTime <= block.timestamp,
-      'Auction has not started'
-    );
-    require(block.timestamp < auctionData.endTime, 'Auction has expired');
-    require(
-      msg.value >=
-        auctionData.highestBid +
-          ((auctionData.highestBid * auctionData.minBidIncrementPercentage) /
-            100),
-      'Must send more than last bid by minBidIncrementPercentage amount'
-    );
+  function bid()
+    external
+    payable
+    nonReentrant
+    whenNotPaused
+    validConfig
+    validTime
+  {
+    Config memory config = _config;
+    if (
+      msg.value <
+      auctionData.highestBid +
+        ((auctionData.highestBid * config.minBidIncrementPercentage) / 100)
+    ) {
+      revert InvalidBidAmount();
+    }
 
     if (auctionData.highestBidder != address(0)) {
       (bool success, ) = auctionData.highestBidder.call{
@@ -116,14 +178,6 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     auctionData.highestBidder = msg.sender;
     auctionData.highestBid = msg.value;
 
-    // Extend the auction if the bid was received within `timeBuffer` of the auction end time
-    bool extended = auctionData.endTime - block.timestamp <
-      auctionData.timeBuffer;
-    if (extended) {
-      auctionData.endTime = block.timestamp + auctionData.timeBuffer;
-      emit AuctionExtended(auctionData.endTime);
-    }
-
     emit Bid(msg.sender, msg.value);
   }
 
@@ -131,18 +185,21 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
    * @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller.
    * @notice The auction must have started and not have ended. The current time must be greater than or equal to the end time.
    */
-  function settleAuction() external whenNotPaused nonReentrant {
-    require(auctionData.startTime != 0, 'Auction has not started');
-    require(block.timestamp >= auctionData.endTime, 'Auction has not ended');
+  function settleAuction() external whenNotPaused validConfig() nonReentrant {
+    Config memory config = _config;
+
+    if (block.timestamp < config.endTime) {
+      revert AuctionNotEnded();
+    }
 
     if (auctionData.highestBidder != address(0)) {
       nft.safeTransferFrom(address(this), auctionData.highestBidder, nftId);
       (bool success, ) = treasury.call{value: auctionData.highestBid}('');
       require(success, 'Transfer failed.');
-      emit End(auctionData.highestBidder, auctionData.highestBid);
+      emit AuctionSettled(auctionData.highestBidder, auctionData.highestBid);
     } else {
       nft.safeTransferFrom(address(this), treasury, nftId);
-      emit End(address(0), 0);
+      emit AuctionSettled(address(0), 0);
     }
   }
 
@@ -160,5 +217,17 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
    */
   function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
+  }
+
+  /// @notice Get auction config
+  /// @return config Auction config
+  function getConfig() external view returns (Config memory) {
+    return _config;
+  }
+
+  /// @notice Get auction data
+  /// @return data Auction data
+  function getData() external view returns (AuctionData memory) {
+    return auctionData;
   }
 }
