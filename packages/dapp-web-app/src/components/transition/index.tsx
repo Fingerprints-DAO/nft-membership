@@ -32,8 +32,8 @@ const Transition = ({ children }: PropsWithChildren) => {
         animate="in"
         initial="out"
         exit="out"
-        min-w="100vw"
-        min-h="100vh"
+        minW="100vw"
+        minH="100vh"
         overflow={'hidden'}
       >
         {children}
