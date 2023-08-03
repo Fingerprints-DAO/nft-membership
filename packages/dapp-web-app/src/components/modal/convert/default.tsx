@@ -1,18 +1,24 @@
 import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
+import { useMemo } from 'react'
 import { Balance } from 'services/web3/prints/use-get-prints-balance'
 
 export type Action = '' | 'top-up' | 'convert'
 
 type ConvertDefaultProps = {
   printsBalance: Balance
+  pricePerMembership: BigNumber
   onClose?: () => void
   onAction: (action: Action) => void
 }
 
-const ConvertDefault = ({ printsBalance, onAction, onClose }: ConvertDefaultProps) => {
+const ConvertDefault = ({ printsBalance, pricePerMembership, onAction, onClose }: ConvertDefaultProps) => {
   const handleAction = (action: Action) => () => onAction(action)
+
+  const nftsMintables = useMemo(() => {
+    return printsBalance.value.div(pricePerMembership).decimalPlaces(0, BigNumber.ROUND_HALF_FLOOR)
+  }, [printsBalance.value, pricePerMembership])
 
   return (
     <>
@@ -42,7 +48,7 @@ const ConvertDefault = ({ printsBalance, onAction, onClose }: ConvertDefaultProp
               # of Membership NFTs mintable
             </Text>
             <Text color="gray.700" fontWeight="bold">
-              2 NFTs
+              {nftsMintables.toNumber()} NFTs
             </Text>
           </Box>
           <Box borderColor="gray.100" borderWidth={1} borderRadius="8px" p={4} mb={10}>

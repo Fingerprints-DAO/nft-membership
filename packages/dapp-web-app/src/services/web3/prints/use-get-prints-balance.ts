@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js'
+import { useNftMembershipContext } from 'contexts/nft-membership'
 import { formatEther } from 'viem'
 import { Address, useAccount, useBalance } from 'wagmi'
-
-const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ''
 
 export type Balance = {
   formatted: string
@@ -11,11 +10,12 @@ export type Balance = {
 
 const useGetPrintsBalance = (): Balance => {
   const { address } = useAccount()
+  const { contracts } = useNftMembershipContext()
 
   const { data: printsBalance } = useBalance({
     address,
-    enabled: Boolean(address) && Boolean(printContractAddress),
-    token: printContractAddress as Address,
+    enabled: Boolean(address) && Boolean(contracts.ERC20.address),
+    token: contracts.ERC20.address as Address,
   })
 
   if (!printsBalance) {
