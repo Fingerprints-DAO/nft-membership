@@ -8,12 +8,11 @@ import { ConnectKitButton } from 'connectkit'
 import { useRouter } from 'next/navigation'
 import { PageState } from 'types/page'
 
-type HomeProps = {
-  pageState: PageState
+type SoonPageProps = {
   bgImage: string
 }
 
-const Home = ({ bgImage, pageState }: HomeProps) => {
+const SoonPage = ({ bgImage }: SoonPageProps) => {
   const { push } = useRouter()
 
   const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
@@ -48,7 +47,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
         justifyContent={'space-between'}
       >
         <Box pb={5}>
-          <Header pageState={pageState} />
+          <Header pageState={PageState.Released} />
         </Box>
         <Grid>
           <GridItem
@@ -82,41 +81,29 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
                 Fingerprints membership is moving from 5,000 $PRINTS to an NFT
                 designed by Larva Labs
               </Heading>
-              {pageState === PageState.Soon && (
-                <Text
-                  color="gray.50"
-                  fontSize="lg"
-                  fontWeight="bold"
-                  textAlign="center"
-                >
-                  Coming soon
-                </Text>
-              )}
-              {pageState === PageState.Released && (
-                <ConnectKitButton.Custom>
-                  {({ isConnected, show }) => {
-                    return (
-                      <Button
-                        size="lg"
-                        colorScheme="white"
-                        w={{ base: 'full', sm: 'auto' }}
-                        onClick={handleCTAClick(isConnected, show)}
-                      >
-                        Convert your $PRINTS
-                      </Button>
-                    )
-                  }}
-                </ConnectKitButton.Custom>
-              )}
+              <ConnectKitButton.Custom>
+                {({ isConnected, show }) => {
+                  return (
+                    <Button
+                      size="lg"
+                      colorScheme="white"
+                      w={{ base: 'full', sm: 'auto' }}
+                      onClick={handleCTAClick(isConnected, show)}
+                    >
+                      Convert your $PRINTS
+                    </Button>
+                  )
+                }}
+              </ConnectKitButton.Custom>
             </Flex>
           </GridItem>
         </Grid>
         <Box pt={5}>
-          <Footer isHome={true} pageState={pageState} />
+          <Footer isHome={true} pageState={PageState.Released} />
         </Box>
       </Flex>
     </Box>
   )
 }
 
-export default Home
+export default SoonPage
