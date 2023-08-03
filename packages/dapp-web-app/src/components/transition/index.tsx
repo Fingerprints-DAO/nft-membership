@@ -3,7 +3,7 @@
 import { Box } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
 
 const Transition = ({ children }: PropsWithChildren) => {
   const pathname = usePathname()
@@ -25,19 +25,17 @@ const Transition = ({ children }: PropsWithChildren) => {
 
   return (
     <AnimatePresence initial={false} mode="wait">
-      <Box
-        as={motion.div}
-        key={pathname}
-        variants={variants}
-        animate="in"
-        initial="out"
-        exit="out"
-        minW="100vw"
-        minH="100vh"
-        overflow={'hidden'}
-      >
-        {children}
-      </Box>
+      <Suspense fallback={null}>
+        <motion.div
+          key={pathname}
+          variants={variants}
+          animate="in"
+          initial="out"
+          exit="out"
+        >
+          {children}
+        </motion.div>
+      </Suspense>
     </AnimatePresence>
   )
 }

@@ -20,39 +20,39 @@ const Providers = ({ children }: PropsWithChildren) => {
   }, [])
 
   return (
-    <Transition>
-      <CacheProvider>
-        <ChakraProvider theme={theme}>
-          <WagmiConfig config={config}>
-            {mounted ? (
-              <ConnectKitProvider mode="light">{children}</ConnectKitProvider>
-            ) : (
-              <Box
-                w={'100vw'}
-                h={'100vh'}
-                display={'flex'}
-                justifyContent={'center'}
-                alignItems={'center'}
+    <CacheProvider>
+      <ChakraProvider theme={theme}>
+        <WagmiConfig config={config}>
+          {mounted ? (
+            <ConnectKitProvider mode="light">
+              <Transition>{children}</Transition>
+            </ConnectKitProvider>
+          ) : (
+            <Box
+              w={'100vw'}
+              h={'100vh'}
+              display={'flex'}
+              justifyContent={'center'}
+              alignItems={'center'}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
               >
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
-                >
-                  <Image
-                    src={logoFP}
-                    alt="Fingerprints DAO"
-                    width={80}
-                    priority
-                  />
-                </motion.div>
-              </Box>
-            )}
-          </WagmiConfig>
-        </ChakraProvider>
-      </CacheProvider>
-    </Transition>
+                <Image
+                  src={logoFP}
+                  alt="Fingerprints DAO"
+                  width={80}
+                  priority
+                />
+              </motion.div>
+            </Box>
+          )}
+        </WagmiConfig>
+      </ChakraProvider>
+    </CacheProvider>
   )
 }
 
