@@ -36,10 +36,10 @@ const mobileNav = [
 ]
 
 type HeaderProps = {
-  pageState: PageState
+  pageState?: PageState
 }
 
-const Header = ({ pageState }: HeaderProps) => {
+const Header = ({ pageState = PageState.Released }: HeaderProps) => {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 767px)')

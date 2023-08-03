@@ -1,3 +1,5 @@
+'use client'
+
 import { Box, Button, Flex, GridItem, Heading, Text } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'

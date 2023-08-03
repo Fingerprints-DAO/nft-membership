@@ -10,10 +10,13 @@ import { PageState } from 'types/page'
 
 type FooterProps = {
   isHome?: boolean
-  pageState: PageState
+  pageState?: PageState
 }
 
-const Footer = ({ isHome = false, pageState }: FooterProps) => {
+const Footer = ({
+  isHome = false,
+  pageState = PageState.Released,
+}: FooterProps) => {
   const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   return (
