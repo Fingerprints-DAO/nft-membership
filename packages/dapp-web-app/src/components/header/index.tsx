@@ -21,6 +21,7 @@ import useMediaQuery from 'hooks/use-media-query'
 import { usePathname } from 'next/navigation'
 import Grid from 'components/grid'
 import Wallet from 'components/wallet'
+import { PageState } from 'types/page'
 
 const nav = [
   { href: '/', label: 'home' },
@@ -34,7 +35,11 @@ const mobileNav = [
   { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' },
 ]
 
-const Header = () => {
+type HeaderProps = {
+  pageState: PageState
+}
+
+const Header = ({ pageState }: HeaderProps) => {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 767px)')
@@ -47,58 +52,60 @@ const Header = () => {
             <Image src={logoFP} alt="Fingerprints DAO" />
           </Link>
         </GridItem>
-        <GridItem colSpan={{ base: 1, sm: 5, md: 11, xl: 9 }}>
-          {isMobile ? (
-            <Flex
-              as="nav"
-              display="flex"
-              alignItems="center"
-              justifyContent="flex-end"
-              h="full"
-            >
-              <Box
-                color="gray.50"
-                as="button"
-                boxSize={[6, 25]}
-                onClick={onOpen}
+        {pageState !== PageState.Soon && (
+          <GridItem colSpan={{ base: 1, sm: 5, md: 11, xl: 9 }}>
+            {isMobile ? (
+              <Flex
+                as="nav"
+                display="flex"
+                alignItems="center"
+                justifyContent="flex-end"
+                h="full"
               >
-                <HamburgerIcon display="block" boxSize="100%" />
-              </Box>
-            </Flex>
-          ) : (
-            <Flex
-              as="nav"
-              display="flex"
-              alignItems="center"
-              justifyContent="flex-end"
-              h="full"
-            >
-              {nav.map((item, index) => {
-                const isActive = pathname === item.href
+                <Box
+                  color="gray.50"
+                  as="button"
+                  boxSize={[6, 25]}
+                  onClick={onOpen}
+                >
+                  <HamburgerIcon display="block" boxSize="100%" />
+                </Box>
+              </Flex>
+            ) : (
+              <Flex
+                as="nav"
+                display="flex"
+                alignItems="center"
+                justifyContent="flex-end"
+                h="full"
+              >
+                {nav.map((item, index) => {
+                  const isActive = pathname === item.href
 
-                return (
-                  <Box
-                    key={index}
-                    as={Link}
-                    href={item.href}
-                    title={item.label}
-                    mr={14}
-                    _hover={{ color: 'secondary.500' }}
-                    color={isActive ? 'secondary.500' : 'white'}
-                    transition="ease"
-                    transitionProperty="color"
-                    transitionDuration="0.2s"
-                  >
-                    <Text as="strong" fontSize="lg">
-                      {item.label}
-                    </Text>
-                  </Box>
-                )
-              })}
-              <Wallet variant="header" buttonWidth="auto" />
-            </Flex>
-          )}
-        </GridItem>
+                  return (
+                    <Box
+                      key={index}
+                      as={Link}
+                      href={item.href}
+                      title={item.label}
+                      mr={14}
+                      _hover={{ color: 'secondary.500' }}
+                      color={isActive ? 'secondary.500' : 'white'}
+                      transition="ease"
+                      transitionProperty="color"
+                      transitionDuration="0.2s"
+                    >
+                      <Text as="strong" fontSize="lg">
+                        {item.label}
+                      </Text>
+                    </Box>
+                  )
+                })}
+                <Wallet variant="header" buttonWidth="auto" />
+              </Flex>
+            )}
+          </GridItem>
+        )}
       </Grid>
       <Drawer
         isOpen={isOpen}

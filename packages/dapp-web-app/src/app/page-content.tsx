@@ -46,7 +46,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
         justifyContent={'space-between'}
       >
         <Box pb={5}>
-          <Header />
+          <Header pageState={pageState} />
         </Box>
         <Grid>
           <GridItem
@@ -67,27 +67,27 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
                 mb={6}
                 textAlign={{ sm: 'center' }}
               >
-                Mint your Fingerprints Membership NFT using your $PRINTS
+                Mint your Voxelglyphs using your $PRINTS
               </Heading>
               <Heading
                 color="gray.50"
                 as="h2"
                 size="md"
-                fontWeight="light"
+                fontWeight="normal"
                 mb={10}
                 textAlign={{ sm: 'center' }}
               >
                 Fingerprints membership is moving from 5,000 $PRINTS to an NFT
-                designed by Larva Labs.
+                designed by Larva Labs
               </Heading>
               {pageState === PageState.Soon && (
                 <Text
                   color="gray.50"
-                  fontSize="xl"
+                  fontSize="lg"
                   fontWeight="bold"
                   textAlign="center"
                 >
-                  Coming soon.
+                  Coming soon
                 </Text>
               )}
               {pageState === PageState.Released && (
@@ -110,7 +110,7 @@ const Home = ({ bgImage, pageState }: HomeProps) => {
           </GridItem>
         </Grid>
         <Box pt={5}>
-          <Footer isHome={true} />
+          <Footer isHome={true} pageState={pageState} />
         </Box>
       </Flex>
     </Box>
