@@ -27,8 +27,10 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
  * @dev This contract implements an auction for an ERC721 token.
  */
 contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
-  event AuctionStarted(uint startTime, uint endTime);
+  /// @dev Emitted when a bid is placed.
   event Bid(address indexed sender, uint amount);
+
+  /// @dev Emitted when the auction is settled.
   event AuctionSettled(address winner, uint amount);
 
   /// @dev Emitted when trying to set the contract config when it's already been set.
