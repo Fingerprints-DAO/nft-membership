@@ -16,6 +16,15 @@ export const metadata: Metadata = {
   },
   description:
     'Fingerprints membership is moving from 5,000 $PRINTS to an NFT designed by Larva Labs',
+  twitter: {
+    card: 'summary_large_image',
+    site: 'https://migration.fingerprintsdao.xyz/',
+    creator: '@FingerprintsDAO',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://migration.fingerprintsdao.xyz/',
+  },
 }
 
 function RootLayout({ children, modals }: PropsWithChildren<Modals>) {
