@@ -42,12 +42,16 @@ task(
   console.log(
     `Migration address: ${await contracts.Migration.instance.getAddress()}`,
   )
+  console.log(
+    `Auction address: ${await contracts.Auction.instance.getAddress()}`,
+  )
 
   writeLogs(
     network.chainId,
     await contracts.ERC20Mock.instance?.getAddress(),
     await contracts.Membership.instance?.getAddress(),
     await contracts.Migration.instance?.getAddress(),
+    await contracts.Auction.instance?.getAddress(),
   )
 
   // Set local node mining interval
