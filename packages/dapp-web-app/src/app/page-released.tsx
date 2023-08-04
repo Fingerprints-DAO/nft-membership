@@ -61,7 +61,7 @@ const HomePage = () => {
         <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1}>
           <Spline
             scene="https://prod.spline.design/U7XH4fuGtiuDN9Lf/scene.splinecode"
-            onStart={() => setAnimationStarted(true)}
+            onLoad={() => setAnimationStarted(true)}
             id={'voxelglyph'}
           />
         </Box>
