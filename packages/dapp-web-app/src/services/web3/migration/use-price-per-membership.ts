@@ -1,19 +1,18 @@
 import { Contracts } from '@dapp/sdk/dist/contract/types'
 import BigNumber from 'bignumber.js'
-import { Address, useContractRead } from 'wagmi'
+import { Address } from 'wagmi'
+import { useMigrationPricePerMembershipInWei } from '../generated'
 
 const usePricePerMembership = (migrationContract: Contracts['Migration']) => {
-  const migration = useContractRead({
-    abi: migrationContract.abi,
+  const { data: pricePerMembershipInWei } = useMigrationPricePerMembershipInWei({
     address: migrationContract.address as Address,
-    functionName: 'pricePerMembershipInWei',
   })
 
-  if (!migration.data) {
+  if (!pricePerMembershipInWei) {
     return BigNumber(0)
   }
 
-  return migration.data as BigNumber
+  return BigNumber(pricePerMembershipInWei as any)
 }
 
 export default usePricePerMembership

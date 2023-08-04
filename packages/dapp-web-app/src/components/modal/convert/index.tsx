@@ -7,7 +7,6 @@ import Convert from './convert'
 import TopUp from './top-up'
 import useGetPrintsBalance from 'services/web3/prints/use-get-prints-balance'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import BigNumber from 'bignumber.js'
 
 type Action = '' | 'top-up' | 'convert'
 

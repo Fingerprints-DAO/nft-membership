@@ -1,10 +1,9 @@
 import { ERC20ABI, MembershipABI, MigrationABI } from '@dapp/contracts'
-import { Address } from 'wagmi'
 
 export interface ContractAddress {
-  ERC20Mock: Address
-  Membership: Address
-  Migration: Address
+  ERC20Mock: string
+  Membership: string
+  Migration: string
   chainId: number
 }
 
@@ -23,7 +22,7 @@ export enum ChainId {
 
 export type Contract<T> = {
   abi: T
-  address: Address
+  address: string
 }
 
 export type Contracts = {

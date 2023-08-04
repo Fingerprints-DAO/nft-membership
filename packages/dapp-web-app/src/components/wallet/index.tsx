@@ -84,6 +84,7 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
             variant={isCard || isConnected ? 'outline' : 'solid'}
             w={buttonWidth}
             overflow="hidden"
+            _hover={{ background: 'none' }}
             onClick={handleConnectWallet(isConnected, show)}
           >
             {isConnected ? 'Disconnect' : 'Connect'}
