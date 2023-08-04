@@ -63,87 +63,87 @@ const HomePage = () => {
 
         <AnimatePresence initial={false} mode="wait">
           {animationEnded && (
-            <Suspense fallback={null}>
-              <motion.div
-                key={'home'}
-                variants={variants}
-                animate="in"
-                initial="out"
-                exit={'out'}
+            // <Suspense fallback={null}>
+            <motion.div
+              key={'home'}
+              variants={variants}
+              animate="in"
+              initial="out"
+              exit={'out'}
+            >
+              <Box
+                w="full"
+                h="full"
+                left={0}
+                top={0}
+                position="absolute"
+                zIndex={1}
+                bg="gray.900"
+                opacity={0.8}
+              />
+              <Flex
+                flexDir={'column'}
+                minHeight={'100vh'}
+                justifyContent={'space-between'}
               >
-                <Box
-                  w="full"
-                  h="full"
-                  left={0}
-                  top={0}
-                  position="absolute"
-                  zIndex={1}
-                  bg="gray.900"
-                  opacity={0.8}
-                />
-                <Flex
-                  flexDir={'column'}
-                  minHeight={'100vh'}
-                  justifyContent={'space-between'}
-                >
-                  <Box pb={5}>
-                    <Header pageState={PageState.Released} />
-                  </Box>
-                  <Grid>
-                    <GridItem
-                      colStart={{ xl: 2 }}
-                      colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}
+                <Box pb={5}>
+                  <Header pageState={PageState.Released} />
+                </Box>
+                <Grid>
+                  <GridItem
+                    colStart={{ xl: 2 }}
+                    colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}
+                  >
+                    <Flex
+                      alignItems="center"
+                      flexDir="column"
+                      justifyContent="center"
+                      position="relative"
+                      zIndex={2}
+                      h="100%"
                     >
-                      <Flex
-                        alignItems="center"
-                        flexDir="column"
-                        justifyContent="center"
-                        position="relative"
-                        zIndex={2}
-                        h="100%"
+                      <Heading
+                        color="gray.50"
+                        as="h1"
+                        mb={6}
+                        textAlign={{ sm: 'center' }}
                       >
-                        <Heading
-                          color="gray.50"
-                          as="h1"
-                          mb={6}
-                          textAlign={{ sm: 'center' }}
-                        >
-                          Mint your Voxelglyphs using your $PRINTS
-                        </Heading>
-                        <Heading
-                          color="gray.50"
-                          as="h2"
-                          size="md"
-                          fontWeight="normal"
-                          mb={10}
-                          textAlign={{ sm: 'center' }}
-                        >
-                          Fingerprints membership is moving from 5,000 $PRINTS
-                          to an NFT designed by Larva Labs
-                        </Heading>
-                        <ConnectKitButton.Custom>
-                          {({ isConnected, show }) => {
-                            return (
-                              <Button
-                                size="lg"
-                                colorScheme="white"
-                                w={{ base: 'full', sm: 'auto' }}
-                                onClick={handleCTAClick(isConnected, show)}
-                              >
-                                Convert your $PRINTS
-                              </Button>
-                            )
-                          }}
-                        </ConnectKitButton.Custom>
-                      </Flex>
-                    </GridItem>
-                  </Grid>
-                  <Box pt={5}>
-                    <Footer isHome={true} pageState={PageState.Released} />
-                  </Box>
-                </Flex>
-              </motion.div>
-            </Suspense>
+                        Mint your Voxelglyphs using your $PRINTS
+                      </Heading>
+                      <Heading
+                        color="gray.50"
+                        as="h2"
+                        size="md"
+                        fontWeight="normal"
+                        mb={10}
+                        textAlign={{ sm: 'center' }}
+                      >
+                        Fingerprints membership is moving from 5,000 $PRINTS to
+                        an NFT designed by Larva Labs
+                      </Heading>
+                      <ConnectKitButton.Custom>
+                        {({ isConnected, show }) => {
+                          return (
+                            <Button
+                              size="lg"
+                              colorScheme="white"
+                              w={{ base: 'full', sm: 'auto' }}
+                              onClick={handleCTAClick(isConnected, show)}
+                            >
+                              Convert your $PRINTS
+                            </Button>
+                          )
+                        }}
+                      </ConnectKitButton.Custom>
+                    </Flex>
+                  </GridItem>
+                </Grid>
+                <Box pt={5}>
+                  <Footer isHome={true} pageState={PageState.Released} />
+                </Box>
+              </Flex>
+            </motion.div>
+            // </Suspense>
           )}
         </AnimatePresence>
       </Box>
