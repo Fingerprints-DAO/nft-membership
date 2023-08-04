@@ -21,7 +21,7 @@ const variants = {
   in: {
     opacity: 1,
     transition: {
-      duration: 2,
+      duration: 1,
       delay: 1,
       ease: 'easeIn',
     },
