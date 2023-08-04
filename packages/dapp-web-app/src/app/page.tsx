@@ -1,19 +1,19 @@
 import { Metadata } from 'next'
 import { PageState } from 'types/page'
-import SoonPage from './page-soon'
-import ReleasePage from './page-release'
+// import SoonPage from './page-soon'
+import ReleasedPage from './page-released'
 
 export const metadata: Metadata = {
-  title: 'Coming soon',
+  title: 'Home',
 }
 
-const state = PageState.Soon
+// const state = PageState.Soon
 
 const HomePage = () => {
-  if (state === PageState.Soon)
-    return <SoonPage bgImage="/images/bg-hero-soon.jpg" />
+  // if (state === PageState.Soon)
+  //   return <SoonPage bgImage="/images/bg-hero-soon.jpg" />
 
-  return <ReleasePage bgImage="/images/bg-hero-released.jpg" />
+  return <ReleasedPage />
 }
 
 export default HomePage
