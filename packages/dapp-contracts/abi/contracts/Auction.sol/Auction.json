@@ -8,7 +8,7 @@
       },
       {
         "internalType": "address",
-        "name": "_nft",
+        "name": "_nftnftAddress",
         "type": "address"
       },
       {
@@ -48,6 +48,11 @@
   {
     "inputs": [],
     "name": "InvalidBidAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMinBidIncrementPercentage",
     "type": "error"
   },
   {
@@ -343,7 +348,7 @@
   },
   {
     "inputs": [],
-    "name": "nft",
+    "name": "nftAddress",
     "outputs": [
       {
         "internalType": "contract IERC721",
