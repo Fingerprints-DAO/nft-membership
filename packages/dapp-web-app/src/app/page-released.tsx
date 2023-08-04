@@ -17,12 +17,13 @@ const Spline = React.lazy(() => import('@splinetool/react-spline'))
 const variants = {
   out: {
     opacity: 0,
+    zIndex: 0,
   },
   in: {
     opacity: 1,
+    zIndex: 2,
     transition: {
-      duration: 1,
-      delay: 1,
+      duration: 0.8,
       ease: 'easeIn',
     },
   },
@@ -39,11 +40,9 @@ const HomePage = () => {
   useEffect(() => {
     console.log('here')
     if (animationStarted) {
-      console.log('animationStarted', animationStarted)
       setTimeout(() => {
         setAnimationEnded(true)
-        console.log('setted', animationStarted)
-      }, 5000)
+      }, 6000)
     }
   }, [animationStarted])
 
@@ -67,12 +66,11 @@ const HomePage = () => {
         </Box>
 
         <AnimatePresence initial={false} mode="wait">
-          {animationEnded && (
-            // <Suspense fallback={null}>
+          <Suspense fallback={<Loading full />}>
             <motion.div
               key={'home'}
               variants={variants}
-              animate="in"
+              animate={animationEnded ? 'in' : 'out'}
               initial="out"
               exit={'out'}
             >
@@ -148,8 +146,7 @@ const HomePage = () => {
                 </Box>
               </Flex>
             </motion.div>
-            // </Suspense>
-          )}
+          </Suspense>
         </AnimatePresence>
       </Box>
     </Suspense>
