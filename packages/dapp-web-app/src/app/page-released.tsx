@@ -37,8 +37,13 @@ const HomePage = () => {
     isConnected ? push('convert') : show?.()
 
   useEffect(() => {
+    console.log('here')
     if (animationStarted) {
-      setTimeout(() => setAnimationEnded(true), 5000)
+      console.log('animationStarted', animationStarted)
+      setTimeout(() => {
+        setAnimationEnded(true)
+        console.log('setted', animationStarted)
+      }, 5000)
     }
   }, [animationStarted])
 
