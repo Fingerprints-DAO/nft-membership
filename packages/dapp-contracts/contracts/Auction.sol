@@ -39,6 +39,9 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /// @dev Emitted when the amount of wei provided is invalid.
   error InvalidAmountInWei();
 
+  /// @dev Emitted when setting the min bid increment percentage is invalid.
+  error InvalidMinBidIncrementPercentage();
+
   /// @dev Emitted when the start or end time is invalid.
   error InvalidStartEndTime(uint256 startTime, uint256 endTime);
 
@@ -53,7 +56,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
 
   /// @notice The address of the ERC721 contract for membership.
   /// @dev The address is immutable and is set in the constructor.
-  IERC721 public immutable nft;
+  IERC721 public immutable nftAddress;
 
   /// @notice The ID of the token being auctioned.
   /// @dev The ID is immutable and is set in the constructor.
@@ -104,19 +107,19 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /**
    * @dev Initializes the auction contract.
    * @param _adminAddress The address of the admin.
-   * @param _nft The address of the ERC721 token contract.
+   * @param _nftnftAddress The address of the ERC721 token contract.
    * @param _nftId The ID of the token being auctioned.
    * @param _treasury The address to receive the auction proceeds.
    */
   constructor(
     address _adminAddress,
-    address _nft,
+    address _nftnftAddress,
     uint _nftId,
     address _treasury
   ) {
     nftId = _nftId;
     treasury = _treasury;
-    nft = IERC721(_nft);
+    nftAddress = IERC721(_nftnftAddress);
 
     _setupRole(DEFAULT_ADMIN_ROLE, _adminAddress);
   }
@@ -139,6 +142,9 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     if (_startTime == 0 || _startTime >= _endTime)
       revert InvalidStartEndTime(_startTime, _endTime);
     if (_startAmountInWei == 0) revert InvalidAmountInWei();
+
+    if (_minBidIncrementPercentage == 0 || _minBidIncrementPercentage > 100)
+      revert InvalidMinBidIncrementPercentage();
 
     auctionData.highestBid = _startAmountInWei;
 
@@ -187,21 +193,19 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
    * @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller.
    * @notice The auction must have started and not have ended. The current time must be greater than or equal to the end time.
    */
-  function settleAuction() external whenNotPaused validConfig() nonReentrant {
-    Config memory config = _config;
-
-    if (block.timestamp < config.endTime) {
+  function settleAuction() external whenNotPaused validConfig nonReentrant {
+    if (block.timestamp < _config.endTime) {
       revert AuctionNotEnded();
     }
 
     if (auctionData.highestBidder != address(0)) {
-      nft.safeTransferFrom(address(this), auctionData.highestBidder, nftId);
+      nftAddress.safeTransferFrom(address(this), auctionData.highestBidder, nftId);
       (bool success, ) = treasury.call{value: auctionData.highestBid}('');
       require(success, 'Transfer failed.');
       emit AuctionSettled(auctionData.highestBidder, auctionData.highestBid);
     } else {
-      nft.safeTransferFrom(address(this), treasury, nftId);
-      emit AuctionSettled(address(0), 0);
+      nftAddress.safeTransferFrom(address(this), treasury, nftId);
+      emit AuctionSettled(treasury, 0);
     }
   }
 

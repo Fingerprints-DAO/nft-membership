@@ -147,7 +147,43 @@ describe('Auction', function () {
           startingBid4,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidAmountInWei')
+      //test wrong minBidIncrementPercentage
+
+      const startTime5 = 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn3Days5 = startTime5 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const startingBid5 = 100
+      const minBidIncrementPercentage5 = 101
+
+      await expect(
+        newAuction.setConfig(
+          startTime5,
+          endTimeIn3Days5,
+          minBidIncrementPercentage5,
+          startingBid5,
+        ),
+      ).to.be.revertedWithCustomError(
+        newAuction,
+        'InvalidMinBidIncrementPercentage',
+      )
+
+      const startTime6 = 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn3Days6 = startTime5 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const startingBid6 = 100
+      const minBidIncrementPercentage6 = 0
+
+      await expect(
+        newAuction.setConfig(
+          startTime6,
+          endTimeIn3Days6,
+          minBidIncrementPercentage6,
+          startingBid6,
+        ),
+      ).to.be.revertedWithCustomError(
+        newAuction,
+        'InvalidMinBidIncrementPercentage',
+      )
     })
+
   })
 
   describe('Bid', function () {
