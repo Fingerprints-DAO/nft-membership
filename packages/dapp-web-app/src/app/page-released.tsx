@@ -1,23 +1,29 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { useRouter } from 'next/navigation'
 import { PageState } from 'types/page'
 import { Suspense } from 'react'
-import { Box, Button, Flex, GridItem, Heading, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, GridItem, Heading, LinkBox } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'
 import Header from 'components/header'
 import Loading from 'components/loading'
-import { AnimatePresence, easeIn, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
 const variants = {
   out: {
     opacity: 0,
-    zIndex: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+    transitionEnd: {
+      zIndex: 0,
+    },
   },
   in: {
     opacity: 1,
@@ -32,6 +38,7 @@ const variants = {
 const HomePage = () => {
   const [animationEnded, setAnimationEnded] = useState(false)
   const [animationStarted, setAnimationStarted] = useState(false)
+  const [firstRender, setFirstRender] = useState(true)
   const { push } = useRouter()
 
   const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
@@ -41,6 +48,7 @@ const HomePage = () => {
     if (animationStarted) {
       setTimeout(() => {
         setAnimationEnded(true)
+        setFirstRender(false)
       }, 6000)
     }
   }, [animationStarted])
@@ -62,6 +70,20 @@ const HomePage = () => {
             onLoad={() => setAnimationStarted(true)}
             id={'voxelglyph'}
           />
+          {animationStarted && !animationEnded && (
+            <LinkBox
+              onClick={() => setAnimationEnded(true)}
+              position={'absolute'}
+              bottom={5}
+              zIndex={2}
+              left={0}
+              right={0}
+              textAlign={'center'}
+              cursor={'pointer'}
+            >
+              {firstRender ? 'Skip intro' : 'Back to home'}
+            </LinkBox>
+          )}
         </Box>
 
         <AnimatePresence initial={false} mode="wait">
@@ -137,6 +159,13 @@ const HomePage = () => {
                           )
                         }}
                       </ConnectKitButton.Custom>
+                      <LinkBox
+                        onClick={() => setAnimationEnded(false)}
+                        mt={5}
+                        cursor={'pointer'}
+                      >
+                        Play the Voxelglyph
+                      </LinkBox>
                     </Flex>
                   </GridItem>
                 </Grid>
