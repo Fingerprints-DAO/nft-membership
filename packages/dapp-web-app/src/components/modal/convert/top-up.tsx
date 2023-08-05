@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icon
 import { Box, Button, CloseButton, Collapse, Flex, Icon, Link, Spinner, Text, Tooltip } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
-import { Balance } from 'services/web3/prints/use-get-prints-balance'
+import { Balance } from 'services/web3/prints/use-prints-get-balance'
 
 type TopUpProps = {
   printsBalance: Balance

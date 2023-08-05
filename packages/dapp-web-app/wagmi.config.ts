@@ -1,9 +1,9 @@
 import { defineConfig } from '@wagmi/cli'
-import { react } from '@wagmi/cli/plugins'
+import { actions, react } from '@wagmi/cli/plugins'
 import contracts from '@dapp/contracts'
 
 export default defineConfig({
-  out: './src/services/web3/index.ts',
+  out: './src/services/web3/generated.ts',
   contracts: [
     {
       name: 'prints',
@@ -18,5 +18,10 @@ export default defineConfig({
       abi: contracts.MembershipABI as any,
     },
   ],
-  plugins: [react()],
+  plugins: [
+    react(),
+    actions({
+      prepareWriteContract: true,
+    }),
+  ],
 })

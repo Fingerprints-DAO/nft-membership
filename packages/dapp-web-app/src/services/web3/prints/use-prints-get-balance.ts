@@ -8,7 +8,7 @@ export type Balance = {
   value: BigNumber
 }
 
-const useGetPrintsBalance = (): Balance => {
+const usePrintsGetBalance = (): Balance => {
   const { address } = useAccount()
   const { contracts } = useNftMembershipContext()
 
@@ -31,4 +31,4 @@ const useGetPrintsBalance = (): Balance => {
   }
 }
 
-export default useGetPrintsBalance
+export default usePrintsGetBalance

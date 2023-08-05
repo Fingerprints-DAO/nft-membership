@@ -1,7 +1,7 @@
 import { CloseButton, Text, Box, Button } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
-import useGetPrintsBalance from 'services/web3/prints/use-get-prints-balance'
+import usePrintsGetBalance from 'services/web3/prints/use-prints-get-balance'
 
 type ConvertFirstStepProps = {
   onConvert: () => void
@@ -9,7 +9,7 @@ type ConvertFirstStepProps = {
 }
 
 const ConvertFirstStep = ({ onConvert, onClose }: ConvertFirstStepProps) => {
-  const printsBalance = useGetPrintsBalance()
+  const printsBalance = usePrintsGetBalance()
 
   return (
     <>

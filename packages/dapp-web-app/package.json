@@ -5,6 +5,7 @@
   "scripts": {
     "predev": "yarn wagmi generate",
     "dev": "next dev",
+    "prebuild": "yarn wagmi generate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

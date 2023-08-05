@@ -2,7 +2,7 @@ import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { Balance } from 'services/web3/prints/use-get-prints-balance'
+import { Balance } from 'services/web3/prints/use-prints-get-balance'
 import { pluralize } from 'utils/string'
 
 export type Action = '' | 'top-up' | 'convert'
@@ -10,22 +10,19 @@ export type Action = '' | 'top-up' | 'convert'
 type ConvertDefaultProps = {
   printsBalance: Balance
   pricePerMembership: BigNumber
+  leftovers: BigNumber
   onClose?: () => void
   onAction: (action: Action) => void
 }
 
-const ZERO = BigNumber(0.001) //TODO: check if this value is valid
+const ZERO = BigNumber(0)
 
-const ConvertDefault = ({ printsBalance, pricePerMembership, onAction, onClose }: ConvertDefaultProps) => {
+const ConvertDefault = ({ printsBalance, leftovers, pricePerMembership, onAction, onClose }: ConvertDefaultProps) => {
   const handleAction = (action: Action) => () => onAction(action)
 
   const nftsMintables = useMemo(() => {
     return printsBalance.value.div(pricePerMembership).decimalPlaces(0, BigNumber.ROUND_HALF_FLOOR)
   }, [printsBalance.value, pricePerMembership])
-
-  const leftovers = useMemo(() => printsBalance.value.mod(pricePerMembership), [printsBalance, pricePerMembership])
-
-  console.log('leftovers', leftovers.toFormat())
 
   return (
     <>
@@ -64,7 +61,7 @@ const ConvertDefault = ({ printsBalance, pricePerMembership, onAction, onClose }
                 Leftover
               </Text>
               <Text color="gray.700" fontWeight="bold">
-                {leftovers.toFormat(0)} $PRINTS
+                {leftovers.toFormat()} $PRINTS
               </Text>
               <Text color="secondary.500" fontSize="xs" mt={4}>
                 Top up your $PRINTS to a multiple of 5,000 for a full conversion.
