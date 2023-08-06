@@ -184,6 +184,11 @@ describe('Auction', function () {
       )
     })
 
+    it('Can calculate minimum bid increment', async function () {
+      const value = await auction.calculateMinBidIncrement()
+      expect(value).to.equal((startingBid * minBidIncrementPercentage) / 100)
+    })
+
   })
 
   describe('Bid', function () {

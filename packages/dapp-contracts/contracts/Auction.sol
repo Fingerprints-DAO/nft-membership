@@ -107,19 +107,19 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /**
    * @dev Initializes the auction contract.
    * @param _adminAddress The address of the admin.
-   * @param _nftnftAddress The address of the ERC721 token contract.
+   * @param _nftAddress The address of the ERC721 token contract.
    * @param _nftId The ID of the token being auctioned.
    * @param _treasury The address to receive the auction proceeds.
    */
   constructor(
     address _adminAddress,
-    address _nftnftAddress,
+    address _nftAddress,
     uint _nftId,
     address _treasury
   ) {
     nftId = _nftId;
     treasury = _treasury;
-    nftAddress = IERC721(_nftnftAddress);
+    nftAddress = IERC721(_nftAddress);
 
     _setupRole(DEFAULT_ADMIN_ROLE, _adminAddress);
   }
@@ -167,15 +167,11 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     validConfig
     validTime
   {
-    Config memory config = _config;
-    if (
-      msg.value <
-      auctionData.highestBid +
-        ((auctionData.highestBid * config.minBidIncrementPercentage) / 100)
-    ) {
+    if (msg.value < auctionData.highestBid + calculateMinBidIncrement()) {
       revert InvalidBidAmount();
     }
 
+    // If there is not highest bidder yet (first bid of the auction), refund the sender
     if (auctionData.highestBidder != address(0)) {
       (bool success, ) = auctionData.highestBidder.call{
         value: auctionData.highestBid
@@ -199,7 +195,11 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     }
 
     if (auctionData.highestBidder != address(0)) {
-      nftAddress.safeTransferFrom(address(this), auctionData.highestBidder, nftId);
+      nftAddress.safeTransferFrom(
+        address(this),
+        auctionData.highestBidder,
+        nftId
+      );
       (bool success, ) = treasury.call{value: auctionData.highestBid}('');
       require(success, 'Transfer failed.');
       emit AuctionSettled(auctionData.highestBidder, auctionData.highestBid);
@@ -223,6 +223,14 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
    */
   function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
+  }
+
+  /**
+   * @dev Calculates the minimum bid increment based on the current highest bid and the minimum bid increment percentage.
+   * @return The minimum bid increment.
+   */
+  function calculateMinBidIncrement() public view returns (uint256) {
+    return (auctionData.highestBid * _config.minBidIncrementPercentage) / 100;
   }
 
   /// @notice Get auction config

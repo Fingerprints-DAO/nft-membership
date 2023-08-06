@@ -8,7 +8,7 @@
       },
       {
         "internalType": "address",
-        "name": "_nftnftAddress",
+        "name": "_nftAddress",
         "type": "address"
       },
       {
@@ -228,6 +228,19 @@
     "name": "bid",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "calculateMinBidIncrement",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
