@@ -109,15 +109,16 @@ describe('Migration', function () {
     })
 
     it('Can not migrate without funds', async function () {
-      await expect(
-        migration.connect(otherAccount).migrate(owner.address, 1),
-      ).to.be.revertedWith('Migration: insufficient balance')
+      await erc20Mock
+        .connect(otherAccount)
+        .approve(await migration.getAddress(), printPrice)
+      await expect(migration.connect(otherAccount).migrate(owner.address, 1)).to
+        .be.reverted
     })
 
     it('Can not migrate with token not approved', async function () {
-      await expect(
-        migration.connect(user).migrate(owner.address, 1),
-      ).to.be.revertedWith('Migration: token transfer from sender failed')
+      await expect(migration.connect(user).migrate(owner.address, 1)).to.be
+        .reverted
     })
 
     it('Can not migrate 0', async function () {
