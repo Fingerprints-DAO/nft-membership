@@ -193,21 +193,21 @@ describe('Migration', function () {
 
   describe('Pause', function () {
     it('Owner can unpause and pause', async function () {
-      await expect(membership.connect(owner).pause()).to.emit(
-        membership,
+      await expect(migration.connect(owner).pause()).to.emit(
+        migration,
         'Paused',
       )
-      await expect(membership.connect(owner).unpause()).to.emit(
-        membership,
+      await expect(migration.connect(owner).unpause()).to.emit(
+        migration,
         'Unpaused',
       )
     })
 
     it('Only owner can pause and unpause', async function () {
-      await expect(membership.connect(user).pause()).to.be.revertedWith(
+      await expect(migration.connect(user).pause()).to.be.revertedWith(
         `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
-      await expect(membership.connect(user).unpause()).to.be.revertedWith(
+      await expect(migration.connect(user).unpause()).to.be.revertedWith(
         `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })
