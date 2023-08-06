@@ -65,18 +65,18 @@ contract Migration is Pausable, AccessControl {
   /// @notice Migrates membership from ERC20 to ERC721, locks print and mints NFT.
   /// @dev This function can only be called when the contract is not paused or by an admin.
   /// @param _to The address of the future owner of the token.
-  /// @param _amount The amount of tokens to migrate.
-  function migrate(address _to, uint16 _amount) public whenNotPausedOrAdmin {
-    require(_amount > 0, 'Migration: amount must be greater than 0');
+  /// @param _qty The amount of NFTs to migrate.
+  function migrate(address _to, uint16 _qty) public whenNotPausedOrAdmin {
+    require(_qty > 0, 'Migration: amount must be greater than 0');
     require(_to != address(0), 'Migration: cannot migrate to zero address');
 
-    uint256 printsAmount = _amount * pricePerMembershipInWei;
+    uint256 printsAmount = _qty * pricePerMembershipInWei;
 
     IERC20(printsAddress).transferFrom(msg.sender, address(this), printsAmount);
 
-    IMembership(nftAddress).safeMint(_to, _amount);
+    IMembership(nftAddress).safeMint(_to, _qty);
 
-    emit Migrated(_to, _amount);
+    emit Migrated(_to, _qty);
   }
 
   /// @notice Pauses all token migrations.

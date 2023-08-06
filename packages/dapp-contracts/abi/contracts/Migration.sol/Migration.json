@@ -228,7 +228,7 @@
       },
       {
         "internalType": "uint16",
-        "name": "_amount",
+        "name": "_qty",
         "type": "uint16"
       }
     ],
