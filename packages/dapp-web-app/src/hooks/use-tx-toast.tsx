@@ -121,7 +121,6 @@ export const useTxToast = () => {
   const showTxErrorToast = (error: Error) => {
     const revertError = error as any
 
-    console.log('error', error)
     console.log('error', JSON.stringify(error))
 
     const toastConfig = (id: ToastId): UseToastOptions => ({
@@ -171,7 +170,7 @@ export const useTxToast = () => {
       render: () => (
         <ToastContent
           title="An error occured: "
-          description={revertError.reason ?? revertError.cause?.shortMessage ?? revertError.message}
+          description={revertError.reason ?? revertError.cause?.shortMessage ?? revertError.message ?? revertError.details}
           status="error"
           icon={{ as: WarningIcon, color: 'gray.900' }}
           toastId={id}

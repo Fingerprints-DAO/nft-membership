@@ -22,6 +22,7 @@ export default defineConfig({
     react(),
     actions({
       prepareWriteContract: true,
+      readContract: false,
     }),
   ],
 })

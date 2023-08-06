@@ -1,8 +1,8 @@
-import { Text, Box, Flex, CloseButton } from '@chakra-ui/react'
+import { Text, Box, Flex, CloseButton, Link, Button } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import useMigrationMigrate from 'services/web3/migration/use-migration-migrate'
 import usePrintsApprove from 'services/web3/prints/use-prints-approve'
-import usePrintsSetAllowance from 'services/web3/prints/use-prints-set-allowance'
 
 export enum AllowanceType {
   Increase = 'increase',
@@ -10,39 +10,54 @@ export enum AllowanceType {
 }
 
 type ConvertProps = {
-  newAllowanceValue?: BigNumber
+  allowance: BigNumber
+  toAllow: BigNumber
+  totalAvailableToSpend: BigNumber
   onClose?: () => void
 }
 
-const Convert = ({ newAllowanceValue, onClose }: ConvertProps) => {
-  const { setAllowance, isSubmittedSetAllowance, isWaitingSetAllowance, waitSetAllowanceTxStatus } = usePrintsSetAllowance(newAllowanceValue)
-  const { approve, isSubmittedApprove, isWaitingApprove, waitApproveTxStatus } = usePrintsApprove()
+const SuccessIcon = (props: any) => (
+  <svg {...props} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M8 15a6.978 6.978 0 0 0 4.95-2.05A6.978 6.978 0 0 0 15 8a6.978 6.978 0 0 0-2.05-4.95A6.978 6.978 0 0 0 8 1a6.978 6.978 0 0 0-4.95 2.05A6.978 6.978 0 0 0 1 8c0 1.933.784 3.683 2.05 4.95A6.978 6.978 0 0 0 8 15Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+    <path d="m5.2 8 2.1 2.1 4.2-4.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
 
-  const allowance = useCallback(async () => {
-    try {
-      await setAllowance?.()
-    } catch (error) {
-      console.log('allowance', error)
-    }
-  }, [setAllowance])
+const Convert = ({ allowance, toAllow, totalAvailableToSpend, onClose }: ConvertProps) => {
+  const {
+    approve,
+    isLoading: isLoadingApprove,
+    hasError: hasErrorApprove,
+    txHash: txHashApprove,
+    isSubmitted: isSubmittedApprove,
+    isApproved,
+  } = usePrintsApprove(allowance, toAllow, totalAvailableToSpend)
 
-  const approveAmount = useCallback(async () => {
-    try {
-      await approve?.()
-    } catch (error) {
-      console.log('approveAmount', error)
-    }
-  }, [approve])
+  const {
+    migrate,
+    isLoading: isLoadingMigrate,
+    hasError: hasErrorMigrate,
+    txHash: txHashMigrate,
+    isSubmitted: isSubmittedMigrate,
+    isSuccess: isSuccessMigrate,
+  } = useMigrationMigrate(totalAvailableToSpend)
 
   useEffect(() => {
-    allowance()
-  }, [allowance])
+    if (!isApproved && !isSubmittedApprove) {
+      approve()
+    }
+  }, [approve, isApproved, isSubmittedApprove])
 
   useEffect(() => {
-    if (waitSetAllowanceTxStatus === 'success') {
-      approveAmount()
+    if (isApproved && !isSubmittedMigrate) {
+      migrate()
     }
-  }, [waitSetAllowanceTxStatus, approveAmount])
+  }, [migrate, isApproved, isSubmittedMigrate])
 
   return (
     <>
@@ -60,12 +75,39 @@ const Convert = ({ newAllowanceValue, onClose }: ConvertProps) => {
         </Flex>
         <Box flex={1}>
           <Text fontWeight="bold" color="gray.900" mb={2}>
-            Please confirm approval of {newAllowanceValue?.isNegative() ? newAllowanceValue.negated().toFormat() : newAllowanceValue?.toFormat()}{' '}
-            $PRINTS for transaction
+            Please confirm approval of {toAllow?.toFormat(3)} $PRINTS for transaction
           </Text>
-          <Text color="gray.500">Waiting for approval...</Text>
-          <Text color="gray.500">Approved!</Text>
-          <Text color="secondary.500">An error occurred or the transaction was cancelled.</Text>
+          {isLoadingApprove && (
+            <Text color="gray.500">
+              Waiting for{' '}
+              {!!txHashApprove ? (
+                <Link color="links.500" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashApprove}`} title="Transaction" target="_blank">
+                  transaction
+                </Link>
+              ) : (
+                'approval'
+              )}{' '}
+              ...
+            </Text>
+          )}
+          {isApproved && (
+            <Flex alignItems="center" color="gray.500">
+              <SuccessIcon width={16} height={16} />
+              <Text color="gray.500" ml={1}>
+                Approved!
+              </Text>
+            </Flex>
+          )}
+          {hasErrorApprove && (
+            <>
+              <Text color="secondary.500">An error occurred or the transaction was cancelled.</Text>
+              <Flex mt={2} justifyContent="flex-end">
+                <Button colorScheme="black" onClick={approve}>
+                  Try again
+                </Button>
+              </Flex>
+            </>
+          )}
         </Box>
       </Flex>
       <Flex alignItems="flex-start" flexWrap="wrap">
@@ -78,6 +120,37 @@ const Convert = ({ newAllowanceValue, onClose }: ConvertProps) => {
           <Text fontWeight="bold" color="gray.900" mb={2}>
             Please confirm the conversion of $PRINTS to membership NFT
           </Text>
+          {isLoadingMigrate && (
+            <Text color="gray.500">
+              Waiting for{' '}
+              {!!txHashMigrate ? (
+                <Link color="links.500" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashMigrate}`} title="Transaction" target="_blank">
+                  transaction
+                </Link>
+              ) : (
+                'approval'
+              )}{' '}
+              ...
+            </Text>
+          )}
+          {isSuccessMigrate && (
+            <Flex alignItems="center" color="gray.500">
+              <SuccessIcon width={16} height={16} />
+              <Text color="gray.500" ml={1}>
+                Migrated!
+              </Text>
+            </Flex>
+          )}
+          {hasErrorMigrate && (
+            <>
+              <Text color="secondary.500">An error occurred or the transaction was cancelled.</Text>
+              <Flex mt={2} justifyContent="flex-end">
+                <Button colorScheme="black" onClick={migrate}>
+                  Try again
+                </Button>
+              </Flex>
+            </>
+          )}
         </Box>
       </Flex>
     </>

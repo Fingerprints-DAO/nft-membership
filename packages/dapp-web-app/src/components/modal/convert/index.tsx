@@ -3,17 +3,19 @@
 import { ModalProps } from 'types/modal'
 import { useMemo, useState } from 'react'
 import ConvertDefault from './default'
-import Convert, { AllowanceType } from './convert'
+import Convert from './convert'
 import TopUp from './top-up'
 import usePrintsGetBalance from 'services/web3/prints/use-prints-get-balance'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import usePrintsGetAllowance from 'services/web3/prints/use-prints-get-allowance'
 import BigNumber from 'bignumber.js'
+import { parseAmountToDisplay } from 'utils/number'
 
 type Action = '' | 'top-up' | 'convert'
 
 const ConvertPrints = ({ onClose }: ModalProps) => {
   const allowance = usePrintsGetAllowance()
+  console.log('allowance', allowance.toNumber())
   const printsBalance = usePrintsGetBalance()
   const { pricePerMembership } = useNftMembershipContext()
 
@@ -21,27 +23,20 @@ const ConvertPrints = ({ onClose }: ModalProps) => {
 
   const leftovers = useMemo(() => printsBalance.value.mod(pricePerMembership), [printsBalance, pricePerMembership])
 
-  const newAllowanceValue = useMemo(() => {
-    const totalAvailableToSpend = printsBalance.value.minus(leftovers)
+  // Valor pra gastar
+  const totalAvailableToSpend = printsBalance.value.minus(leftovers)
+  console.log('totalAvailableToSpend', totalAvailableToSpend.toNumber())
 
-    const allowanceValue = totalAvailableToSpend.minus(allowance)
-
-    if (allowanceValue.isZero()) {
-      return
-    }
-
-    return allowanceValue
-  }, [allowance, leftovers, printsBalance])
-
-  console.log('allowance', allowance.toNumber())
-  console.log('amountToIncreaseAllowance', newAllowanceValue?.toNumber())
+  // Valor q falta aprovar
+  const toAllow = totalAvailableToSpend.minus(allowance)
+  console.log('toAllow', toAllow.toNumber())
 
   if (action === 'top-up') {
     return <TopUp printsBalance={printsBalance} />
   }
 
   if (action === 'convert') {
-    return <Convert newAllowanceValue={newAllowanceValue} onClose={onClose} />
+    return <Convert allowance={allowance} toAllow={toAllow} totalAvailableToSpend={totalAvailableToSpend} onClose={onClose} />
   }
 
   return (

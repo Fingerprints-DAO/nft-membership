@@ -4,71 +4,67 @@ import BigNumber from 'bignumber.js'
 import useTxToast from 'hooks/use-tx-toast'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
-import { printsABI } from '../generated'
+import { migrationABI } from '../generated'
+import { parseAmountToContract } from 'utils/number'
 
-const usePrintsApprove = (allowance: BigNumber, toAllow: BigNumber, totalAvailableToSpend: BigNumber) => {
-  const { contracts } = useNftMembershipContext()
+const useMigrationMigrate = (amount: BigNumber) => {
+  const { address, contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
   const [txHash, setTxHash] = useState<Address>()
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isApproved, setIsApproved] = useState(allowance.gte(totalAvailableToSpend))
 
   const request = async () => {
     try {
-      console.log('isApproved', isApproved)
-      if (isApproved) {
-        return
-      }
-
       setHasError(false)
       setIsLoading(true)
       setIsSubmitted(true)
 
       const config = await prepareWriteContract({
-        address: contracts.ERC20.address as Address,
-        abi: printsABI,
-        functionName: 'approve',
-        args: [contracts.Migration.address as Address, toAllow.integerValue() as any],
+        address: contracts.Migration.address as Address,
+        abi: migrationABI,
+        functionName: 'migrate',
+        args: [address as Address, BigNumber(amount).toNumber()],
       })
 
       const { hash } = await writeContract(config)
 
       if (!!hash) {
         setTxHash(hash)
-        showTxSentToast('approve-submitted', hash)
+        showTxSentToast('migrate-submitted', hash)
 
         const { transactionHash } = await waitForTransaction({ hash })
 
         if (!!transactionHash) {
           showTxExecutedToast({
-            title: 'Approved',
+            title: 'Migrated',
             txHash: transactionHash,
-            id: 'approve-success',
+            id: 'migrate-success',
           })
 
-          setIsApproved(true)
+          setIsSuccess(true)
         }
       }
     } catch (error: any) {
       setHasError(true)
       showTxErrorToast(error)
-      setIsApproved(false)
+      setIsSuccess(false)
     } finally {
       setIsLoading(false)
     }
   }
 
   return {
-    isApproved,
+    isSuccess,
     isLoading,
     isSubmitted,
     hasError,
     txHash,
-    approve: request,
+    migrate: request,
   }
 }
 
-export default usePrintsApprove
+export default useMigrationMigrate

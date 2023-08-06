@@ -69,7 +69,7 @@ const usePrintsSetAllowance = (amount?: BigNumber) => {
   return {
     isSubmittedSetAllowance: isSubmitted,
     isWaitingSetAllowance: isWaiting,
-    waitSetAllowanceTxStatus: data?.status,
+    waitSetAllowanceData: data,
     setAllowance: writeAsync,
   }
 }

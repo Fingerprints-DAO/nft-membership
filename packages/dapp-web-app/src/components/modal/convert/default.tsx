@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
+import { parseAmountToDisplay } from 'utils/number'
 import { pluralize } from 'utils/string'
 
 export type Action = '' | 'top-up' | 'convert'
@@ -15,7 +16,7 @@ type ConvertDefaultProps = {
   onAction: (action: Action) => void
 }
 
-const ZERO = BigNumber(0)
+const ZERO = BigNumber(parseAmountToDisplay(BigInt(0)))
 
 const ConvertDefault = ({ printsBalance, leftovers, pricePerMembership, onAction, onClose }: ConvertDefaultProps) => {
   const handleAction = (action: Action) => () => onAction(action)

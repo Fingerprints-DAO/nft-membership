@@ -3,11 +3,14 @@ import { Box, Button, CloseButton, Collapse, Flex, Icon, Link, Spinner, Text, To
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
+import { parseAmountToDisplay } from 'utils/number'
 
 type TopUpProps = {
   printsBalance: Balance
   onClose?: () => void
 }
+
+const ZERO = BigNumber(parseAmountToDisplay(BigInt(0)))
 
 const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -27,7 +30,7 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
         <Text color="gray.700" fontWeight="bold">
           {printsBalance.formatted} $PRINTS
         </Text>
-        {printsBalance.value.lte(BigNumber(0)) && (
+        {printsBalance.value.lte(ZERO) && (
           <Text fontSize="xs" color="secondary.500" mt={4}>
             You don&apos;t have any $PRINTS, which means you can acquire the NFT Membership directly on Opensea.
           </Text>
