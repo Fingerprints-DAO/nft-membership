@@ -207,4 +207,59 @@ describe('Membership', function () {
       expect(await membership.tokenURI(1)).to.be.equal(baseURI + '1')
     })
   })
+
+  describe('Override functions', function () {
+    it('Approves an account to spend a token', async function () {
+      await membership.safeMint(owner.address, 1)
+      await membership.approve(otherAccount.address, 1)
+      expect(await membership.getApproved(1)).to.be.equal(otherAccount.address)
+    })
+
+    it('Sets approval for an operator to spend all tokens of an account', async function () {
+      await membership.setApprovalForAll(otherAccount.address, true)
+      expect(
+        await membership.isApprovedForAll(owner.address, otherAccount.address),
+      ).to.be.equal(true)
+    })
+
+    it('Returns the account approved to spend a token', async function () {
+      await membership.safeMint(owner.address, 1)
+      await membership.approve(otherAccount.address, 1)
+      expect(await membership.getApproved(1)).to.be.equal(otherAccount.address)
+    })
+
+    it('Returns whether an operator is approved to spend all tokens of an account', async function () {
+      await membership.setApprovalForAll(otherAccount.address, true)
+      expect(
+        await membership.isApprovedForAll(owner.address, otherAccount.address),
+      ).to.be.equal(true)
+    })
+
+    it('Transfers a token from one account to another', async function () {
+      await membership.safeMint(owner.address, 1)
+      await membership.transferFrom(owner.address, otherAccount.address, 1)
+      expect(await membership.ownerOf(1)).to.be.equal(otherAccount.address)
+    })
+
+    it('Safely transfers a token from one account to another', async function () {
+      await membership.safeMint(owner.address, 1)
+      await membership['safeTransferFrom(address,address,uint256)'](
+        owner.address,
+        otherAccount.address,
+        1,
+      )
+      expect(await membership.ownerOf(1)).to.be.equal(otherAccount.address)
+    })
+
+    it('Safely transfers a token from one account to another with data', async function () {
+      await membership.safeMint(owner.address, 1)
+      await membership['safeTransferFrom(address,address,uint256,bytes)'](
+        owner.address,
+        otherAccount.address,
+        1,
+        '0x1234',
+      )
+      expect(await membership.ownerOf(1)).to.be.equal(otherAccount.address)
+    })
+  })
 })
