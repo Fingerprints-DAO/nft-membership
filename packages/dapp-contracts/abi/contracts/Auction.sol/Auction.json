@@ -364,7 +364,7 @@
     "name": "nftAddress",
     "outputs": [
       {
-        "internalType": "contract IERC721",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }

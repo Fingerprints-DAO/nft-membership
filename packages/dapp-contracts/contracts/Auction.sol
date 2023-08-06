@@ -56,7 +56,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
 
   /// @notice The address of the ERC721 contract for membership.
   /// @dev The address is immutable and is set in the constructor.
-  IERC721 public immutable nftAddress;
+  address public immutable nftAddress;
 
   /// @notice The ID of the token being auctioned.
   /// @dev The ID is immutable and is set in the constructor.
@@ -119,7 +119,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   ) {
     nftId = _nftId;
     treasury = _treasury;
-    nftAddress = IERC721(_nftAddress);
+    nftAddress = _nftAddress;
 
     _setupRole(DEFAULT_ADMIN_ROLE, _adminAddress);
   }
@@ -195,7 +195,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     }
 
     if (auctionData.highestBidder != address(0)) {
-      nftAddress.safeTransferFrom(
+      IERC721(nftAddress).safeTransferFrom(
         address(this),
         auctionData.highestBidder,
         nftId
@@ -204,7 +204,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
       require(success, 'Transfer failed.');
       emit AuctionSettled(auctionData.highestBidder, auctionData.highestBid);
     } else {
-      nftAddress.safeTransferFrom(address(this), treasury, nftId);
+      IERC721(nftAddress).safeTransferFrom(address(this), treasury, nftId);
       emit AuctionSettled(treasury, 0);
     }
   }
