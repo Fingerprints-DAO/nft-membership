@@ -11,7 +11,7 @@
  *
  * @title Auction contract
  * @author arod.studio and Fingerprints DAO
- * This contract will be used to auction the first Voxelglyph NFT.
+ * @dev This contract is used to auction the first Voxelglyph NFT.
  * SPDX-License-Identifier: MIT
  */
 pragma solidity ^0.8.9;
@@ -23,47 +23,49 @@ import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
 /**
- * @title Auction
- * @dev This contract implements an auction for an ERC721 token.
+ * @title Auction Contract
+ * @dev This contract is an auction for an ERC721 token (NFT). It inherits from ERC721Holder to handle safe transfers of NFTs,
+ * Pausable to add ability to pause/unpause the contract by the contract's admin, AccessControl to manage access and permissions,
+ * and ReentrancyGuard to protect against reentrant calls.
  */
 contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
-  /// @dev Emitted when a bid is placed.
+  /// @dev Emitted when a new bid is placed. The event includes the address of the bidder and the amount of the bid.
   event Bid(address indexed sender, uint amount);
 
-  /// @dev Emitted when the auction is settled.
+  /// @dev Emitted when the auction is successfully settled. The event includes the address of the winner and the winning bid amount.
   event AuctionSettled(address winner, uint amount);
 
   /// @dev Emitted when trying to set the contract config when it's already been set.
   error ConfigAlreadySet();
 
-  /// @dev Emitted when the amount of wei provided is invalid.
+  /// @dev Emitted when the amount of wei provided for a bid or starting bid is invalid. This usually means the amount is zero.
   error InvalidAmountInWei();
 
-  /// @dev Emitted when setting the min bid increment percentage is invalid.
+  /// @dev Emitted when the provided minimum bid increment percentage is invalid. This usually means the percentage is either zero or more than 100.
   error InvalidMinBidIncrementPercentage();
 
-  /// @dev Emitted when the start or end time is invalid.
+  /// @dev Emitted when the provided start or end time for the auction is invalid. This usually means the start time is greater than the end time.
   error InvalidStartEndTime(uint256 startTime, uint256 endTime);
 
-  /// @dev Emitted when the config is not set.
+  /// @dev Emitted when a config-related operation is attempted before the config has been set.
   error ConfigNotSet();
 
-  /// @dev Emitted when the bid amount is invalid.
+  /// @dev Emitted when the bid amount is invalid. This usually means the bid is less than the current highest bid plus the minimum bid increment.
   error InvalidBidAmount();
 
-  /// @dev Emitted when the auction has ended.
+  /// @dev Emitted when an operation is attempted after the auction has ended.
   error AuctionNotEnded();
 
-  /// @notice The address of the ERC721 contract for membership.
-  /// @dev The address is immutable and is set in the constructor.
+  /// @notice The address of the ERC721 token contract that represents the NFT being auctioned.
+  /// @dev This is an immutable variable; its value is set during contract deployment and cannot be changed afterwards.
   address public immutable nftAddress;
 
-  /// @notice The ID of the token being auctioned.
-  /// @dev The ID is immutable and is set in the constructor.
+  /// @notice The unique identifier (ID) of the specific NFT being auctioned.
+  /// @dev This is an immutable variable; its value is set during contract deployment and cannot be changed afterwards.
   uint public immutable nftId;
 
-  /// @notice The address of the treasury.
-  /// @dev The address is immutable and is set in the constructor.
+  /// @notice The address of the treasury that will receive the proceeds from the auction.
+  /// @dev This is an immutable variable; its value is set during contract deployment and cannot be changed afterwards.
   address public immutable treasury;
 
   /// @dev Auction Config
@@ -99,8 +101,9 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
 
   modifier validTime() {
     Config memory config = _config;
-    if (block.timestamp > config.endTime || block.timestamp < config.startTime)
-      revert InvalidStartEndTime(config.startTime, config.endTime);
+    if (
+      block.timestamp >= config.endTime || block.timestamp <= config.startTime
+    ) revert InvalidStartEndTime(config.startTime, config.endTime);
     _;
   }
 
@@ -124,8 +127,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     _setupRole(DEFAULT_ADMIN_ROLE, _adminAddress);
   }
 
-  /// @notice Set auction config
-  /// @dev Only admin can set auction config
+  /// @notice Sets the configuration parameters for the auction.
+  /// @dev This function can only be called by an admin. It can be used to set the start time, end time, minimum bid increment percentage, and starting bid amount.
   /// @param _startTime Auction start time
   /// @param _endTime Auction end time
   /// @param _minBidIncrementPercentage Auction min bid increment percentage
@@ -233,14 +236,14 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     return (auctionData.highestBid * _config.minBidIncrementPercentage) / 100;
   }
 
-  /// @notice Get auction config
-  /// @return config Auction config
+  /// @notice Gets the current configuration parameters of the auction.
+  /// @return config A struct containing the start time, end time, minimum bid increment percentage, and starting bid amount of the auction.
   function getConfig() external view returns (Config memory) {
     return _config;
   }
 
-  /// @notice Get auction data
-  /// @return data Auction data
+  /// @notice Gets the current data of the auction.
+  /// @return data A struct containing the highest bidder and the highest bid amount of the auction.
   function getData() external view returns (AuctionData memory) {
     return auctionData;
   }
