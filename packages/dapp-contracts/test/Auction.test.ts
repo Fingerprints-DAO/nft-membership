@@ -11,11 +11,11 @@ describe('Auction', function () {
   let bidder1: SignerWithAddress
   let bidder2: SignerWithAddress
   let treasury: SignerWithAddress
-  let startingBid = 100
+  let startingBid = ethers.toBigInt(100)
   let defaultAdminRole: string
 
   const nftId = 1
-  const minBidIncrementPercentage = 10 // 10%
+  const minBidIncrement = ethers.parseEther('0.1')
 
   const deployContracts = async () => {
     const MembershipFactory = await ethers.getContractFactory('Membership')
@@ -58,7 +58,7 @@ describe('Auction', function () {
     await auction.setConfig(
       startTime,
       endTimeIn3Days,
-      minBidIncrementPercentage,
+      minBidIncrement,
       startingBid,
     )
   }
@@ -72,7 +72,7 @@ describe('Auction', function () {
       const config = await auction.getConfig()
       expect(config[0]).to.not.equal(0)
       expect(config[1]).to.not.equal(0)
-      expect(config[2]).to.equal(minBidIncrementPercentage)
+      expect(config[2]).to.equal(minBidIncrement)
     })
 
     it('Can not set config twice', async function () {
@@ -84,7 +84,7 @@ describe('Auction', function () {
         auction.setConfig(
           startTime,
           endTimeIn3Days,
-          minBidIncrementPercentage,
+          minBidIncrement,
           startingBid,
         ),
       ).to.be.revertedWithCustomError(auction, 'ConfigAlreadySet')
@@ -98,12 +98,7 @@ describe('Auction', function () {
       await expect(
         auction
           .connect(bidder1)
-          .setConfig(
-            startTime,
-            endTimeIn3Days,
-            minBidIncrementPercentage,
-            startingBid,
-          ),
+          .setConfig(startTime, endTimeIn3Days, minBidIncrement, startingBid),
       ).to.be.revertedWith(
         `AccessControl: account ${bidder1.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
@@ -118,7 +113,7 @@ describe('Auction', function () {
         newAuction.setConfig(
           startTime,
           endTimeIn3Days,
-          minBidIncrementPercentage,
+          minBidIncrement,
           startingBid,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
@@ -130,7 +125,7 @@ describe('Auction', function () {
         newAuction.setConfig(
           startTime3,
           endTimeIn3Days3,
-          minBidIncrementPercentage,
+          minBidIncrement,
           startingBid,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
@@ -143,7 +138,7 @@ describe('Auction', function () {
         newAuction.setConfig(
           startTime4,
           endTimeIn3Days4,
-          minBidIncrementPercentage,
+          minBidIncrement,
           startingBid4,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidAmountInWei')
@@ -152,7 +147,7 @@ describe('Auction', function () {
       const startTime5 = 7 * 24 * 60 * 60 // 7 days
       const endTimeIn3Days5 = startTime5 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
       const startingBid5 = 100
-      const minBidIncrementPercentage5 = 101
+      const minBidIncrementPercentage5 = 0
 
       await expect(
         newAuction.setConfig(
@@ -161,34 +156,13 @@ describe('Auction', function () {
           minBidIncrementPercentage5,
           startingBid5,
         ),
-      ).to.be.revertedWithCustomError(
-        newAuction,
-        'InvalidMinBidIncrementPercentage',
-      )
-
-      const startTime6 = 7 * 24 * 60 * 60 // 7 days
-      const endTimeIn3Days6 = startTime5 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
-      const startingBid6 = 100
-      const minBidIncrementPercentage6 = 0
-
-      await expect(
-        newAuction.setConfig(
-          startTime6,
-          endTimeIn3Days6,
-          minBidIncrementPercentage6,
-          startingBid6,
-        ),
-      ).to.be.revertedWithCustomError(
-        newAuction,
-        'InvalidMinBidIncrementPercentage',
-      )
+      ).to.be.revertedWithCustomError(newAuction, 'InvalidMinBidIncrementValue')
     })
 
     it('Can calculate minimum bid increment', async function () {
       const value = await auction.calculateMinBidIncrement()
-      expect(value).to.equal((startingBid * minBidIncrementPercentage) / 100)
+      expect(value).to.equal(startingBid + minBidIncrement)
     })
-
   })
 
   describe('Bid', function () {
@@ -199,7 +173,7 @@ describe('Auction', function () {
       ).to.be.revertedWithCustomError(auction, 'ConfigNotSet')
     })
     it('Place a bid', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
 
       await auction.connect(bidder1).bid({ value: bid })
 
@@ -210,7 +184,7 @@ describe('Auction', function () {
     })
 
     it('Must send more than last by minBidIncrementPercentage', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
 
       await auction.connect(bidder1).bid({ value: bid })
 
@@ -220,12 +194,12 @@ describe('Auction', function () {
       expect((await auction.getData()).highestBid).to.equal(bid)
 
       await expect(
-        auction.connect(bidder2).bid({ value: bid + 1 }),
+        auction.connect(bidder2).bid({ value: bid + ethers.toBigInt(1) }),
       ).to.be.revertedWithCustomError(auction, 'InvalidBidAmount')
     })
 
     it('Refund last bidder', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
 
       await auction.connect(bidder1).bid({ value: bid })
       expect((await auction.getData()).highestBidder).to.equal(
@@ -237,7 +211,9 @@ describe('Auction', function () {
         await bidder1.getAddress(),
       )
       await expect(
-        auction.connect(bidder2).bid({ value: bid + 20 }),
+        auction
+          .connect(bidder2)
+          .bid({ value: bid + (await auction.calculateMinBidIncrement()) }),
       ).to.changeEtherBalance(bidder1, bid)
 
       const balanceAfter = await ethers.provider.getBalance(
@@ -249,7 +225,7 @@ describe('Auction', function () {
 
     it('Cannot bid if the auction has Auction has not started', async function () {
       await goBack10Minute()
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
@@ -257,7 +233,7 @@ describe('Auction', function () {
     })
 
     it('Cannot bid if the auction has expired', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
       await forwardEndTime()
 
       await expect(
@@ -266,7 +242,7 @@ describe('Auction', function () {
     })
 
     it('Cannot bid if the contract is paused', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
       await auction.connect(seller).pause()
 
       await expect(
@@ -275,7 +251,7 @@ describe('Auction', function () {
     })
 
     it('Cannot bid if auction has ended', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
 
       await forwardEndTime()
       await auction.connect(seller).settleAuction()
@@ -286,7 +262,7 @@ describe('Auction', function () {
     })
 
     it('Cannot bid if the value is less than the starting bid', async function () {
-      const bid = startingBid - 1
+      const bid = startingBid - ethers.toBigInt(1)
 
       await expect(
         auction.connect(bidder1).bid({ value: bid }),
@@ -296,7 +272,7 @@ describe('Auction', function () {
 
   describe('Settle', function () {
     it('Transfer to winner if there is bid and treasury to get funds', async function () {
-      const bid = startingBid + 10
+      const bid = await auction.calculateMinBidIncrement()
       await auction.connect(bidder1).bid({ value: bid })
 
       await forwardEndTime()

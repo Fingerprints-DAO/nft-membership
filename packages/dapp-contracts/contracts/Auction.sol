@@ -41,8 +41,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /// @dev Emitted when the amount of wei provided for a bid or starting bid is invalid. This usually means the amount is zero.
   error InvalidAmountInWei();
 
-  /// @dev Emitted when the provided minimum bid increment percentage is invalid. This usually means the percentage is either zero or more than 100.
-  error InvalidMinBidIncrementPercentage();
+  /// @dev Emitted when the provided minimum bid increment value is invalid. This usually means the value is either zero.
+  error InvalidMinBidIncrementValue();
 
   /// @dev Emitted when the provided start or end time for the auction is invalid. This usually means the start time is greater than the end time.
   error InvalidStartEndTime(uint256 startTime, uint256 endTime);
@@ -90,8 +90,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     uint256 startTime;
     /// @notice The end time of the auction.
     uint256 endTime;
-    /// @notice The minimum percentage to increase the bid.
-    uint8 minBidIncrementPercentage;
+    /// @notice The minimum value to increase the current bid in WEI.
+    uint256 minBidIncrementInWei;
   }
 
   modifier validConfig() {
@@ -128,15 +128,15 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   }
 
   /// @notice Sets the configuration parameters for the auction.
-  /// @dev This function can only be called by an admin. It can be used to set the start time, end time, minimum bid increment percentage, and starting bid amount.
+  /// @dev This function can only be called by an admin. It can be used to set the start time, end time, minimum bid increment in WEI, and starting bid amount.
   /// @param _startTime Auction start time
   /// @param _endTime Auction end time
-  /// @param _minBidIncrementPercentage Auction min bid increment percentage
+  /// @param _minBidIncrementInWei Auction minimum bid increment in WEI
   /// @param _startAmountInWei Auction starting bid
   function setConfig(
     uint256 _startTime,
     uint256 _endTime,
-    uint8 _minBidIncrementPercentage,
+    uint256 _minBidIncrementInWei,
     uint256 _startAmountInWei
   ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_config.startTime != 0 && _config.startTime <= block.timestamp)
@@ -146,21 +146,21 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
       revert InvalidStartEndTime(_startTime, _endTime);
     if (_startAmountInWei == 0) revert InvalidAmountInWei();
 
-    if (_minBidIncrementPercentage == 0 || _minBidIncrementPercentage > 100)
-      revert InvalidMinBidIncrementPercentage();
+    if (_minBidIncrementInWei == 0)
+      revert InvalidMinBidIncrementValue();
 
     auctionData.highestBid = _startAmountInWei;
 
     _config = Config({
       startTime: _startTime,
       endTime: _endTime,
-      minBidIncrementPercentage: _minBidIncrementPercentage
+      minBidIncrementInWei: _minBidIncrementInWei
     });
   }
 
   /**
    * @dev Allows a bidder to place a bid on the auction.
-   * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment percentage.
+   * @notice The bid must be greater than or equal to the current highest bid plus the minimum bid increment.
    */
   function bid()
     external
@@ -170,7 +170,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     validConfig
     validTime
   {
-    if (msg.value < auctionData.highestBid + calculateMinBidIncrement()) {
+    if (msg.value < calculateMinBidIncrement()) {
       revert InvalidBidAmount();
     }
 
@@ -229,15 +229,15 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   }
 
   /**
-   * @dev Calculates the minimum bid increment based on the current highest bid and the minimum bid increment percentage.
+   * @dev Calculates the minimum bid increment based on the current highest bid and the minimum bid increment.
    * @return The minimum bid increment.
    */
   function calculateMinBidIncrement() public view returns (uint256) {
-    return (auctionData.highestBid * _config.minBidIncrementPercentage) / 100;
+    return auctionData.highestBid + _config.minBidIncrementInWei;
   }
 
   /// @notice Gets the current configuration parameters of the auction.
-  /// @return config A struct containing the start time, end time, minimum bid increment percentage, and starting bid amount of the auction.
+  /// @return config A struct containing the start time, end time, minimum bid increment in WEI, and starting bid amount of the auction.
   function getConfig() external view returns (Config memory) {
     return _config;
   }

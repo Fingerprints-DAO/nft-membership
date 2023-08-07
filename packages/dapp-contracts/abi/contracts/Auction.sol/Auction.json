@@ -52,7 +52,7 @@
   },
   {
     "inputs": [],
-    "name": "InvalidMinBidIncrementPercentage",
+    "name": "InvalidMinBidIncrementValue",
     "type": "error"
   },
   {
@@ -260,9 +260,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint8",
-            "name": "minBidIncrementPercentage",
-            "type": "uint8"
+            "internalType": "uint256",
+            "name": "minBidIncrementInWei",
+            "type": "uint256"
           }
         ],
         "internalType": "struct Auction.Config",
@@ -488,9 +488,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint8",
-        "name": "_minBidIncrementPercentage",
-        "type": "uint8"
+        "internalType": "uint256",
+        "name": "_minBidIncrementInWei",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
