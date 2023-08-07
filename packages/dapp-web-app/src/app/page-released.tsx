@@ -114,7 +114,7 @@ const HomePage = () => {
               ) : (
                 <Box
                   as={'span'}
-                  ml={-12}
+                  ml={-8}
                   display={'inline-flex'}
                   alignItems={'center'}
                   justifyContent={'center'}
@@ -150,7 +150,7 @@ const HomePage = () => {
               display={'inline-flex'}
               alignItems={'center'}
             >
-              <Icon as={GiModernCity} mr={2} ml={-12} />
+              <Icon as={GiModernCity} mr={2} ml={-8} />
               <span>Play the Voxelglyph</span>
             </LinkBox>
           </Box>
