@@ -66,20 +66,22 @@ const HomePage = () => {
       >
         <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1}>
           <Spline
-            scene="https://prod.spline.design/U7XH4fuGtiuDN9Lf/scene.splinecode"
+            scene="/voxelglyph.spline"
             onLoad={() => setAnimationStarted(true)}
             id={'voxelglyph'}
           />
           {animationStarted && !animationEnded && (
             <LinkBox
               onClick={() => setAnimationEnded(true)}
-              position={'absolute'}
-              bottom={5}
+              position={'fixed'}
+              bottom={8}
               zIndex={2}
               left={0}
               right={0}
               textAlign={'center'}
               cursor={'pointer'}
+              fontWeight={'bold'}
+              fontSize={'lg'}
             >
               {firstRender ? 'Skip intro' : 'Back to home'}
             </LinkBox>
@@ -145,27 +147,40 @@ const HomePage = () => {
                         Fingerprints membership is moving from 5,000 $PRINTS to
                         an NFT designed by Larva Labs
                       </Heading>
-                      <ConnectKitButton.Custom>
-                        {({ isConnected, show }) => {
-                          return (
-                            <Button
-                              size="lg"
-                              colorScheme="white"
-                              w={{ base: 'full', sm: 'auto' }}
-                              onClick={handleCTAClick(isConnected, show)}
-                            >
-                              Convert your $PRINTS
-                            </Button>
-                          )
-                        }}
-                      </ConnectKitButton.Custom>
-                      <LinkBox
+                      <div>
+                        <ConnectKitButton.Custom>
+                          {({ isConnected, show }) => {
+                            return (
+                              <Button
+                                size="lg"
+                                colorScheme="white"
+                                w={{ base: 'full', sm: 'auto' }}
+                                onClick={handleCTAClick(isConnected, show)}
+                              >
+                                Convert your $PRINTS
+                              </Button>
+                            )
+                          }}
+                        </ConnectKitButton.Custom>
+                        <Button
+                          size="lg"
+                          w={{ base: 'full', sm: 'auto' }}
+                          variant={'ghost'}
+                          ml={{ sm: 3 }}
+                          mt={{ base: 3, sm: 0 }}
+                          onClick={() => setAnimationEnded(false)}
+                        >
+                          Play with Voxelglyph
+                        </Button>
+                      </div>
+                      {/* <LinkBox
                         onClick={() => setAnimationEnded(false)}
                         mt={5}
                         cursor={'pointer'}
+                        fontWeight={'bold'}
                       >
                         Play the Voxelglyph
-                      </LinkBox>
+                      </LinkBox> */}
                     </Flex>
                   </GridItem>
                 </Grid>
