@@ -171,7 +171,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
       revert InvalidBidAmount();
     }
 
-    // If there is not highest bidder yet (first bid of the auction), refund the sender
+    // Only refund the previous highest bidder, if there was a previous bid
     if (auctionData.highestBidder != address(0)) {
       (bool success, ) = auctionData.highestBidder.call{
         value: auctionData.highestBid
