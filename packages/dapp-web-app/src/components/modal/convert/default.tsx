@@ -1,7 +1,6 @@
 import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
-import { useMemo } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
 import { parseAmountToDisplay } from 'utils/number'
 import { pluralize } from 'utils/string'
@@ -10,7 +9,7 @@ export type Action = '' | 'top-up' | 'convert'
 
 type ConvertDefaultProps = {
   printsBalance: Balance
-  pricePerMembership: BigNumber
+  nftsMintables: number
   leftovers: BigNumber
   onClose?: () => void
   onAction: (action: Action) => void
@@ -18,12 +17,8 @@ type ConvertDefaultProps = {
 
 const ZERO = BigNumber(parseAmountToDisplay(BigInt(0)))
 
-const ConvertDefault = ({ printsBalance, leftovers, pricePerMembership, onAction, onClose }: ConvertDefaultProps) => {
+const ConvertDefault = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }: ConvertDefaultProps) => {
   const handleAction = (action: Action) => () => onAction(action)
-
-  const nftsMintables = useMemo(() => {
-    return printsBalance.value.div(pricePerMembership).decimalPlaces(0, BigNumber.ROUND_HALF_FLOOR)
-  }, [printsBalance.value, pricePerMembership])
 
   return (
     <>
@@ -53,7 +48,7 @@ const ConvertDefault = ({ printsBalance, leftovers, pricePerMembership, onAction
               # of Membership NFTs mintable
             </Text>
             <Text color="gray.700" fontWeight="bold">
-              {pluralize(nftsMintables.toNumber(), 'NFTs', 'NFT')}
+              {pluralize(nftsMintables, 'NFTs', 'NFT')}
             </Text>
           </Box>
           {leftovers.gt(ZERO) && (

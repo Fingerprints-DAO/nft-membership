@@ -3,15 +3,13 @@
 import { PropsWithChildren, useEffect, useState } from 'react'
 import { ConnectKitProvider } from 'connectkit'
 import { WagmiConfig } from 'wagmi'
-import { Box, ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import { CacheProvider } from '@chakra-ui/next-js'
 import { config } from '../settings/wagmi'
 import theme from 'settings/theme'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import logoFP from '/public/images/animated-logo.gif'
 import Transition from 'components/transition'
 import { NftMembershipProvider } from './nft-membership'
+import Loading from 'components/loading'
 
 const Providers = ({ children }: PropsWithChildren) => {
   const [mounted, setMounted] = useState(false)
@@ -30,11 +28,7 @@ const Providers = ({ children }: PropsWithChildren) => {
                 <Transition>{children}</Transition>
               </ConnectKitProvider>
             ) : (
-              <Box w={'100vw'} h={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
-                  <Image src={logoFP} alt="Fingerprints DAO" width={80} priority />
-                </motion.div>
-              </Box>
+              <Loading />
             )}
           </NftMembershipProvider>
         </WagmiConfig>

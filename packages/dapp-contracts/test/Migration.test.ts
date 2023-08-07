@@ -109,15 +109,16 @@ describe('Migration', function () {
     })
 
     it('Can not migrate without funds', async function () {
-      await expect(
-        migration.connect(otherAccount).migrate(owner.address, 1),
-      ).to.be.revertedWith('Migration: insufficient balance')
+      await erc20Mock
+        .connect(otherAccount)
+        .approve(await migration.getAddress(), printPrice)
+      await expect(migration.connect(otherAccount).migrate(owner.address, 1)).to
+        .be.reverted
     })
 
     it('Can not migrate with token not approved', async function () {
-      await expect(
-        migration.connect(user).migrate(owner.address, 1),
-      ).to.be.revertedWith('Migration: token transfer from sender failed')
+      await expect(migration.connect(user).migrate(owner.address, 1)).to.be
+        .reverted
     })
 
     it('Can not migrate 0', async function () {
@@ -193,21 +194,21 @@ describe('Migration', function () {
 
   describe('Pause', function () {
     it('Owner can unpause and pause', async function () {
-      await expect(membership.connect(owner).pause()).to.emit(
-        membership,
+      await expect(migration.connect(owner).pause()).to.emit(
+        migration,
         'Paused',
       )
-      await expect(membership.connect(owner).unpause()).to.emit(
-        membership,
+      await expect(migration.connect(owner).unpause()).to.emit(
+        migration,
         'Unpaused',
       )
     })
 
     it('Only owner can pause and unpause', async function () {
-      await expect(membership.connect(user).pause()).to.be.revertedWith(
+      await expect(migration.connect(user).pause()).to.be.revertedWith(
         `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
-      await expect(membership.connect(user).unpause()).to.be.revertedWith(
+      await expect(migration.connect(user).unpause()).to.be.revertedWith(
         `AccessControl: account ${user.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })

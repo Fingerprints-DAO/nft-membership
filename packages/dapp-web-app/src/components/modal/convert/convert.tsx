@@ -13,6 +13,7 @@ type ConvertProps = {
   allowance: BigNumber
   toAllow: BigNumber
   totalAvailableToSpend: BigNumber
+  nftsMintables: number
   onClose?: () => void
 }
 
@@ -28,7 +29,7 @@ const SuccessIcon = (props: any) => (
   </svg>
 )
 
-const Convert = ({ allowance, toAllow, totalAvailableToSpend, onClose }: ConvertProps) => {
+const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onClose }: ConvertProps) => {
   const {
     approve,
     isLoading: isLoadingApprove,
@@ -45,7 +46,7 @@ const Convert = ({ allowance, toAllow, totalAvailableToSpend, onClose }: Convert
     txHash: txHashMigrate,
     isSubmitted: isSubmittedMigrate,
     isSuccess: isSuccessMigrate,
-  } = useMigrationMigrate(totalAvailableToSpend)
+  } = useMigrationMigrate(nftsMintables)
 
   useEffect(() => {
     if (!isApproved && !isSubmittedApprove) {

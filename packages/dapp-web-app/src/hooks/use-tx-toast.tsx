@@ -121,7 +121,7 @@ export const useTxToast = () => {
   const showTxErrorToast = (error: Error) => {
     const revertError = error as any
 
-    console.log('error', JSON.stringify(error))
+    // console.log('error', JSON.stringify(error))
 
     const toastConfig = (id: ToastId): UseToastOptions => ({
       title: `An error occured: `,

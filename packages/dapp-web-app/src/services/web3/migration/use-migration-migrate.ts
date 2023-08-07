@@ -1,13 +1,13 @@
 import { Address } from 'viem'
 import { useState } from 'react'
-import BigNumber from 'bignumber.js'
 import useTxToast from 'hooks/use-tx-toast'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
 import { migrationABI } from '../generated'
-import { parseAmountToContract } from 'utils/number'
+import { useRouter } from 'next/navigation'
 
-const useMigrationMigrate = (amount: BigNumber) => {
+const useMigrationMigrate = (qty: number) => {
+  const { back } = useRouter()
   const { address, contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
@@ -27,7 +27,7 @@ const useMigrationMigrate = (amount: BigNumber) => {
         address: contracts.Migration.address as Address,
         abi: migrationABI,
         functionName: 'migrate',
-        args: [address as Address, BigNumber(amount).toNumber()],
+        args: [address as Address, qty], // TODO: qual endereço devo passar?
       })
 
       const { hash } = await writeContract(config)
@@ -46,6 +46,8 @@ const useMigrationMigrate = (amount: BigNumber) => {
           })
 
           setIsSuccess(true)
+
+          back()
         }
       }
     } catch (error: any) {

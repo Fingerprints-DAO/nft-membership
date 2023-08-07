@@ -18,7 +18,6 @@ const usePrintsApprove = (allowance: BigNumber, toAllow: BigNumber, totalAvailab
 
   const request = async () => {
     try {
-      console.log('isApproved', isApproved)
       if (isApproved) {
         return
       }
