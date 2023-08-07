@@ -5,12 +5,23 @@ import { ConnectKitButton } from 'connectkit'
 import { useRouter } from 'next/navigation'
 import { PageState } from 'types/page'
 import { Suspense } from 'react'
-import { Box, Button, Flex, GridItem, Heading, LinkBox } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Flex,
+  GridItem,
+  Heading,
+  Icon,
+  LinkBox,
+} from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'
 import Header from 'components/header'
 import Loading from 'components/loading'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
+import { GiModernCity, GiHouse } from 'react-icons/gi'
+import Image from 'next/image'
+import logoFP from '/public/images/logo-fp.svg'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
@@ -35,6 +46,16 @@ const variants = {
   },
 }
 
+const pulseAnimation = {
+  opacity: [1, 0.5, 1],
+  animationTimingFunction: 'cubic-bezier(.4,0,.6,1)',
+  transition: {
+    duration: 1.5,
+    repeat: Infinity,
+    repeatType: 'loop',
+  },
+} as TargetAndTransition
+
 const HomePage = () => {
   const [animationEnded, setAnimationEnded] = useState(false)
   const [animationStarted, setAnimationStarted] = useState(false)
@@ -49,7 +70,7 @@ const HomePage = () => {
       setTimeout(() => {
         setAnimationEnded(true)
         setFirstRender(false)
-      }, 6000)
+      }, 8000)
     }
   }, [animationStarted])
 
@@ -63,6 +84,7 @@ const HomePage = () => {
         bgRepeat="no-repeat"
         display="flex"
         flexDir="column"
+        bgColor={'black'}
       >
         <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1}>
           <Spline
@@ -72,9 +94,10 @@ const HomePage = () => {
           />
           {animationStarted && !animationEnded && (
             <LinkBox
+              as={motion.a}
               onClick={() => setAnimationEnded(true)}
               position={'fixed'}
-              bottom={8}
+              bottom={20}
               zIndex={2}
               left={0}
               right={0}
@@ -82,12 +105,56 @@ const HomePage = () => {
               cursor={'pointer'}
               fontWeight={'bold'}
               fontSize={'lg'}
+              animate={pulseAnimation}
             >
-              {firstRender ? 'Skip intro' : 'Back to home'}
+              {firstRender ? (
+                <>
+                  <span>Skip intro</span>
+                </>
+              ) : (
+                <Box
+                  as={'span'}
+                  ml={-12}
+                  display={'inline-flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                >
+                  <Image src={logoFP} alt="Fingerprints DAO" width={14} />
+                  <Box as={'span'} ml={2}>
+                    Back to home
+                  </Box>
+                </Box>
+              )}
             </LinkBox>
           )}
         </Box>
 
+        {animationEnded && (
+          <Box
+            position={'absolute'}
+            bottom={20}
+            zIndex={3}
+            left={0}
+            right={0}
+            textAlign={'center'}
+          >
+            <LinkBox
+              as={motion.a}
+              onClick={() => setAnimationEnded(false)}
+              ml={'auto'}
+              mr={'auto'}
+              mt={5}
+              cursor={'pointer'}
+              fontWeight={'bold'}
+              animate={pulseAnimation}
+              display={'inline-flex'}
+              alignItems={'center'}
+            >
+              <Icon as={GiModernCity} mr={2} ml={-12} />
+              <span>Play the Voxelglyph</span>
+            </LinkBox>
+          </Box>
+        )}
         <AnimatePresence initial={false} mode="wait">
           <Suspense fallback={<Loading full />}>
             <motion.div
@@ -148,6 +215,16 @@ const HomePage = () => {
                         an NFT designed by Larva Labs
                       </Heading>
                       <div>
+                        <Button
+                          size="lg"
+                          w={{ base: 'full', sm: 'auto' }}
+                          variant={'outline'}
+                          mr={{ sm: 3 }}
+                          mb={{ base: 3, sm: 0 }}
+                          colorScheme="white"
+                        >
+                          Learn more
+                        </Button>
                         <ConnectKitButton.Custom>
                           {({ isConnected, show }) => {
                             return (
@@ -162,25 +239,7 @@ const HomePage = () => {
                             )
                           }}
                         </ConnectKitButton.Custom>
-                        <Button
-                          size="lg"
-                          w={{ base: 'full', sm: 'auto' }}
-                          variant={'ghost'}
-                          ml={{ sm: 3 }}
-                          mt={{ base: 3, sm: 0 }}
-                          onClick={() => setAnimationEnded(false)}
-                        >
-                          Play with Voxelglyph
-                        </Button>
                       </div>
-                      {/* <LinkBox
-                        onClick={() => setAnimationEnded(false)}
-                        mt={5}
-                        cursor={'pointer'}
-                        fontWeight={'bold'}
-                      >
-                        Play the Voxelglyph
-                      </LinkBox> */}
                     </Flex>
                   </GridItem>
                 </Grid>
