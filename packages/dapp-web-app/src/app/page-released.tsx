@@ -2,18 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { PageState } from 'types/page'
 import { Suspense } from 'react'
-import {
-  Box,
-  Button,
-  Flex,
-  GridItem,
-  Heading,
-  Icon,
-  LinkBox,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, GridItem, Heading, Icon, LinkBox } from '@chakra-ui/react'
 import Footer from 'components/footer'
 import Grid from 'components/grid'
 import Header from 'components/header'
@@ -22,6 +14,7 @@ import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
 import { GiModernCity, GiHouse } from 'react-icons/gi'
 import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
+import ConvertPrintsPage from 'components/modal/convert'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
@@ -57,13 +50,16 @@ const pulseAnimation = {
 } as TargetAndTransition
 
 const HomePage = () => {
+  const { push } = useRouter()
+  const searchParams = useSearchParams()
+
   const [animationEnded, setAnimationEnded] = useState(false)
   const [animationStarted, setAnimationStarted] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
-  const { push } = useRouter()
 
-  const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
-    isConnected ? push('convert') : show?.()
+  const modalName = searchParams.get('modal')
+
+  const handleCTAClick = (isConnected: boolean, show?: () => void) => () => isConnected ? push('/?modal=convert') : show?.()
 
   useEffect(() => {
     if (animationStarted) {
@@ -73,6 +69,13 @@ const HomePage = () => {
       }, 8000)
     }
   }, [animationStarted])
+
+  useEffect(() => {
+    if (modalName && !animationEnded) {
+      setAnimationEnded(true)
+      setFirstRender(false)
+    }
+  }, [animationEnded, modalName])
 
   return (
     <Suspense fallback={<Loading full />}>
@@ -87,11 +90,7 @@ const HomePage = () => {
         bgColor={'black'}
       >
         <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1}>
-          <Spline
-            scene="https://prod.spline.design/U7XH4fuGtiuDN9Lf/scene.splinecode"
-            onLoad={() => setAnimationStarted(true)}
-            id={'voxelglyph'}
-          />
+          <Spline scene="https://prod.spline.design/U7XH4fuGtiuDN9Lf/scene.splinecode" onLoad={() => setAnimationStarted(true)} id={'voxelglyph'} />
           {animationStarted && !animationEnded && (
             <LinkBox
               as={motion.a}
@@ -112,13 +111,7 @@ const HomePage = () => {
                   <span>Skip intro</span>
                 </>
               ) : (
-                <Box
-                  as={'span'}
-                  ml={-8}
-                  display={'inline-flex'}
-                  alignItems={'center'}
-                  justifyContent={'center'}
-                >
+                <Box as={'span'} ml={-8} display={'inline-flex'} alignItems={'center'} justifyContent={'center'}>
                   <Image src={logoFP} alt="Fingerprints DAO" width={14} />
                   <Box as={'span'} ml={2}>
                     Back to home
@@ -130,14 +123,7 @@ const HomePage = () => {
         </Box>
 
         {animationEnded && (
-          <Box
-            position={'absolute'}
-            bottom={20}
-            zIndex={3}
-            left={0}
-            right={0}
-            textAlign={'center'}
-          >
+          <Box position={'absolute'} bottom={20} zIndex={3} left={0} right={0} textAlign={'center'}>
             <LinkBox
               as={motion.a}
               onClick={() => setAnimationEnded(false)}
@@ -157,62 +143,20 @@ const HomePage = () => {
         )}
         <AnimatePresence initial={false} mode="wait">
           <Suspense fallback={<Loading full />}>
-            <motion.div
-              key={'home'}
-              variants={variants}
-              animate={animationEnded ? 'in' : 'out'}
-              initial="out"
-              exit={'out'}
-            >
-              <Box
-                w="full"
-                h="full"
-                left={0}
-                top={0}
-                position="absolute"
-                zIndex={1}
-                bg="gray.900"
-                opacity={0.8}
-              />
-              <Flex
-                flexDir={'column'}
-                minHeight={'100vh'}
-                justifyContent={'space-between'}
-              >
+            <motion.div key={'home'} variants={variants} animate={animationEnded ? 'in' : 'out'} initial="out" exit={'out'}>
+              <Box w="full" h="full" left={0} top={0} position="absolute" zIndex={1} bg="gray.900" opacity={0.8} />
+              <Flex flexDir={'column'} minHeight={'100vh'} justifyContent={'space-between'}>
                 <Box pb={5}>
                   <Header pageState={PageState.Released} />
                 </Box>
                 <Grid>
-                  <GridItem
-                    colStart={{ xl: 2 }}
-                    colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}
-                  >
-                    <Flex
-                      alignItems="center"
-                      flexDir="column"
-                      justifyContent="center"
-                      position="relative"
-                      zIndex={2}
-                      h="100%"
-                    >
-                      <Heading
-                        color="gray.50"
-                        as="h1"
-                        mb={6}
-                        textAlign={{ sm: 'center' }}
-                      >
+                  <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
+                    <Flex alignItems="center" flexDir="column" justifyContent="center" position="relative" zIndex={2} h="100%">
+                      <Heading color="gray.50" as="h1" mb={6} textAlign={{ sm: 'center' }}>
                         Mint your Voxelglyphs using your $PRINTS
                       </Heading>
-                      <Heading
-                        color="gray.50"
-                        as="h2"
-                        size="md"
-                        fontWeight="normal"
-                        mb={10}
-                        textAlign={{ sm: 'center' }}
-                      >
-                        Fingerprints membership is moving from 5,000 $PRINTS to
-                        an NFT designed by Larva Labs
+                      <Heading color="gray.50" as="h2" size="md" fontWeight="normal" mb={10} textAlign={{ sm: 'center' }}>
+                        Fingerprints membership is moving from 5,000 $PRINTS to an NFT designed by Larva Labs
                       </Heading>
                       <div>
                         <Button
@@ -228,12 +172,7 @@ const HomePage = () => {
                         <ConnectKitButton.Custom>
                           {({ isConnected, show }) => {
                             return (
-                              <Button
-                                size="lg"
-                                colorScheme="white"
-                                w={{ base: 'full', sm: 'auto' }}
-                                onClick={handleCTAClick(isConnected, show)}
-                              >
+                              <Button size="lg" colorScheme="white" w={{ base: 'full', sm: 'auto' }} onClick={handleCTAClick(isConnected, show)}>
                                 Convert your $PRINTS
                               </Button>
                             )
@@ -251,6 +190,7 @@ const HomePage = () => {
           </Suspense>
         </AnimatePresence>
       </Box>
+      {modalName === 'convert' && <ConvertPrintsPage />}
     </Suspense>
   )
 }

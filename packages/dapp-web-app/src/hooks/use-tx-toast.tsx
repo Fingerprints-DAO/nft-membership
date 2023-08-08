@@ -43,6 +43,10 @@ export const useTxToast = () => {
   const toast = useToast()
 
   const showTxSentToast = (toastId: ToastId, txHash?: string) => {
+    if (toast.isActive(toastId)) {
+      return
+    }
+
     toast({
       id: toastId,
       isClosable: true,
@@ -117,6 +121,8 @@ export const useTxToast = () => {
   const showTxErrorToast = (error: Error) => {
     const revertError = error as any
 
+    // console.log('error', JSON.stringify(error))
+
     const toastConfig = (id: ToastId): UseToastOptions => ({
       title: `An error occured: `,
       status: 'error',
@@ -129,53 +135,29 @@ export const useTxToast = () => {
       },
     })
 
-    if (revertError.errorName) {
-      const id = 'error-name'
+    // if (revertError.errorName) {
+    //   const id = 'error-name'
 
-      if (toast.isActive(id)) {
-        return
-      }
+    //   if (toast.isActive(id)) {
+    //     return
+    //   }
 
-      toast({
-        ...toastConfig(id),
-        render: () => (
-          <ToastContent
-            title="An error occured: "
-            description={`Error reverted ${revertError.errorName}`}
-            status="error"
-            icon={{ as: WarningIcon, color: 'gray.900' }}
-            toastId={id}
-            onClose={toast.close}
-          />
-        ),
-      })
+    //   toast({
+    //     ...toastConfig(id),
+    //     render: () => (
+    //       <ToastContent
+    //         title="An error occured: "
+    //         description={`Error reverted ${revertError.errorName}`}
+    //         status="error"
+    //         icon={{ as: WarningIcon, color: 'gray.900' }}
+    //         toastId={id}
+    //         onClose={toast.close}
+    //       />
+    //     ),
+    //   })
 
-      return
-    }
-
-    if (revertError.code === 'ACTION_REJECTED') {
-      const id = 'user-rejected'
-
-      if (toast.isActive(id)) {
-        return
-      }
-
-      toast({
-        ...toastConfig(id),
-        render: () => (
-          <ToastContent
-            title="An error occured: "
-            description="user rejected metamask tx"
-            status="error"
-            icon={{ as: WarningIcon, color: 'gray.900' }}
-            toastId={id}
-            onClose={toast.close}
-          />
-        ),
-      })
-
-      return
-    }
+    //   return
+    // }
 
     const id = 'error'
 
@@ -188,7 +170,7 @@ export const useTxToast = () => {
       render: () => (
         <ToastContent
           title="An error occured: "
-          description={revertError.reason ?? revertError.cause ?? revertError.message}
+          description={revertError.reason ?? revertError.cause?.shortMessage ?? revertError.message ?? revertError.details}
           status="error"
           icon={{ as: WarningIcon, color: 'gray.900' }}
           toastId={id}
