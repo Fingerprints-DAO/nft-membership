@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { parseAmountToDisplay } from 'utils/number'
+import { formatToEtherString, formatToEtherStringBN, normalizeBigNumber } from 'utils/price'
 import { formatEther } from 'viem'
 import { Address, useAccount, useBalance } from 'wagmi'
 
@@ -22,13 +23,13 @@ const usePrintsGetBalance = (): Balance => {
   if (!printsBalance) {
     return {
       formatted: '0',
-      value: BigNumber(parseAmountToDisplay(BigInt(0))),
+      value: BigNumber(0),
     }
   }
 
   return {
-    value: BigNumber(parseAmountToDisplay(BigInt(printsBalance.value?.toString() ?? 0))),
-    formatted: BigNumber(formatEther(printsBalance.value)).toFormat(3),
+    value: formatToEtherString(printsBalance.value.toString()),
+    formatted: Number(formatToEtherStringBN(printsBalance.value)).toLocaleString(),
   }
 }
 

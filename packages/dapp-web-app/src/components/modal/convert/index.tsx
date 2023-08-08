@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import ConvertDefault from './default'
 import Convert from './convert'
 import TopUp from './top-up'
@@ -11,11 +11,12 @@ import BigNumber from 'bignumber.js'
 import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import useMediaQuery from 'hooks/use-media-query'
 import { useRouter } from 'next/navigation'
+import { formatBigNumberFloor } from 'utils/price'
 
 type Action = '' | 'top-up' | 'convert'
 
 const ConvertPrintsPage = () => {
-  const { back } = useRouter()
+  const { push } = useRouter()
   const [isMobile] = useMediaQuery('(max-width: 479px)')
 
   const allowance = usePrintsGetAllowance()
@@ -24,15 +25,19 @@ const ConvertPrintsPage = () => {
 
   const [action, setAction] = useState<Action>('')
 
-  const leftovers = useMemo(() => printsBalance.value.mod(pricePerMembership), [printsBalance, pricePerMembership])
-
+  const leftovers = useMemo(
+    () => printsBalance.value.mod(pricePerMembership),
+    [printsBalance, pricePerMembership],
+  )
   const totalAvailableToSpend = printsBalance.value.minus(leftovers)
-
   const toAllow = totalAvailableToSpend.minus(allowance)
 
-  const nftsMintables = useMemo(() => {
-    return printsBalance.value.div(pricePerMembership).decimalPlaces(0, BigNumber.ROUND_HALF_FLOOR).toNumber()
-  }, [printsBalance.value, pricePerMembership])
+  const nftsMintables = useMemo(
+    () => Number(formatBigNumberFloor(printsBalance.value.div(pricePerMembership), 0)),
+    [printsBalance.value, pricePerMembership],
+  )
+
+  const onBack = useCallback(() => push('/'), [push])
 
   const render = useMemo(() => {
     if (action === 'top-up') {
@@ -41,12 +46,35 @@ const ConvertPrintsPage = () => {
 
     if (action === 'convert') {
       return (
-        <Convert nftsMintables={nftsMintables} allowance={allowance} toAllow={toAllow} totalAvailableToSpend={totalAvailableToSpend} onClose={back} />
+        <Convert
+          nftsMintables={nftsMintables}
+          allowance={allowance}
+          toAllow={toAllow}
+          totalAvailableToSpend={totalAvailableToSpend}
+          onClose={onBack}
+        />
       )
     }
 
-    return <ConvertDefault nftsMintables={nftsMintables} leftovers={leftovers} printsBalance={printsBalance} onClose={back} onAction={setAction} />
-  }, [action, printsBalance, allowance, leftovers, nftsMintables, toAllow, back, totalAvailableToSpend])
+    return (
+      <ConvertDefault
+        nftsMintables={nftsMintables}
+        leftovers={leftovers}
+        printsBalance={printsBalance}
+        onClose={onBack}
+        onAction={setAction}
+      />
+    )
+  }, [
+    action,
+    nftsMintables,
+    leftovers,
+    printsBalance,
+    onBack,
+    allowance,
+    toAllow,
+    totalAvailableToSpend,
+  ])
 
   return (
     <Modal
@@ -54,7 +82,7 @@ const ConvertPrintsPage = () => {
       isOpen={true}
       scrollBehavior={isMobile ? 'inside' : 'outside'}
       motionPreset={isMobile ? 'slideInBottom' : 'scale'}
-      onClose={back}
+      onClose={onBack}
     >
       <ModalOverlay height="100vh" />
       <ModalContent

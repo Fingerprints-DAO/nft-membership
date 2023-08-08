@@ -1,6 +1,6 @@
 import { Text, Box, Flex, CloseButton, Link, Button } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import useMigrationMigrate from 'services/web3/migration/use-migration-migrate'
 import usePrintsApprove from 'services/web3/prints/use-prints-approve'
 
@@ -25,11 +25,23 @@ const SuccessIcon = (props: any) => (
       strokeWidth="2"
       strokeLinejoin="round"
     />
-    <path d="m5.2 8 2.1 2.1 4.2-4.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="m5.2 8 2.1 2.1 4.2-4.2"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 )
 
-const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onClose }: ConvertProps) => {
+const Convert = ({
+  allowance,
+  toAllow,
+  totalAvailableToSpend,
+  nftsMintables,
+  onClose,
+}: ConvertProps) => {
   const {
     approve,
     isLoading: isLoadingApprove,
@@ -66,10 +78,38 @@ const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onC
         <Text fontSize="lg" fontWeight="bold" color="gray.900" textAlign="center" lineHeight="24px">
           Confirm mint in your wallet
         </Text>
-        {!!onClose && <CloseButton color="gray.500" onClick={onClose} position="absolute" right={0} top={0} w="44px" h="44px" size="lg" />}
+        {!!onClose && (
+          <CloseButton
+            color="gray.500"
+            onClick={onClose}
+            position="absolute"
+            right={0}
+            top={0}
+            w="44px"
+            h="44px"
+            size="lg"
+          />
+        )}
       </Box>
-      <Flex alignItems="flex-start" flexWrap="wrap" mb={6} pb={6} borderBottom="1px" borderBottomColor="gray.300">
-        <Flex alignItems="center" justifyContent="center" border={2} borderStyle="solid" borderColor="gray.500" rounded="full" mr={6} w={8} h={8}>
+      <Flex
+        alignItems="flex-start"
+        flexWrap="wrap"
+        mb={6}
+        pb={6}
+        borderBottom="1px"
+        borderBottomColor="gray.300"
+      >
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          border={2}
+          borderStyle="solid"
+          borderColor="gray.500"
+          rounded="full"
+          mr={6}
+          w={8}
+          h={8}
+        >
           <Text fontSize="lg" fontWeight="bold" color="gray.500">
             1
           </Text>
@@ -82,7 +122,12 @@ const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onC
             <Text color="gray.500">
               Waiting for{' '}
               {!!txHashApprove ? (
-                <Link color="links.500" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashApprove}`} title="Transaction" target="_blank">
+                <Link
+                  color="links.500"
+                  href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashApprove}`}
+                  title="Transaction"
+                  target="_blank"
+                >
                   transaction
                 </Link>
               ) : (
@@ -112,7 +157,17 @@ const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onC
         </Box>
       </Flex>
       <Flex alignItems="flex-start" flexWrap="wrap">
-        <Flex alignItems="center" justifyContent="center" border={2} borderStyle="solid" borderColor="gray.500" rounded="full" mr={6} w={8} h={8}>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          border={2}
+          borderStyle="solid"
+          borderColor="gray.500"
+          rounded="full"
+          mr={6}
+          w={8}
+          h={8}
+        >
           <Text fontSize="lg" fontWeight="bold" color="gray.500">
             2
           </Text>
@@ -125,7 +180,12 @@ const Convert = ({ allowance, toAllow, totalAvailableToSpend, nftsMintables, onC
             <Text color="gray.500">
               Waiting for{' '}
               {!!txHashMigrate ? (
-                <Link color="links.500" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashMigrate}`} title="Transaction" target="_blank">
+                <Link
+                  color="links.500"
+                  href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashMigrate}`}
+                  title="Transaction"
+                  target="_blank"
+                >
                   transaction
                 </Link>
               ) : (
