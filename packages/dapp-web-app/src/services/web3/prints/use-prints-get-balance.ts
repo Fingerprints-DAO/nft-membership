@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import { parseAmountToDisplay } from 'utils/number'
-import { formatToEtherString, formatToEtherStringBN, normalizeBigNumber } from 'utils/price'
-import { formatEther } from 'viem'
+import { formatToEtherString, formatToEtherStringBN } from 'utils/price'
 import { Address, useAccount, useBalance } from 'wagmi'
 
 export type Balance = {

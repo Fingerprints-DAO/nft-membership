@@ -7,7 +7,6 @@ import TopUp from './top-up'
 import usePrintsGetBalance from 'services/web3/prints/use-prints-get-balance'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import usePrintsGetAllowance from 'services/web3/prints/use-prints-get-allowance'
-import BigNumber from 'bignumber.js'
 import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import useMediaQuery from 'hooks/use-media-query'
 import { useRouter } from 'next/navigation'
@@ -27,14 +26,14 @@ const ConvertPrintsPage = () => {
 
   const leftovers = useMemo(
     () => printsBalance.value.mod(pricePerMembership),
-    [printsBalance, pricePerMembership],
+    [printsBalance, pricePerMembership]
   )
   const totalAvailableToSpend = printsBalance.value.minus(leftovers)
   const toAllow = totalAvailableToSpend.minus(allowance)
 
   const nftsMintables = useMemo(
     () => Number(formatBigNumberFloor(printsBalance.value.div(pricePerMembership), 0)),
-    [printsBalance.value, pricePerMembership],
+    [printsBalance.value, pricePerMembership]
   )
 
   const onBack = useCallback(() => push('/'), [push])
