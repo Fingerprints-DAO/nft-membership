@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useEffect } from 'react'
 import useMigrationMigrate from 'services/web3/migration/use-migration-migrate'
 import usePrintsApprove from 'services/web3/prints/use-prints-approve'
+import { formatBigNumberFloor } from 'utils/price'
 
 export enum AllowanceType {
   Increase = 'increase',
@@ -116,7 +117,7 @@ const Convert = ({
         </Flex>
         <Box flex={1}>
           <Text fontWeight="bold" color="gray.900" mb={2}>
-            Please confirm approval of {toAllow?.toFormat(3)} $PRINTS for transaction
+            Please confirm approval of {formatBigNumberFloor(toAllow, 0)} $PRINTS for transaction
           </Text>
           {isLoadingApprove && (
             <Text color="gray.500">
