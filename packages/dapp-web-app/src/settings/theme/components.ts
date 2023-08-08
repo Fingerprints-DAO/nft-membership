@@ -1,11 +1,11 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
 
 const customColor = (colorScheme: any) => {
-  if (colorScheme === 'blackAlpha') {
+  if (colorScheme === 'black') {
     return 'gray.50'
   }
 
-  if (colorScheme === 'whiteAlpha') {
+  if (colorScheme === 'white') {
     return 'gray.900'
   }
 
@@ -40,46 +40,44 @@ const components = {
         _hover: {
           background: `${colorScheme}.900`,
         },
+        _active: {
+          background: ``,
+        },
       })),
       outline: defineStyle(({ colorScheme }) => ({
         borderColor: `${colorScheme}.500`,
         borderWidth: 2,
         color: `${colorScheme}.500`,
-        _hover: {
-          background: `${colorScheme}.100`,
-        },
+        // _hover: {
+        //   background: `${colorScheme}.100`,
+        //   color: 'black',
+        // },
       })),
-      white: {
-        background: 'white',
-        color: 'gray.900',
-      },
     },
     baseStyle: {
       lineHeight: 1,
-      _hover: {
-        opacity: 0.8,
-      },
     },
   }),
-  //   Input: {
-  //     sizes: {
-  //       lg: {
-  //         field: {
-  //           borderRadius: '8px',
-  //         },
-  //       },
-  //     },
-  //     variants: {
-  //       outline: defineStyle(({ colorScheme = 'gray' }) => ({
-  //         field: {
-  //           background: `${colorScheme}.50`,
-  //           borderColor: `${colorScheme}.100`,
-  //           color: `${colorScheme}.900`,
-  //           borderWidth: 2,
-  //         },
-  //       })),
-  //     },
-  //   },
+  Input: {
+    sizes: {
+      lg: {
+        field: {
+          borderRadius: '8px',
+        },
+      },
+    },
+    variants: {
+      outline: defineStyle(({ colorScheme = 'gray' }) => ({
+        field: {
+          background: `${colorScheme}.50`,
+          borderColor: `${colorScheme}.100`,
+          color: `${colorScheme}.900`,
+          borderWidth: 2,
+          _placeholder: { color: 'gray.400' },
+        },
+      })),
+    },
+  },
 }
 
 export default components
