@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { PageState } from 'types/page'
 import { Suspense } from 'react'
 import {
@@ -19,9 +19,10 @@ import Grid from 'components/grid'
 import Header from 'components/header'
 import Loading from 'components/loading'
 import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
-import { GiModernCity, GiHouse } from 'react-icons/gi'
+import { GiModernCity } from 'react-icons/gi'
 import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
+import ConvertPrintsPage from './(institutional)/convert/page'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
@@ -61,9 +62,11 @@ const HomePage = () => {
   const [animationStarted, setAnimationStarted] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
   const { push } = useRouter()
+  const searchParams = useSearchParams()
+  const modalName = searchParams.get('modal')
 
   const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
-    isConnected ? push('convert') : show?.()
+    isConnected ? push('/?modal=convert') : show?.()
 
   useEffect(() => {
     if (animationStarted) {
@@ -73,6 +76,13 @@ const HomePage = () => {
       }, 8000)
     }
   }, [animationStarted])
+
+  useEffect(() => {
+    if (modalName && !animationEnded) {
+      setAnimationEnded(true)
+      setFirstRender(false)
+    }
+  }, [animationEnded, modalName])
 
   return (
     <Suspense fallback={<Loading full />}>
@@ -251,6 +261,7 @@ const HomePage = () => {
           </Suspense>
         </AnimatePresence>
       </Box>
+      {modalName === 'convert' && <ConvertPrintsPage />}
     </Suspense>
   )
 }
