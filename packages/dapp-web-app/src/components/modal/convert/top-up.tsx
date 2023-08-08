@@ -1,16 +1,23 @@
 import { ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons'
-import { Box, Button, CloseButton, Collapse, Flex, Icon, Link, Spinner, Text, Tooltip } from '@chakra-ui/react'
-import BigNumber from 'bignumber.js'
+import {
+  Box,
+  Button,
+  CloseButton,
+  Collapse,
+  Flex,
+  Icon,
+  Link,
+  Spinner,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
-import { parseAmountToDisplay } from 'utils/number'
 
 type TopUpProps = {
   printsBalance: Balance
   onClose?: () => void
 }
-
-const ZERO = BigNumber(parseAmountToDisplay(BigInt(0)))
 
 const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -21,7 +28,18 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
         <Text fontSize="lg" fontWeight="bold" color="gray.900" textAlign="center" lineHeight="24px">
           Buy $PRINTS
         </Text>
-        {!!onClose && <CloseButton color="gray.500" onClick={onClose} position="absolute" right={0} top={0} w="44px" h="44px" size="lg" />}
+        {!!onClose && (
+          <CloseButton
+            color="gray.500"
+            onClick={onClose}
+            position="absolute"
+            right={0}
+            top={0}
+            w="44px"
+            h="44px"
+            size="lg"
+          />
+        )}
       </Box>
       <Box borderColor="gray.100" borderWidth={1} borderRadius="8px" p={4} mb={4}>
         <Text color="gray.500" mb={1}>
@@ -30,9 +48,10 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
         <Text color="gray.700" fontWeight="bold">
           {printsBalance.formatted} $PRINTS
         </Text>
-        {printsBalance.value.lte(ZERO) && (
+        {printsBalance.value.lte(0) && (
           <Text fontSize="xs" color="secondary.500" mt={4}>
-            You don&apos;t have any $PRINTS, which means you can acquire the NFT Membership directly on Opensea.
+            You don&apos;t have any $PRINTS, which means you can acquire the NFT Membership directly
+            on Opensea.
           </Text>
         )}
       </Box>
@@ -42,7 +61,12 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
             You are buying
           </Text>
           <Tooltip
-            label={<Text>You could end up paying more than this amount due to pool slippage. Click details for more information.</Text>}
+            label={
+              <Text>
+                You could end up paying more than this amount due to pool slippage. Click details
+                for more information.
+              </Text>
+            }
             fontSize="xs"
             color="gray.900"
             textAlign="left"
