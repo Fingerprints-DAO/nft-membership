@@ -74,6 +74,9 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /// @dev Auction data
   AuctionData private auctionData;
 
+  /// @dev The gas limit for the refund last bid.
+  uint256 private constant GAS_LIMIT = 3_000;
+
   /**
    * @dev Represents the data of the auction, including the highest bidder and their bid.
    */
@@ -176,10 +179,9 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
 
     // Only refund the previous highest bidder, if there was a previous bid
     if (auctionData.highestBidder != address(0)) {
-      (bool success, ) = auctionData.highestBidder.call{
-        value: auctionData.highestBid
+      auctionData.highestBidder.call{
+        value: auctionData.highestBid, gas: GAS_LIMIT
       }('');
-      require(success, 'Transfer failed.');
     }
 
     auctionData.highestBidder = msg.sender;

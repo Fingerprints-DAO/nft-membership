@@ -54,10 +54,10 @@ describe('Auction', function () {
     ;[seller, bidder1, bidder2, treasury] = await ethers.getSigners()
     ;({ auction, membership } = await deployContracts())
     const startTime = (await ethers.provider.getBlock('latest'))?.timestamp || 0
-    const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+    const endTimeIn7Days = startTime + 7 * 24 * 60 * 60 // 7 days
     await auction.setConfig(
       startTime,
-      endTimeIn3Days,
+      endTimeIn7Days,
       minBidIncrement,
       startingBid,
     )
@@ -78,12 +78,12 @@ describe('Auction', function () {
     it('Can not set config twice', async function () {
       const startTime =
         (await ethers.provider.getBlock('latest'))?.timestamp || 0
-      const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn7Days = startTime + 7 * 24 * 60 * 60 // 7 days
 
       await expect(
         auction.setConfig(
           startTime,
-          endTimeIn3Days,
+          endTimeIn7Days,
           minBidIncrement,
           startingBid,
         ),
@@ -91,14 +91,13 @@ describe('Auction', function () {
     })
 
     it('Only admin can set config', async function () {
-      const startTime =
-        (await ethers.provider.getBlock('latest'))?.timestamp || 0
-      const endTimeIn3Days = startTime + 7 * 24 * 60 * 60 // 7 days
+      const now = (await ethers.provider.getBlock('latest'))?.timestamp || 0
+      const endTimeIn7Days = now + 7 * 24 * 60 * 60 // 7 days
 
       await expect(
         auction
           .connect(bidder1)
-          .setConfig(startTime, endTimeIn3Days, minBidIncrement, startingBid),
+          .setConfig(now, endTimeIn7Days, minBidIncrement, startingBid),
       ).to.be.revertedWith(
         `AccessControl: account ${bidder1.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
@@ -106,52 +105,50 @@ describe('Auction', function () {
 
     it('Revert on invalid config', async function () {
       const { auction: newAuction } = await deployContracts()
-      const startTime = 0
-      const endTimeIn3Days = 7 * 24 * 60 * 60 // 7 days
+      const startTimeZero = 0
+      const endTimeIn7Days = 7 * 24 * 60 * 60 // 7 days
 
       await expect(
         newAuction.setConfig(
-          startTime,
-          endTimeIn3Days,
+          startTimeZero,
+          endTimeIn7Days,
           minBidIncrement,
           startingBid,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
 
-      const startTime3 = 7 * 24 * 60 * 60 // 7 days
-      const endTimeIn3Days3 = startTime3 - 1 // 7 days - 1
+      const startTimeIn7Days = 7 * 24 * 60 * 60 // 7 days
+      const endTimeIn7DaysMinus1 = startTimeIn7Days - 1 // 7 days - 1
 
       await expect(
         newAuction.setConfig(
-          startTime3,
-          endTimeIn3Days3,
+          startTimeIn7Days,
+          endTimeIn7DaysMinus1,
           minBidIncrement,
           startingBid,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidStartEndTime')
 
-      const startTime4 = 7 * 24 * 60 * 60 // 7 days
-      const endTimeIn3Days4 = startTime4 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const endTimeIn7DaysPlus1 = startTimeIn7Days + 7 * 24 * 60 * 60 + 1 // 7 days + 1
       const startingBid4 = 0
 
       await expect(
         newAuction.setConfig(
-          startTime4,
-          endTimeIn3Days4,
+          startTimeIn7Days,
+          endTimeIn7DaysPlus1,
           minBidIncrement,
           startingBid4,
         ),
       ).to.be.revertedWithCustomError(newAuction, 'InvalidAmountInWei')
       //test wrong minBidIncrementPercentage
 
-      const startTime5 = 7 * 24 * 60 * 60 // 7 days
-      const endTimeIn3Days5 = startTime5 + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const endTimeIn3Days5 = startTimeIn7Days + 7 * 24 * 60 * 60 + 1 // 7 days + 1
       const startingBid5 = 100
       const minBidIncrementPercentage5 = 0
 
       await expect(
         newAuction.setConfig(
-          startTime5,
+          startTimeIn7Days,
           endTimeIn3Days5,
           minBidIncrementPercentage5,
           startingBid5,
