@@ -1048,10 +1048,10 @@
   resolved "https://registry.yarnpkg.com/@cowprotocol/contracts/-/contracts-1.4.0.tgz#e93e5f25aac76feeaa348fa57231903274676247"
   integrity sha512-XLs3SlPmXD4lbiWIO7mxxuCn1eE5isuO6EUlE1cj17HqN/wukDAN0xXYPx6umOH/XdjGS33miMiPHELEyY9siw==
 
-"@cowprotocol/cow-sdk@^2.3.0-rc.7":
-  version "2.3.0-rc.7"
-  resolved "https://registry.yarnpkg.com/@cowprotocol/cow-sdk/-/cow-sdk-2.3.0-rc.7.tgz#03861aa44730ed8189eea3b2c48ded041ee0311e"
-  integrity sha512-fj8wnab+0qUjmdFZr7tUDeZOBU0fR/TiSUsN9XI3qkddbe0qTZQpcWG0dYcD9/ceJ4k2hWZUTczepK0DeXaEXg==
+"@cowprotocol/cow-sdk@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@cowprotocol/cow-sdk/-/cow-sdk-2.3.1.tgz#ea7347869eada629b706cc24567ddcaa48bcc1ed"
+  integrity sha512-Rn3zCo3VCPqi3Wzqov0mDHXVVxBVhkLpnxnxcEZW7Kpv9WGcudl1vpz9e3Gs3YMzUQ5G6IA+kHxm5l81boIPhQ==
   dependencies:
     "@cowprotocol/contracts" "^1.4.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -7014,7 +7014,7 @@ ethers@^4.0.40:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^5.7.1:
+ethers@^5.7.1, ethers@^5.7.2:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -7054,19 +7054,6 @@ ethers@^6.6.2:
   version "6.6.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.6.2.tgz#0b6131b5fa291fec69b7ae379cb6bb2405c505a7"
   integrity sha512-vyWfVAj2g7xeZIivOqlbpt7PbS2MzvJkKgsncgn4A/1xZr8Q3BznBmEBRQyPXKCgHmX4PzRQLpnYG7jl/yutMg==
-  dependencies:
-    "@adraffy/ens-normalize" "1.9.2"
-    "@noble/hashes" "1.1.2"
-    "@noble/secp256k1" "1.7.1"
-    "@types/node" "18.15.13"
-    aes-js "4.0.0-beta.5"
-    tslib "2.4.0"
-    ws "8.5.0"
-
-ethers@^6.6.7:
-  version "6.6.7"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.6.7.tgz#9cf773bcbc0ca56d783d4774e9b73b4d1aff9962"
-  integrity sha512-1SdT3W5/IPAcx9l5/+9qKRYR/iqVIdNQIct18yeh+XvN+I4RK44mvOsAerMwJYCAwdQfsOgf3OkfozeuMInbtQ==
   dependencies:
     "@adraffy/ens-normalize" "1.9.2"
     "@noble/hashes" "1.1.2"

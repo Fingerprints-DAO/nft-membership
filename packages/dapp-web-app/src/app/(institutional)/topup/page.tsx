@@ -6,16 +6,19 @@ import Grid from 'components/grid'
 import TopUp from 'components/top-up'
 import {
   OrderBookApi,
-  OrderQuoteSide,
+  OrderParameters,
+  OrderQuoteSideKindBuy,
   OrderSigningUtils,
   SigningScheme,
+  UnsignedOrder,
 } from '@cowprotocol/cow-sdk'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { formatToEtherString } from 'utils/price'
-import { ethers } from 'ethers'
+import { parseEther } from 'viem'
+import { useWalletClient } from 'wagmi'
+import { Signer } from 'ethers'
 
-const chainId = 1 // Goerli chain
+const chainId = 5 // Goerli chain
 
 const orderBookApi = new OrderBookApi({ chainId })
 // const subgraphApi = new SubgraphApi({ chainId })
@@ -26,11 +29,12 @@ const amountToBuy = BigNumber(5000)
 
 const getQuote = async () => {
   return await orderBookApi.getQuote({
-    kind: 'buy' as OrderQuoteSide.kind,
-    sellToken: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    buyToken: '0x4dd28568d05f09b02220b09c2cb307bfd837cb95',
-    buyAmountAfterFee: ethers.parseEther(amountToBuy.toString()).toString(),
+    kind: OrderQuoteSideKindBuy.BUY,
+    sellToken: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6', // weth goerli
+    buyToken: '0x91056d4a53e1faa1a84306d4deaec71085394bc8', // cow
+    buyAmountAfterFee: parseEther(amountToBuy.toString()).toString(),
     from: '0x13d735A4D5E966b8F7B19Fc2f476BfC25c0fc7Dc',
+    receiver: '0x13d735A4D5E966b8F7B19Fc2f476BfC25c0fc7Dc',
     validTo,
     signingScheme: SigningScheme.EIP1271,
     onchainOrder: true,
@@ -38,47 +42,32 @@ const getQuote = async () => {
 }
 
 const TopupPage = () => {
-  const [test, setTest] = useState({
-    sellToken: '',
-    buyToken: '',
-    validTo: 0,
-    buyAmount: '',
-    sellAmount: '',
-    feeAmount: '',
-    triggered: false,
-  })
+  const { data: walletClient, isError, isLoading } = useWalletClient()
+  const [quote, setQuote] = useState<OrderParameters>()
   useEffect(() => {
     const init = async () => {
-      const {
-        sellToken,
-        buyToken,
-        validTo,
-        buyAmount,
-        sellAmount,
-        receiver,
-        feeAmount,
-      } = (await getQuote()).quote
-      console.table({
-        sellToken,
-        buyToken,
-        validTo,
-        buyAmount,
-        sellAmount,
-        receiver,
-        feeAmount,
-      })
-      setTest({
-        sellToken,
-        buyToken,
-        validTo,
-        buyAmount,
-        sellAmount,
-        feeAmount,
-        triggered: true,
-      })
+      const currentQuote = (await getQuote()).quote
+      console.table(currentQuote)
+      setQuote(currentQuote)
     }
     init()
   }, [])
+
+  const onSign = useCallback(async () => {
+    if (!quote || !walletClient) return
+    const order = {
+      ...quote,
+      partiallyFillable: false,
+      sellAmount: (Number(quote.sellAmount) * 1.05).toString(),
+    } as UnsignedOrder
+
+    const signedOrder = await OrderSigningUtils.signOrder(
+      order,
+      5,
+      walletClient as unknown as Signer
+    )
+    console.table(signedOrder)
+  }, [quote, walletClient])
 
   return (
     <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
@@ -88,22 +77,18 @@ const TopupPage = () => {
             Top up
           </Text>
           <Box bgColor={'white'}>
-            {test.triggered && (
+            {/* {test.triggered && (
               <Text color={'black'} as={'pre'}>
-                <Text>
-                  Buy Amount: {formatToEtherString(test.buyAmount)} $prints
-                </Text>
-                <Text>
-                  Sell Amount: {formatToEtherString(test.sellAmount)} weth
-                </Text>
-                <Text>Fee: {formatToEtherString(test.feeAmount)}</Text>
-                <Text>
-                  validTo: {dayjs(Number(`${test.validTo}000`)).toString()}
-                </Text>
+                <Text>Buy Amount: {formatToEtherStringBN(test.buyAmount)} $prints</Text>
+                <Text>Sell Amount: {formatToEtherStringBN(test.sellAmount)} weth</Text>
+                <Text>Fee: {formatToEtherStringBN(test.feeAmount)}</Text>
+                <Text>validTo: {dayjs(Number(`${test.validTo}000`)).toString()}</Text>
               </Text>
-            )}
+            )} */}
             <TopUp
               printsBalance={{ formatted: '1000', value: BigNumber(1000) }}
+              quote={quote}
+              onSign={onSign}
             />
           </Box>
         </GridItem>
