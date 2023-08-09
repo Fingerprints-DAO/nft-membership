@@ -1,6 +1,7 @@
 export { default as MembershipABI } from '../abi/contracts/Membership.sol/Membership.json'
 export { default as MigrationABI } from '../abi/contracts/Migration.sol/Migration.json'
 export { default as ERC20ABI } from '../abi/contracts/mocks/ERC20Mock.sol/ERC20Mock.json'
+export { Auction__factory as AuctionFactory } from '../typechain-types/factories/contracts/Auction__factory'
 export { Membership__factory as MembershipFactory } from '../typechain-types/factories/contracts/Membership__factory'
 export { Migration__factory as MigrationFactory } from '../typechain-types/factories/contracts/Migration__factory'
 export { ERC20Mock__factory as ERC20Factory } from '../typechain-types/factories/contracts/mocks/ERC20Mock__factory'

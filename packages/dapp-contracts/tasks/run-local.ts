@@ -37,15 +37,25 @@ task(
   console.log(
     `arod.studio template contracts deployed to local node at http://localhost:8545 (Chain ID: ${chainId})`,
   )
-  console.log(`ERC20 Mock ($PRINTS) address: ${erc20MockAddress}`)
-  console.log(`Membership address: ${membershipAddress}`)
-  console.log(`Migration address: ${migrationAddress}`)
+  console.log(
+    `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
+  )
+  console.log(
+    `Membership address: ${await contracts.Membership.instance.getAddress()}`,
+  )
+  console.log(
+    `Migration address: ${await contracts.Migration.instance.getAddress()}`,
+  )
+  console.log(
+    `Auction address: ${await contracts.Auction.instance.getAddress()}`,
+  )
 
   writeLogs(
     network.chainId,
-    erc20MockAddress,
-    membershipAddress,
-    migrationAddress,
+    await contracts.ERC20Mock.instance?.getAddress(),
+    await contracts.Membership.instance?.getAddress(),
+    await contracts.Migration.instance?.getAddress(),
+    await contracts.Auction.instance?.getAddress(),
   )
 
   // Set local node mining interval

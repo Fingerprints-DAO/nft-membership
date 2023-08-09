@@ -1,0 +1,14 @@
+{
+  "name": "Voxelglyph #1",
+  "tokenID": 1,
+  "token_id": 1,
+  "image": "https://voxelglyph-nft-membership-git-develop-fingerprints.vercel.app/nft.jpg",
+  "collection_name": "Voxelglyph",
+  "description": "Fingerprints' membership NFT designed by Larva Labs.",
+  "artist": "Larva Labs",
+  "website": "https://fingerprintsdao.xyz/",
+  "aspect_ratio": 1,
+  "animation_url": "https://voxelglyph-nft-membership-git-develop-fingerprints.vercel.app/nft/voxelglyph.html",
+  "external_url": "https://voxelglyph-nft-membership-git-develop-fingerprints.vercel.app/nft/voxelglyph.html",
+  "background_color": "000000"
+  }
