@@ -2,7 +2,7 @@ import { useNftMembershipContext } from 'contexts/nft-membership'
 import { usePrintsAllowance } from '../generated'
 import { Address } from 'viem'
 import BigNumber from 'bignumber.js'
-import { parseAmountToDisplay } from 'utils/number'
+import { formatToEtherString } from 'utils/price'
 
 const usePrintsGetAllowance = () => {
   const { address, contracts } = useNftMembershipContext()
@@ -13,10 +13,10 @@ const usePrintsGetAllowance = () => {
   })
 
   if (!allowance) {
-    return BigNumber(parseAmountToDisplay(BigInt(0)))
+    return BigNumber(0)
   }
 
-  return BigNumber(parseAmountToDisplay(BigInt(allowance?.toString() ?? 0)))
+  return formatToEtherString(allowance.toString())
 }
 
 export default usePrintsGetAllowance
