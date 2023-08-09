@@ -75,7 +75,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   AuctionData private auctionData;
 
   /// @dev The gas limit for the refund last bid.
-  uint256 private constant GAS_LIMIT = 3_000;
+  uint256 private constant GAS_LIMIT = 5_000;
 
   /**
    * @dev Represents the data of the auction, including the highest bidder and their bid.
@@ -149,8 +149,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
       revert InvalidStartEndTime(_startTime, _endTime);
     if (_startAmountInWei == 0) revert InvalidAmountInWei();
 
-    if (_minBidIncrementInWei == 0)
-      revert InvalidMinBidIncrementValue();
+    if (_minBidIncrementInWei == 0) revert InvalidMinBidIncrementValue();
 
     auctionData.highestBid = _startAmountInWei;
 
@@ -180,7 +179,8 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     // Only refund the previous highest bidder, if there was a previous bid
     if (auctionData.highestBidder != address(0)) {
       auctionData.highestBidder.call{
-        value: auctionData.highestBid, gas: GAS_LIMIT
+        value: auctionData.highestBid,
+        gas: GAS_LIMIT
       }('');
     }
 
@@ -200,12 +200,12 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     }
 
     if (auctionData.highestBidder != address(0)) {
-      IERC721(nftAddress).safeTransferFrom(
+      IERC721(nftAddress).transferFrom(
         address(this),
         auctionData.highestBidder,
         nftId
       );
-      (bool success, ) = treasury.call{value: auctionData.highestBid}('');
+      (bool success, ) = treasury.call{value: address(this).balance}('');
       require(success, 'Transfer failed.');
       emit AuctionSettled(auctionData.highestBidder, auctionData.highestBid);
     } else {
