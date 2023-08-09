@@ -13,7 +13,7 @@ const usePrintsGetAllowance = () => {
   })
 
   if (!allowance) {
-    return BigNumber(parseAmountToDisplay(BigInt(0)))
+    return BigNumber(0)
   }
 
   return BigNumber(parseAmountToDisplay(BigInt(allowance?.toString() ?? 0)))
