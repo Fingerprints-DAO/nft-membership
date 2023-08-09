@@ -6,6 +6,7 @@ import Grid from 'components/grid'
 import TopUp from 'components/top-up'
 import {
   OrderBookApi,
+  OrderCreation,
   OrderParameters,
   OrderQuoteSideKindBuy,
   OrderSigningUtils,
@@ -17,15 +18,17 @@ import dayjs from 'dayjs'
 import { parseEther } from 'viem'
 import { useWalletClient } from 'wagmi'
 import { Signer } from 'ethers'
+import { useEthersSigner } from 'hooks/ethers'
 
 const chainId = 5 // Goerli chain
 
 const orderBookApi = new OrderBookApi({ chainId })
 // const subgraphApi = new SubgraphApi({ chainId })
-const orderSigningUtils = new OrderSigningUtils()
+
+// const orderSigningUtils = new OrderSigningUtils()
 
 const validTo = dayjs().add(30, 'minutes').unix()
-const amountToBuy = BigNumber(5000)
+const amountToBuy = BigNumber(28)
 
 const getQuote = async () => {
   return await orderBookApi.getQuote({
@@ -42,8 +45,9 @@ const getQuote = async () => {
 }
 
 const TopupPage = () => {
-  const { data: walletClient, isError, isLoading } = useWalletClient()
   const [quote, setQuote] = useState<OrderParameters>()
+  const signer = useEthersSigner()
+
   useEffect(() => {
     const init = async () => {
       const currentQuote = (await getQuote()).quote
@@ -54,20 +58,22 @@ const TopupPage = () => {
   }, [])
 
   const onSign = useCallback(async () => {
-    if (!quote || !walletClient) return
+    if (!quote || !signer) return
     const order = {
       ...quote,
       partiallyFillable: false,
       sellAmount: (Number(quote.sellAmount) * 1.05).toString(),
     } as UnsignedOrder
 
-    const signedOrder = await OrderSigningUtils.signOrder(
-      order,
-      5,
-      walletClient as unknown as Signer
-    )
+    const signedOrder = await OrderSigningUtils.signOrder(order, 5, signer)
     console.table(signedOrder)
-  }, [quote, walletClient])
+    const orderId = await orderBookApi.sendOrder({
+      ...order,
+      ...signedOrder,
+    } as unknown as OrderCreation)
+
+    console.log(orderBookApi.getOrderLink(orderId)) // https://explorer.cow.fi/goerli/orders/${orderId}
+  }, [quote, signer])
 
   return (
     <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
