@@ -1,7 +1,6 @@
 'use client'
 
-import { Box, Button, Flex, GridItem, Heading, Image } from '@chakra-ui/react'
-import Grid from 'components/grid'
+import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 
