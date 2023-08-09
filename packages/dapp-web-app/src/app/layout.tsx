@@ -11,8 +11,8 @@ type Modals = {
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Fingerprints DAO membership NFT',
-    default: 'Voxelglyphs',
+    template: '%s | Fingerprints Membership Migration',
+    default: 'Fingerprints Membership Migration',
   },
   description:
     'Fingerprints membership is moving from 5,000 $PRINTS to an NFT designed by Larva Labs',
