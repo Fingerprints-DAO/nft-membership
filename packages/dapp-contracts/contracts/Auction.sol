@@ -74,9 +74,6 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
   /// @dev Auction data
   AuctionData private auctionData;
 
-  /// @dev The gas limit for the refund last bid.
-  uint256 private constant GAS_LIMIT = 5_000;
-
   /**
    * @dev Represents the data of the auction, including the highest bidder and their bid.
    */
@@ -97,11 +94,19 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
     uint256 minBidIncrementInWei;
   }
 
+  /**
+   * @dev Modifier to check if the configuration is valid.
+   * @dev Throws ConfigNotSet error if the start time is not set.
+   */
   modifier validConfig() {
     if (_config.startTime == 0) revert ConfigNotSet();
     _;
   }
 
+  /**
+   * @dev Modifier to check if the current block timestamp is within the specified start and end time.
+   * @dev Throws InvalidStartEndTime error if the current timestamp is not between the start and end time.
+   */
   modifier validTime() {
     Config memory config = _config;
     if (
@@ -178,10 +183,7 @@ contract Auction is ERC721Holder, Pausable, AccessControl, ReentrancyGuard {
 
     // Only refund the previous highest bidder, if there was a previous bid
     if (auctionData.highestBidder != address(0)) {
-      auctionData.highestBidder.call{
-        value: auctionData.highestBid,
-        gas: GAS_LIMIT
-      }('');
+      auctionData.highestBidder.call{value: auctionData.highestBid}('');
     }
 
     auctionData.highestBidder = msg.sender;
