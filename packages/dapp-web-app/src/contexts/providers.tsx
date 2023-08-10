@@ -8,6 +8,7 @@ import { CacheProvider } from '@chakra-ui/next-js'
 import { config } from '../settings/wagmi'
 import theme from 'settings/theme'
 import Transition from 'components/transition'
+import { NftMembershipProvider } from './nft-membership'
 import Loading from 'components/loading'
 
 const Providers = ({ children }: PropsWithChildren) => {
@@ -21,13 +22,15 @@ const Providers = ({ children }: PropsWithChildren) => {
     <CacheProvider>
       <ChakraProvider theme={theme}>
         <WagmiConfig config={config}>
-          {mounted ? (
-            <ConnectKitProvider mode="light">
-              <Transition>{children}</Transition>
-            </ConnectKitProvider>
-          ) : (
-            <Loading />
-          )}
+          <NftMembershipProvider>
+            {mounted ? (
+              <ConnectKitProvider mode="light">
+                <Transition>{children}</Transition>
+              </ConnectKitProvider>
+            ) : (
+              <Loading />
+            )}
+          </NftMembershipProvider>
         </WagmiConfig>
       </ChakraProvider>
     </CacheProvider>
