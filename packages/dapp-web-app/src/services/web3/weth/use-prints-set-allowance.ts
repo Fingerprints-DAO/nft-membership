@@ -1,9 +1,9 @@
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import {
-  usePreparePrintsDecreaseAllowance,
-  usePreparePrintsIncreaseAllowance,
-  usePrintsDecreaseAllowance,
-  usePrintsIncreaseAllowance,
+  usePrepareWethDecreaseAllowance,
+  usePrepareWethIncreaseAllowance,
+  useWethDecreaseAllowance,
+  useWethIncreaseAllowance,
 } from '../generated'
 import { Address } from 'viem'
 import BigNumber from 'bignumber.js'
@@ -23,8 +23,8 @@ const useWETHSetAllowance = (amount?: BigNumber) => {
     return {
       amount: finalAmount,
       prepare:
-        mode === 'decrease' ? usePreparePrintsDecreaseAllowance : usePreparePrintsIncreaseAllowance,
-      write: mode === 'decrease' ? usePrintsDecreaseAllowance : usePrintsIncreaseAllowance,
+        mode === 'decrease' ? usePrepareWethDecreaseAllowance : usePrepareWethIncreaseAllowance,
+      write: mode === 'decrease' ? useWethDecreaseAllowance : useWethIncreaseAllowance,
     }
   }, [amount, mode])
 

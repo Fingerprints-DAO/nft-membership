@@ -1,5 +1,5 @@
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import { usePrintsAllowance } from '../generated'
+import { useWethAllowance } from '../generated'
 import { Address } from 'viem'
 import BigNumber from 'bignumber.js'
 import { formatToEtherString } from 'utils/price'
@@ -7,7 +7,7 @@ import { formatToEtherString } from 'utils/price'
 const useWETHGetAllowance = () => {
   const { address, contracts } = useNftMembershipContext()
 
-  const { data: allowance } = usePrintsAllowance({
+  const { data: allowance } = useWethAllowance({
     address: contracts.WETH.address as Address,
     args: [address as Address, process.env.NEXT_PUBLIC_COW_ADDRESS as Address],
   })

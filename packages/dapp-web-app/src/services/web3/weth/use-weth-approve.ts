@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import useTxToast from 'hooks/use-tx-toast'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
-import { printsABI } from '../generated'
+import { wethABI } from '../generated'
 
 const useWETHApprove = (
   allowance: BigNumber,
@@ -32,7 +32,7 @@ const useWETHApprove = (
 
       const config = await prepareWriteContract({
         address: contracts.WETH.address as Address,
-        abi: printsABI,
+        abi: wethABI,
         functionName: 'approve',
         args: [process.env.NEXT_PUBLIC_COW_ADDRESS as Address, toAllow.integerValue() as any],
       })

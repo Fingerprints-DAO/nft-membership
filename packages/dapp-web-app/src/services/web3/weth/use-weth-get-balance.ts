@@ -12,13 +12,13 @@ const useWETHGetBalance = (): Balance => {
   const { address } = useAccount()
   const { contracts } = useNftMembershipContext()
 
-  const { data: printsBalance } = useBalance({
+  const { data: wethBalance } = useBalance({
     address,
     enabled: Boolean(address) && Boolean(contracts.WETH.address),
     token: contracts.WETH.address as Address,
   })
 
-  if (!printsBalance) {
+  if (!wethBalance) {
     return {
       formatted: '0',
       value: BigNumber(0),
@@ -26,8 +26,8 @@ const useWETHGetBalance = (): Balance => {
   }
 
   return {
-    value: formatToEtherString(printsBalance.value.toString()),
-    formatted: Number(formatToEtherStringBN(printsBalance.value)).toLocaleString(),
+    value: formatToEtherString(wethBalance.value.toString()),
+    formatted: Number(formatToEtherStringBN(wethBalance.value)).toLocaleString(),
   }
 }
 
