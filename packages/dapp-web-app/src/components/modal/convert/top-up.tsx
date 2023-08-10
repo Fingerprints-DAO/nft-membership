@@ -25,9 +25,8 @@ import {
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
 import { useEthersSigner } from 'hooks/ethers'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
-import { clearInterval } from 'timers'
 import {
   formatBigNumberUp,
   formatToEtherString,
@@ -91,6 +90,7 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [quote, setQuote] = useState<OrderParameters>()
   const signer = useEthersSigner()
+  const intervalIDRef = useRef<null | ReturnType<typeof setInterval>>(null)
 
   useEffect(() => {
     const init = async () => {
@@ -101,9 +101,10 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
       setLoadingQuote(false)
     }
     init()
-    const interval = setInterval(init, 30000)
+    intervalIDRef.current = setInterval(init, 30000)
     return () => {
-      clearInterval(interval)
+      if (intervalIDRef.current) clearInterval(intervalIDRef.current)
+      intervalIDRef.current = null
     }
   }, [])
 
