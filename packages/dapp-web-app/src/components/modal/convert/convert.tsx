@@ -1,83 +1,27 @@
-import { Text, Box, Flex, CloseButton, Link, Button } from '@chakra-ui/react'
+import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
-import { useEffect } from 'react'
-import useMigrationMigrate from 'services/web3/migration/use-migration-migrate'
-import usePrintsApprove from 'services/web3/prints/use-prints-approve'
-import { formatBigNumberFloor } from 'utils/price'
+import Link from 'next/link'
+import { Balance } from 'services/web3/prints/use-prints-get-balance'
+import { pluralize } from 'utils/string'
 
-export enum AllowanceType {
-  Increase = 'increase',
-  Decrease = 'decrease',
-}
+export type Action = '' | 'top-up' | 'convert'
 
 type ConvertProps = {
-  allowance: BigNumber
-  toAllow: BigNumber
-  totalAvailableToSpend: BigNumber
+  printsBalance: Balance
   nftsMintables: number
+  leftovers: BigNumber
   onClose?: () => void
+  onAction: (action: Action) => void
 }
 
-const SuccessIcon = (props: any) => (
-  <svg {...props} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M8 15a6.978 6.978 0 0 0 4.95-2.05A6.978 6.978 0 0 0 15 8a6.978 6.978 0 0 0-2.05-4.95A6.978 6.978 0 0 0 8 1a6.978 6.978 0 0 0-4.95 2.05A6.978 6.978 0 0 0 1 8c0 1.933.784 3.683 2.05 4.95A6.978 6.978 0 0 0 8 15Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-    <path
-      d="m5.2 8 2.1 2.1 4.2-4.2"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
-const Convert = ({
-  allowance,
-  toAllow,
-  totalAvailableToSpend,
-  nftsMintables,
-  onClose,
-}: ConvertProps) => {
-  const {
-    approve,
-    isLoading: isLoadingApprove,
-    hasError: hasErrorApprove,
-    txHash: txHashApprove,
-    isSubmitted: isSubmittedApprove,
-    isApproved,
-  } = usePrintsApprove(allowance, toAllow, totalAvailableToSpend)
-
-  const {
-    migrate,
-    isLoading: isLoadingMigrate,
-    hasError: hasErrorMigrate,
-    txHash: txHashMigrate,
-    isSubmitted: isSubmittedMigrate,
-    isSuccess: isSuccessMigrate,
-  } = useMigrationMigrate(nftsMintables)
-
-  useEffect(() => {
-    if (!isApproved && !isSubmittedApprove) {
-      approve()
-    }
-  }, [approve, isApproved, isSubmittedApprove])
-
-  useEffect(() => {
-    if (isApproved && !isSubmittedMigrate) {
-      migrate()
-    }
-  }, [migrate, isApproved, isSubmittedMigrate])
+const Convert = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }: ConvertProps) => {
+  const handleAction = (action: Action) => () => onAction(action)
 
   return (
     <>
       <Box position="relative" py="13px" mb={7}>
         <Text fontSize="lg" fontWeight="bold" color="gray.900" textAlign="center" lineHeight="24px">
-          Confirm mint in your wallet
+          Convert $PRINTS to Fingerprints membership NFT
         </Text>
         {!!onClose && (
           <CloseButton
@@ -92,129 +36,77 @@ const Convert = ({
           />
         )}
       </Box>
-      <Flex
-        alignItems="flex-start"
-        flexWrap="wrap"
-        mb={6}
-        pb={6}
-        borderBottom="1px"
-        borderBottomColor="gray.300"
-      >
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          border={2}
-          borderStyle="solid"
-          borderColor="gray.500"
-          rounded="full"
-          mr={6}
-          w={8}
-          h={8}
-        >
-          <Text fontSize="lg" fontWeight="bold" color="gray.500">
-            1
+      <Box borderColor="gray.100" borderWidth={1} borderRadius="8px" p={4} mb={4}>
+        <Text color="gray.500" mb={1}>
+          Your $PRINTS balance
+        </Text>
+        <Text color="gray.700" fontWeight="bold">
+          {printsBalance.formatted} $PRINTS
+        </Text>
+        {printsBalance.value.lte(0) && (
+          <Text fontSize="xs" color="secondary.500" mt={4}>
+            You don&apos;t have any $PRINTS, which means you can acquire the NFT Membership directly
+            on Opensea.
           </Text>
-        </Flex>
-        <Box flex={1}>
-          <Text fontWeight="bold" color="gray.900" mb={2}>
-            Please confirm approval of {formatBigNumberFloor(toAllow, 0)} $PRINTS for transaction
-          </Text>
-          {isLoadingApprove && (
-            <Text color="gray.500">
-              Waiting for{' '}
-              {!!txHashApprove ? (
-                <Link
-                  color="links.500"
-                  href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashApprove}`}
-                  title="Transaction"
-                  target="_blank"
-                >
-                  transaction
-                </Link>
-              ) : (
-                'approval'
-              )}{' '}
-              ...
+        )}
+      </Box>
+      {printsBalance.value.gt(0) && (
+        <>
+          <Box borderColor="gray.100" borderWidth={1} borderRadius="8px" p={4} mb={4}>
+            <Text color="gray.500" mb={1}>
+              # of Membership NFTs mintable
             </Text>
-          )}
-          {isApproved && (
-            <Flex alignItems="center" color="gray.500">
-              <SuccessIcon width={16} height={16} />
-              <Text color="gray.500" ml={1}>
-                Approved!
-              </Text>
-            </Flex>
-          )}
-          {hasErrorApprove && (
-            <>
-              <Text color="secondary.500">An error occurred or the transaction was cancelled.</Text>
-              <Flex mt={2} justifyContent="flex-end">
-                <Button colorScheme="black" onClick={approve}>
-                  Try again
-                </Button>
-              </Flex>
-            </>
-          )}
-        </Box>
-      </Flex>
-      <Flex alignItems="flex-start" flexWrap="wrap">
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          border={2}
-          borderStyle="solid"
-          borderColor="gray.500"
-          rounded="full"
-          mr={6}
-          w={8}
-          h={8}
-        >
-          <Text fontSize="lg" fontWeight="bold" color="gray.500">
-            2
-          </Text>
-        </Flex>
-        <Box flex={1}>
-          <Text fontWeight="bold" color="gray.900" mb={2}>
-            Please confirm the conversion of $PRINTS to membership NFT
-          </Text>
-          {isLoadingMigrate && (
-            <Text color="gray.500">
-              Waiting for{' '}
-              {!!txHashMigrate ? (
-                <Link
-                  color="links.500"
-                  href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${txHashMigrate}`}
-                  title="Transaction"
-                  target="_blank"
-                >
-                  transaction
-                </Link>
-              ) : (
-                'approval'
-              )}{' '}
-              ...
+            <Text color="gray.700" fontWeight="bold">
+              {pluralize(nftsMintables, 'NFTs', 'NFT')}
             </Text>
-          )}
-          {isSuccessMigrate && (
-            <Flex alignItems="center" color="gray.500">
-              <SuccessIcon width={16} height={16} />
-              <Text color="gray.500" ml={1}>
-                Migrated!
+          </Box>
+          {leftovers.gt(0) && (
+            <Box borderColor="gray.100" borderWidth={1} borderRadius="8px" p={4} mb={10}>
+              <Text color="gray.500" mb={1}>
+                Leftover
               </Text>
-            </Flex>
+              <Text color="gray.700" fontWeight="bold">
+                {leftovers.toFormat()} $PRINTS
+              </Text>
+              <Text color="secondary.500" fontSize="xs" mt={4}>
+                Top up your $PRINTS to a multiple of 5,000 for a full conversion.
+              </Text>
+            </Box>
           )}
-          {hasErrorMigrate && (
-            <>
-              <Text color="secondary.500">An error occurred or the transaction was cancelled.</Text>
-              <Flex mt={2} justifyContent="flex-end">
-                <Button colorScheme="black" onClick={migrate}>
-                  Try again
-                </Button>
-              </Flex>
-            </>
-          )}
-        </Box>
-      </Flex>
+        </>
+      )}
+      <Box>
+        {printsBalance.value.lte(0) && (
+          <Button
+            as={Link}
+            href="https://opensea.io"
+            target="_blank"
+            colorScheme="black"
+            w="full"
+            size="lg"
+          >
+            Buy on OpenSea
+          </Button>
+        )}
+        {leftovers.gt(0) && (
+          <Button
+            colorScheme="secondary"
+            w="full"
+            size="lg"
+            variant="outline"
+            mb={6}
+            onClick={handleAction('top-up')}
+          >
+            Top up $PRINTS
+          </Button>
+        )}
+
+        {printsBalance.value.gt(0) && (
+          <Button colorScheme="black" w="full" size="lg" onClick={handleAction('convert')}>
+            Convert $PRINTS to NFT
+          </Button>
+        )}
+      </Box>
     </>
   )
 }

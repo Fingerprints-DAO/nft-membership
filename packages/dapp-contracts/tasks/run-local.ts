@@ -2,6 +2,7 @@ import fs from 'fs'
 import { TASK_COMPILE, TASK_NODE } from 'hardhat/builtin-tasks/task-names'
 import { task } from 'hardhat/config'
 import { writeLogs } from './utils/_write-logs'
+import { WETH_GOERLI_ADDRESS } from './utils/_addresses'
 
 task(
   'run-local',
@@ -46,6 +47,7 @@ task(
     erc20MockAddress,
     membershipAddress,
     migrationAddress,
+    WETH_GOERLI_ADDRESS,
   )
 
   // Set local node mining interval
