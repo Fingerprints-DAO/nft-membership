@@ -2,6 +2,7 @@ import { ERC20ABI, MembershipABI, MigrationABI, AuctionABI } from '@dapp/contrac
 
 export interface ContractAddress {
   ERC20Mock: string
+  WETH: string
   Membership: string
   Migration: string
   Auction: string
@@ -25,4 +26,5 @@ export type Contracts = {
   Migration: Contract<typeof MigrationABI>
   ERC20: Contract<typeof ERC20ABI>
   Auction: Contract<typeof AuctionABI>
+  WETH: Contract<typeof ERC20ABI>
 }

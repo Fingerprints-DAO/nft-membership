@@ -22,5 +22,9 @@ export const getContractsDataForChainOrThrow = (chainId: number): Contracts => {
       abi: AuctionABI,
       address: addresses.Auction,
     },
+    WETH: {
+      abi: ERC20ABI,
+      address: addresses.WETH,
+    },
   }
 }

@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import ConvertDefault from './default'
 import Convert from './convert'
+import ConvertTransactions from './convert-transactions'
 import TopUp from './top-up'
 import usePrintsGetBalance from 'services/web3/prints/use-prints-get-balance'
 import { useNftMembershipContext } from 'contexts/nft-membership'
@@ -22,6 +22,9 @@ const ConvertPrintsPage = () => {
   const printsBalance = usePrintsGetBalance()
   const { pricePerMembership } = useNftMembershipContext()
 
+  console.log('allowance', allowance.toNumber())
+
+  // const [action, setAction] = useState<Action>('top-up')
   const [action, setAction] = useState<Action>('')
 
   const leftovers = useMemo(
@@ -36,16 +39,16 @@ const ConvertPrintsPage = () => {
     [printsBalance.value, pricePerMembership]
   )
 
-  const onBack = useCallback(() => push('/'), [push])
+  const onBack = useCallback(() => setAction(''), [])
 
   const render = useMemo(() => {
     if (action === 'top-up') {
-      return <TopUp printsBalance={printsBalance} />
+      return <TopUp printsBalance={printsBalance} onClose={onBack} />
     }
 
     if (action === 'convert') {
       return (
-        <Convert
+        <ConvertTransactions
           nftsMintables={nftsMintables}
           allowance={allowance}
           toAllow={toAllow}
@@ -56,7 +59,7 @@ const ConvertPrintsPage = () => {
     }
 
     return (
-      <ConvertDefault
+      <Convert
         nftsMintables={nftsMintables}
         leftovers={leftovers}
         printsBalance={printsBalance}
