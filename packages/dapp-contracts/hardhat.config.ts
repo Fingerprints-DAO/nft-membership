@@ -43,7 +43,7 @@ const config: HardhatUserConfig = {
 
   networks: {
     goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `${process.env.ALCHEMY_API_KEY}`,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : accounts,
       chainId: 5,
     },

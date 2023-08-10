@@ -1,5 +1,6 @@
 export * from './accounts'
 export * from './deploy-local'
+export * from './deploy-testnet'
 export * from './run-local'
 export * from './grant-role'
 export * from './advance-time'

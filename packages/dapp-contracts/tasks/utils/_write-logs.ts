@@ -3,10 +3,10 @@ import fs from 'fs'
 
 export const writeLogs = (
   chainId: bigint,
-  ERC20Mock: Addressable,
-  Membership: Addressable,
-  Migration: Addressable,
-  Auction: Addressable,
+  ERC20Mock: Addressable | string,
+  Membership: Addressable | string,
+  Migration: Addressable | string,
+  Auction: Addressable | string,
   WETH: AddressLike,
 ) => {
   if (!fs.existsSync('logs')) {
