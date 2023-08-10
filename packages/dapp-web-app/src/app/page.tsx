@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const HomePage = () => {
   // if (state === PageState.Soon)
-  //   return <SoonPage bgImage="/images/bg-hero-soon.jpg" />
+  //   return <SoonPage bgImage="/images/voxelgif-opt.gif" />
 
   return <ReleasedPage />
 }
