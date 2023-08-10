@@ -7,7 +7,7 @@ import { migrationABI } from '../generated'
 import { useRouter } from 'next/navigation'
 
 const useMigrationMigrate = (qty: number) => {
-  const { back } = useRouter()
+  const { push } = useRouter()
   const { address, contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
@@ -47,7 +47,7 @@ const useMigrationMigrate = (qty: number) => {
 
           setIsSuccess(true)
 
-          back()
+          push('/')
         }
       }
     } catch (error: any) {
