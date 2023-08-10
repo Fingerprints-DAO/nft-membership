@@ -1,11 +1,10 @@
-import { Contracts } from '@dapp/sdk/dist/contract/types'
 import BigNumber from 'bignumber.js'
 import { Address } from 'wagmi'
 import { useMigrationPricePerMembershipInWei } from '../generated'
 
-const useMigrationPricePerMembership = (migrationContract: Contracts['Migration']) => {
+const useMigrationPricePerMembership = (migrationContractAddress: string) => {
   const { data: pricePerMembershipInWei } = useMigrationPricePerMembershipInWei({
-    address: migrationContract.address as Address,
+    address: migrationContractAddress as Address,
   })
 
   if (!pricePerMembershipInWei) {

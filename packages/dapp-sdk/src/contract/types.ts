@@ -1,17 +1,12 @@
-import { ERC20ABI, MembershipABI, MigrationABI } from '@dapp/contracts'
+import { ERC20ABI, MembershipABI, MigrationABI, AuctionABI } from '@dapp/contracts'
 
 export interface ContractAddress {
   ERC20Mock: string
   Membership: string
   Migration: string
+  Auction: string
   chainId: number
 }
-
-// export interface Contracts {
-//   MembershipContract: ReturnType<typeof MembershipFactory.connect>
-//   MigrationContract: ReturnType<typeof MigrationFactory.connect>
-//   ERC20: ReturnType<typeof ERC20Factory.connect>
-// }
 
 export enum ChainId {
   Mainnet = 1,
@@ -29,4 +24,5 @@ export type Contracts = {
   Membership: Contract<typeof MembershipABI>
   Migration: Contract<typeof MigrationABI>
   ERC20: Contract<typeof ERC20ABI>
+  Auction: Contract<typeof AuctionABI>
 }

@@ -30,7 +30,7 @@ const NftMembershipProvider = ({ children }: PropsWithChildren) => {
 
   const contracts = getContracts()
 
-  const pricePerMembership = useMigrationPricePerMembership(contracts.Migration)
+  const pricePerMembership = useMigrationPricePerMembership(contracts.Migration.address)
 
   const value: NftMembershipContextState = useMemo(() => {
     return {

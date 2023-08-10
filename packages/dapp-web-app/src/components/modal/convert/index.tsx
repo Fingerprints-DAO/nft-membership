@@ -22,8 +22,6 @@ const ConvertPrintsPage = () => {
   const printsBalance = usePrintsGetBalance()
   const { pricePerMembership } = useNftMembershipContext()
 
-  console.log('allowance', allowance.toNumber())
-
   const [action, setAction] = useState<Action>('')
 
   const leftovers = useMemo(

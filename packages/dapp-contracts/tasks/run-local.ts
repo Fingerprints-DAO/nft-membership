@@ -33,29 +33,22 @@ task(
   const erc20MockAddress = await contracts.ERC20Mock.instance?.getAddress()
   const membershipAddress = await contracts.Membership.instance?.getAddress()
   const migrationAddress = await contracts.Migration.instance?.getAddress()
+  const auctionAddress = await contracts.Auction.instance?.getAddress()
 
   console.log(
     `arod.studio template contracts deployed to local node at http://localhost:8545 (Chain ID: ${chainId})`,
   )
-  console.log(
-    `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
-  )
-  console.log(
-    `Membership address: ${await contracts.Membership.instance.getAddress()}`,
-  )
-  console.log(
-    `Migration address: ${await contracts.Migration.instance.getAddress()}`,
-  )
-  console.log(
-    `Auction address: ${await contracts.Auction.instance.getAddress()}`,
-  )
+  console.log(`ERC20 Mock ($PRINTS) address: ${erc20MockAddress}`)
+  console.log(`Membership address: ${membershipAddress}`)
+  console.log(`Migration address: ${migrationAddress}`)
+  console.log(`Auction address: ${auctionAddress}`)
 
   writeLogs(
     network.chainId,
-    await contracts.ERC20Mock.instance?.getAddress(),
-    await contracts.Membership.instance?.getAddress(),
-    await contracts.Migration.instance?.getAddress(),
-    await contracts.Auction.instance?.getAddress(),
+    erc20MockAddress,
+    membershipAddress,
+    migrationAddress,
+    auctionAddress,
   )
 
   // Set local node mining interval
@@ -71,6 +64,8 @@ task(
   })
 
   await run('unpause-migration')
+
+  await run('auction-set-config')
 
   await new Promise(() => {
     /* keep node alive until this process is killed */

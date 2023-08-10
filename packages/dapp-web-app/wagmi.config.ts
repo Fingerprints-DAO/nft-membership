@@ -17,6 +17,10 @@ export default defineConfig({
       name: 'membership',
       abi: contracts.MembershipABI as any,
     },
+    {
+      name: 'auction',
+      abi: contracts.AuctionABI as any,
+    },
   ],
   plugins: [
     react(),

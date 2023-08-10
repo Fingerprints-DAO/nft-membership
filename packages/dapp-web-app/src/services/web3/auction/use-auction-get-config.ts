@@ -1,7 +1,12 @@
 import BigNumber from 'bignumber.js'
+import { useAuctionGetConfig as useGenAuctionGetConfig } from '../generated'
+import { Address } from 'viem'
+import { AuctionConfig } from 'types/auction'
 
-const useAuctionGetConfig = () => {
-  const { data: config } = useGenAuctionGetConfig()
+const useAuctionGetConfig = (auctionContractAddress: string): AuctionConfig => {
+  const { data: config } = useGenAuctionGetConfig({
+    address: auctionContractAddress as Address,
+  })
 
   if (!config) {
     return {
@@ -11,7 +16,11 @@ const useAuctionGetConfig = () => {
     }
   }
 
-  return config
+  return {
+    startTime: BigNumber(config.startTime as any),
+    endTime: BigNumber(config.endTime as any),
+    minBidIncrementInWei: BigNumber(config.minBidIncrementInWei as any),
+  }
 }
 
 export default useAuctionGetConfig
