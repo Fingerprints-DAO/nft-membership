@@ -37,3 +37,6 @@ next-env.d.ts
 
 .env
 .graphclient
+
+# Wagmi generated file
+src/services/web3/generated.ts

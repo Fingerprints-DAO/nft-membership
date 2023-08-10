@@ -1,6 +1,10 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "dev": "yarn lerna run dev --parallel",
+    "build": "yarn lerna run build"
+  },
   "workspaces": [
     "packages/*"
   ],

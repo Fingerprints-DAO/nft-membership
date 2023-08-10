@@ -48,9 +48,10 @@ const components = {
         borderColor: `${colorScheme}.500`,
         borderWidth: 2,
         color: `${colorScheme}.500`,
-        _hover: {
-          background: `${colorScheme}.100`,
-        },
+        // _hover: {
+        //   background: `${colorScheme}.100`,
+        //   color: 'black',
+        // },
       })),
     },
     baseStyle: {

@@ -67,7 +67,22 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
     [isHeader, isDrawer]
   )
 
-  const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => (isConnected ? disconnect() : show?.())
+  const hoverStyles = useMemo(
+    () => (isConnected: boolean) => {
+      if (isHeader) {
+        return {
+          background: isConnected ? 'transparent' : '#F7FAFC',
+        }
+      }
+
+      return {
+        background: '#171923',
+      }
+    },
+    [isHeader]
+  )
+
+  const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => isConnected ? disconnect() : show?.()
 
   return (
     <ConnectKitButton.Custom>
@@ -84,6 +99,7 @@ const Wallet = ({ variant, buttonWidth = 'full' }: WalletProps) => {
             variant={isCard || isConnected ? 'outline' : 'solid'}
             w={buttonWidth}
             overflow="hidden"
+            _hover={hoverStyles(isConnected)}
             onClick={handleConnectWallet(isConnected, show)}
           >
             {isConnected ? 'Disconnect' : 'Connect'}
