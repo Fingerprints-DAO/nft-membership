@@ -13,10 +13,16 @@ const useWETHGetAllowance = () => {
   })
 
   if (!allowance) {
-    return BigNumber(0)
+    return {
+      formatted: '0',
+      value: BigNumber(0),
+    }
   }
 
-  return formatToEtherString(allowance.toString())
+  return {
+    formatted: formatToEtherString(allowance.toString()),
+    value: BigNumber(allowance.toString()),
+  }
 }
 
 export default useWETHGetAllowance

@@ -24,8 +24,8 @@ const ConvertPrintsPage = () => {
 
   console.log('allowance', allowance.toNumber())
 
-  // const [action, setAction] = useState<Action>('top-up')
-  const [action, setAction] = useState<Action>('')
+  const [action, setAction] = useState<Action>('top-up')
+  // const [action, setAction] = useState<Action>('')
 
   const leftovers = useMemo(
     () => printsBalance.value.mod(pricePerMembership),
