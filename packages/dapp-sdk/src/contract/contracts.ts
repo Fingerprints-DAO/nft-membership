@@ -18,5 +18,9 @@ export const getContractsDataForChainOrThrow = (chainId: number): Contracts => {
       abi: ERC20ABI,
       address: addresses.ERC20Mock,
     },
+    WETH: {
+      abi: ERC20ABI,
+      address: addresses.WETH,
+    },
   }
 }

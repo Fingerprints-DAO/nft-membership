@@ -10,6 +10,10 @@ export default defineConfig({
       abi: contracts.ERC20ABI as any,
     },
     {
+      name: 'weth',
+      abi: contracts.ERC20ABI as any,
+    },
+    {
       name: 'migration',
       abi: contracts.MigrationABI as any,
     },

@@ -2,6 +2,7 @@ import { ERC20ABI, MembershipABI, MigrationABI } from '@dapp/contracts'
 
 export interface ContractAddress {
   ERC20Mock: string
+  WETH: string
   Membership: string
   Migration: string
   chainId: number
@@ -29,4 +30,5 @@ export type Contracts = {
   Membership: Contract<typeof MembershipABI>
   Migration: Contract<typeof MigrationABI>
   ERC20: Contract<typeof ERC20ABI>
+  WETH: Contract<typeof ERC20ABI>
 }
