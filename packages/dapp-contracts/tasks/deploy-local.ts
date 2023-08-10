@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config'
 import { BaseContract } from 'ethers'
 
-type LocalContractName = 'ERC20Mock' | 'Membership' | 'Migration'
+type LocalContractName = 'ERC20Mock' | 'Membership' | 'Migration' | 'Auction'
 type CombinedContract = Contract & BaseContract;
 
 
@@ -36,6 +36,14 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
         async () => await contracts.Membership.instance!.getAddress(),
         async () => await contracts.ERC20Mock.instance!.getAddress(),
         5000,
+      ],
+    },
+    Auction: {
+      args: [
+        deployer.address,
+        async () => await contracts.Membership.instance!.getAddress(),
+        1,
+        deployer.address,
       ],
     },
   }

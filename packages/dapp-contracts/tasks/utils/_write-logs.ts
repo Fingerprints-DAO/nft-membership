@@ -6,6 +6,7 @@ export const writeLogs = (
   ERC20Mock: Addressable,
   Membership: Addressable,
   Migration: Addressable,
+  Auction: Addressable,
   WETH: AddressLike,
 ) => {
   if (!fs.existsSync('logs')) {
@@ -18,6 +19,7 @@ export const writeLogs = (
     ERC20Mock,
     Membership,
     Migration,
+    Auction,
     WETH,
     chainId: Number(chainId),
   }

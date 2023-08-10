@@ -34,6 +34,7 @@ task(
   const erc20MockAddress = await contracts.ERC20Mock.instance?.getAddress()
   const membershipAddress = await contracts.Membership.instance?.getAddress()
   const migrationAddress = await contracts.Migration.instance?.getAddress()
+  const auctionAddress = await contracts.Auction.instance?.getAddress()
 
   console.log(
     `arod.studio template contracts deployed to local node at http://localhost:8545 (Chain ID: ${chainId})`,
@@ -41,12 +42,14 @@ task(
   console.log(`ERC20 Mock ($PRINTS) address: ${erc20MockAddress}`)
   console.log(`Membership address: ${membershipAddress}`)
   console.log(`Migration address: ${migrationAddress}`)
+  console.log(`Auction address: ${auctionAddress}`)
 
   writeLogs(
     network.chainId,
     erc20MockAddress,
     membershipAddress,
     migrationAddress,
+    auctionAddress,
     WETH_GOERLI_ADDRESS,
   )
 
