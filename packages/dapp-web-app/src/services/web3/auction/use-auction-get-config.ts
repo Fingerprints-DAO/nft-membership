@@ -12,14 +12,14 @@ const useAuctionGetConfig = (auctionContractAddress: string): AuctionConfig => {
     return {
       startTime: BigNumber(0),
       endTime: BigNumber(0),
-      minBidIncrementInWei: BigNumber(0),
+      minBidIncrementInWei: BigInt(0),
     }
   }
 
   return {
     startTime: BigNumber(config.startTime as any),
     endTime: BigNumber(config.endTime as any),
-    minBidIncrementInWei: BigNumber(config.minBidIncrementInWei as any),
+    minBidIncrementInWei: config.minBidIncrementInWei,
   }
 }
 

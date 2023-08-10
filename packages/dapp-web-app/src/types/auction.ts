@@ -9,5 +9,5 @@ export enum AuctionState {
 export type AuctionConfig = {
   startTime: BigNumber
   endTime: BigNumber
-  minBidIncrementInWei: BigNumber
+  minBidIncrementInWei: bigint
 }

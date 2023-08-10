@@ -22,7 +22,7 @@ import useCountdownTime from 'hooks/use-countdown-timer'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { AuctionState } from 'types/auction'
-import { formatEther } from 'ethers'
+import { formatEther } from 'viem'
 
 const NftCard = () => {
   const { auctionConfig, auctionState } = useAuctionContext()
@@ -46,7 +46,7 @@ const NftCard = () => {
                 Initial price
               </Text>
               <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-                {formatEther(auctionConfig.minBidIncrementInWei.toString())} ETH
+                {formatEther(auctionConfig.minBidIncrementInWei)} ETH
               </Text>
             </Box>
             <Box flex={1}>
