@@ -52,7 +52,8 @@ const generateMetadata = async () => {
       name: `Voxelglyph #${i + 1}`,
       image: addIPFSPrefix(`${ipfsHashItemFolder}/nft.jpg`),
       collection_name: 'Voxelglyph',
-      description: "Fingerprints' membership NFT designed by Larva Labs.",
+      description:
+        "The Voxelglyph is the result of a direct partnership between Larva Labs and Fingerprints, and represents membership to Fingerprints DAO, granting access to all member perks and exposure to its renowned collection. \n\nIt is an extension of Autoglyph #134, one of the 26 Autoglyphs in the Fingerprints Collection. It consists of a script in Java stored entirely on-chain that, when executed, will take Autoglyph #134's characters as input and generate coordinates for the 3D artwork. \n\nMore information about Fingerprints DAO membership is available at https://fingerprintsdao.xyz/join.",
       artist: 'Larva Labs',
       website: 'https://fingerprintsdao.xyz/',
       aspect_ratio: 1,
