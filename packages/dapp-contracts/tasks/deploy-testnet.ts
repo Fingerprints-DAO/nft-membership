@@ -19,7 +19,7 @@ interface Contract {
 }
 
 task('deploy-testnet', 'Deploy contracts to testnet').setAction(
-  async (_, { ethers }) => {
+  async (_, { ethers, run }) => {
     const [deployer] = await ethers.getSigners()
     const { chainId } = await ethers.provider.getNetwork()
 
@@ -78,6 +78,19 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(
       await contracts.Auction.instance!.getAddress(),
       WETH_GOERLI_ADDRESS,
     )
+
+    await run('grant-role', {
+      address: await contracts.Migration.instance!.getAddress(),
+      role: 'MINTER_ROLE',
+    })
+
+    await run('mint-tokens', {
+      mintTo: deployer.address,
+    })
+
+    await run('unpause-migration')
+
+    await run('migrate', deployer.address)
 
     return contracts
   },

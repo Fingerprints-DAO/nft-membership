@@ -21,7 +21,9 @@ task('grant-role', 'Grant role to address')
   .setAction(async (taskArgs: { address: string, role: string }, hre: HardhatRuntimeEnvironment) => {
     const { address, role } = taskArgs
 
-    const chainId = await hre.ethers.provider.getNetwork().then((n) => n.chainId) as (keyof typeof contractAddresses)
+    const chainId = (await hre.ethers.provider
+      .getNetwork()
+      .then((n) => n.chainId)) as keyof typeof contractAddresses
 
     const Membership = await hre.ethers.getContractFactory('Membership')
     const membership = Membership.attach(contractAddresses[chainId].Membership) as Membership
