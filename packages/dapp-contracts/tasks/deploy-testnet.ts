@@ -18,7 +18,7 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
   const [deployer] = await ethers.getSigners()
   const { chainId } = await ethers.provider.getNetwork()
 
-  const baseUri = 'ipfs://QmVGSdqD5Sy7muE1U7H5wfufCDWkPgusECcEe78GXyssxN/'
+  const baseUri = 'ipfs://QmcF6KCccBHmEazNJW6MNgh9xJFBapLFdAefT19Uer4i43/'
 
   const contracts: Record<LocalContractName, Contract> = {
     ERC20Mock: {
@@ -34,12 +34,10 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
         deployer.address,
         async () => {
           const address = await contracts.Membership?.instance?.getAddress()
-          console.log('migration [0]', address)
           return address || ''
         },
         async () => {
           const address = await contracts.ERC20Mock?.instance?.getAddress()
-          console.log('migration [1]', address)
           return address || ''
         },
         5000,
@@ -71,10 +69,10 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
     }
     contracts[name as LocalContractName].instance = deployedContract
 
-    console.log(`${name} contract deployed to ${await deployedContract.getAddress()}`)
+    console.log(
+      `${name} contract deployed to ${await deployedContract.getAddress()}`,
+    )
   }
-
-  console.log('writing logs')
 
   writeLogs(
     chainId,
@@ -85,38 +83,19 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
     WETH_GOERLI_ADDRESS,
   )
 
-  console.log('logs written')
-
-  console.log(
-    chainId,
-    await contracts.ERC20Mock.instance!.getAddress(),
-    await contracts.Membership.instance!.getAddress(),
-    await contracts.Migration.instance!.getAddress(),
-    await contracts.Auction.instance!.getAddress(),
-    WETH_GOERLI_ADDRESS,
-  )
-  console.table(await getAddresses(ethers.provider))
-
-  console.log('granting role to', await contracts.Migration.instance!.getAddress())
   await run('grant-role', {
     address: await contracts.Migration.instance!.getAddress(),
     role: 'MINTER_ROLE',
   })
-  console.log('role granted')
 
-  console.log('minting tokens')
   await run('mint-tokens', {
     mintTo: deployer.address,
   })
-  console.log('tokens minted')
-
-  console.log('unpausing migration')
   await run('unpause-migration')
-  console.log('migration unpaused')
 
-  console.log('migration')
-  await run('migrate', { mintTo: await contracts.Auction?.instance?.getAddress() })
-  console.log('migrated')
+  await run('migrate', {
+    mintTo: await contracts.Auction?.instance?.getAddress(),
+  })
 
   return contracts
 })
