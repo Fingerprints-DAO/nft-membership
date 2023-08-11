@@ -6,35 +6,34 @@ import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
 import { wethABI } from '../generated'
 
-const useWETHApprove = (
-  allowance: BigNumber,
-  toAllow: BigNumber,
-  totalAvailableToSpend: BigNumber
-) => {
+const useWETHApprove = (allowance: BigNumber) => {
   const { contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
   const [txHash, setTxHash] = useState<Address>()
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isApproved, setIsApproved] = useState(allowance.gte(totalAvailableToSpend))
+  const [isApproved, setIsApproved] = useState(false)
 
-  const request = async () => {
+  const request = async (toAllow: BigNumber) => {
     try {
-      if (isApproved) {
+      if (allowance.gte(toAllow)) {
+        setIsApproved(true)
         return
       }
 
       setHasError(false)
       setIsLoading(true)
-      setIsSubmitted(true)
 
       const config = await prepareWriteContract({
         address: contracts.WETH.address as Address,
         abi: wethABI,
         functionName: 'approve',
-        args: [process.env.NEXT_PUBLIC_COW_ADDRESS as Address, toAllow.integerValue() as any],
+        args: [
+          process.env.NEXT_PUBLIC_COW_ADDRESS as Address,
+          // toAllow.minus(allowance).integerValue() as any,
+          toAllow.integerValue() as any,
+        ],
       })
 
       const { hash } = await writeContract(config)
@@ -47,7 +46,7 @@ const useWETHApprove = (
 
         if (!!transactionHash) {
           showTxExecutedToast({
-            title: 'Approved',
+            title: 'WETH approved to be used by CoW Swap',
             txHash: transactionHash,
             id: 'approve-success',
           })
@@ -67,7 +66,6 @@ const useWETHApprove = (
   return {
     isApproved,
     isLoading,
-    isSubmitted,
     hasError,
     txHash,
     approve: request,
