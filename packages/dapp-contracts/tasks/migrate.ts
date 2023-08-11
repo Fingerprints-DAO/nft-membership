@@ -1,6 +1,6 @@
 import { parseUnits } from 'ethers'
 import { task, types } from 'hardhat/config'
-import { default as contractAddresses } from '../logs/deploy.json'
+import { getAddresses } from './utils/_getAddresses'
 
 task('migrate', 'Migrate one')
   .addOptionalParam(
@@ -10,22 +10,16 @@ task('migrate', 'Migrate one')
     types.string,
   )
   .addOptionalParam('amount', 'Amount to mint', '100000', types.string)
-  .setAction(async ({ mintTo, amount }, { ethers }) => {
-    const chainId = (await ethers.provider
-      .getNetwork()
-      .then((n) => n.chainId)) as keyof typeof contractAddresses
+  .setAction(async ({ mintTo }, { ethers }) => {
+    const contractAddresses = await getAddresses(ethers.provider)
 
     const migrationFactory = await ethers.getContractFactory('Migration')
+    const migrationContract = migrationFactory.attach(contractAddresses.Migration)
     const erc20Factory = await ethers.getContractFactory('ERC20Mock')
-    const migrationContract = migrationFactory.attach(
-      contractAddresses[chainId].Migration,
-    )
-    const erc20Contract = erc20Factory.attach(
-      contractAddresses[chainId].ERC20Mock,
-    )
-    console.log(
-      `Migration contract address: ${contractAddresses[chainId].Membership}`,
-    )
+    const erc20Contract = erc20Factory.attach(contractAddresses.ERC20Mock)
+    console.log(`Migration contract address: ${contractAddresses.Migration}`)
+    console.table(contractAddresses)
+    console.log(`get address ${await migrationContract.getAddress()}`)
 
     // @ts-ignore
     const approveRes = await erc20Contract.approve(
@@ -34,6 +28,8 @@ task('migrate', 'Migrate one')
     )
     await approveRes.wait()
     console.log(`Approved migration contract to spend tokens`)
+
+    console.log(`migrating address ${await migrationContract.getAddress()} mintTo: ${mintTo}`)
 
     // @ts-ignore
     const mintRes = await migrationContract.migrate(mintTo, 1)
