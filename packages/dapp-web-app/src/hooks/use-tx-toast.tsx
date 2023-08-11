@@ -38,7 +38,7 @@ const ToastContent = ({
       alignItems="center"
       justifyContent="center"
       bg={status === 'success' ? 'gray.300' : '#F76B8B'}
-      p={['24px 16px 18px', 4]}
+      p={['18px 16px', 4]}
       position="relative"
     >
       {Boolean(icon) && <Icon {...icon} mr={2} />}

@@ -13,25 +13,21 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import {
-  OrderBookApi,
   OrderCreation,
   OrderParameters,
-  OrderQuoteSideKindBuy,
   OrderSigningUtils,
-  SigningScheme,
   UnsignedOrder,
 } from '@cowprotocol/cow-sdk'
-import { hardhat } from '@wagmi/chains'
 import BigNumber from 'bignumber.js'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import dayjs from 'dayjs'
 import { useEthersSigner } from 'hooks/ethers'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import useTxToast from 'hooks/use-tx-toast'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
+import useCowOrderWatch from 'services/web3/weth/use-cow-order-watch'
 import useWETHApprove from 'services/web3/weth/use-weth-approve'
 import useWETHGetAllowance from 'services/web3/weth/use-weth-get-allowance'
-import { getChainId } from 'utils/chain'
-import { goerli } from 'utils/goerli-chain'
+import useWETHGetBalance from 'services/web3/weth/use-weth-get-balance'
 import {
   formatBigNumberUp,
   formatToEtherString,
@@ -39,136 +35,142 @@ import {
   roundEtherUp,
 } from 'utils/price'
 import { parseEther } from 'viem'
-
-let chainId = getChainId()
-chainId = chainId === hardhat.id ? 5 : chainId
-
-const orderBookApi = new OrderBookApi({ chainId })
-// const subgraphApi = new SubgraphApi({ chainId })
-// const orderSigningUtils = new OrderSigningUtils()
-
-const amountToBuy = BigNumber(28)
-
-const getQuote = async (walletAddress: string, wethAddress: string, printsAddress: string) => {
-  let forceConfig: { buyToken?: string; buyAmountAfterFee?: string } = {}
-  const validTo = dayjs().add(30, 'minutes').unix()
-
-  if (chainId === goerli.id || chainId === hardhat.id) {
-    // cow token
-    forceConfig.buyToken = '0x91056d4a53e1faa1a84306d4deaec71085394bc8'
-    // 28 tokens ~0.01 weth on goerli
-    forceConfig.buyAmountAfterFee = parseEther(BigNumber(28).toString()).toString()
-  }
-  return await orderBookApi.getQuote({
-    kind: OrderQuoteSideKindBuy.BUY,
-    sellToken: wethAddress, // weth goerli
-    buyToken: printsAddress, // cow
-    buyAmountAfterFee: parseEther(amountToBuy.toString()).toString(),
-    from: walletAddress,
-    receiver: walletAddress,
-    validTo,
-    signingScheme: SigningScheme.EIP1271,
-    onchainOrder: true,
-    ...forceConfig,
-  })
-}
-
-function formatExpirationTime(validTo?: number) {
-  if (!validTo) return ''
-  const expirationTime = dayjs.unix(validTo)
-  const now = dayjs()
-  const diffMinutes: number = expirationTime.diff(now, 'minute')
-
-  if (diffMinutes < 60) {
-    return `${diffMinutes}min`
-  } else {
-    const diffHours: number = Math.floor(diffMinutes / 60)
-    const remainingMinutes: number = diffMinutes % 60
-    if (remainingMinutes === 0) {
-      return `${diffHours}h`
-    } else {
-      return `${diffHours}h${remainingMinutes}min`
-    }
-  }
-}
+import {
+  slippage,
+  getQuote,
+  quoteTimeInterval,
+  chainId,
+  orderBookApi,
+  chainName,
+  formatExpirationTime,
+  TOP_UP_STATUS,
+} from './top-up-config'
 
 type TopUpProps = {
   printsBalance: Balance
-  onClose?: () => void
+  onClose: () => void
+  amount: BigNumber
+  ableToMint: number
 }
 
-enum TOP_UP_STATUS {
-  LOADING,
-  NEED_APPROVAL,
-  NEED_SIGN,
-  ORDER_WAITING,
-  ORDER_SUCCESS,
-}
-
-const slippage = 0.05
-
-const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
+const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) => {
   const [loadingQuote, setLoadingQuote] = useState(true)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [status, setStatus] = useState<TOP_UP_STATUS>(TOP_UP_STATUS.LOADING)
   const [quote, setQuote] = useState<OrderParameters>()
+  const [swapLink, setSwapLink] = useState<string>()
+  const { showTxErrorToast } = useTxToast()
   const { address, contracts } = useNftMembershipContext()
-  const { value: wethAllowed } = useWETHGetAllowance()
+  const { value: wethAllowed, refetch: refetchAllowance } = useWETHGetAllowance()
   const wethApprove = useWETHApprove(wethAllowed)
+  const wethBalance = useWETHGetBalance()
   const signer = useEthersSigner()
+  const cowOrderWatch = useCowOrderWatch()
   const intervalIDRef = useRef<null | ReturnType<typeof setInterval>>(null)
+  const sellAmountExpected = useMemo(
+    () => Number(quote?.sellAmount ?? '0') * (1 + slippage),
+    [quote?.sellAmount]
+  )
+  const isWethInsufficient = useMemo(
+    () => BigNumber(parseEther(wethBalance.formatted).toString()).lte(sellAmountExpected),
+    [sellAmountExpected, wethBalance.formatted]
+  )
 
-  console.log(wethAllowed.toString())
+  // @dev fetchQuote and start pooling
   useEffect(() => {
-    const init = async () => {
-      if (!address || !contracts.ERC20.address || !contracts.WETH.address) return
+    const fetchQuote = async () => {
+      if (
+        !address ||
+        !contracts.ERC20.address ||
+        !contracts.WETH.address ||
+        status !== TOP_UP_STATUS.LOADING
+      )
+        return
 
       setLoadingQuote(true)
 
       const currentQuote = (
-        await getQuote(address, contracts.WETH.address, contracts.ERC20.address)
+        await getQuote(address, contracts.WETH.address, contracts.ERC20.address, amount)
       ).quote
-      console.table(currentQuote)
+      // console.table(currentQuote)
       setQuote(currentQuote)
       setLoadingQuote(false)
     }
 
-    init()
-    if (!intervalIDRef.current) intervalIDRef.current = setInterval(init, 30000)
+    fetchQuote()
+    if (!intervalIDRef.current) intervalIDRef.current = setInterval(fetchQuote, quoteTimeInterval)
     return () => {
       if (intervalIDRef.current) clearInterval(intervalIDRef.current)
       intervalIDRef.current = null
     }
-  }, [address, contracts.ERC20.address, contracts.WETH.address])
+  }, [address, amount, contracts.ERC20.address, contracts.WETH.address, status])
 
+  // @dev handle modal steps - Approva/Sign
   useEffect(() => {
-    if (!quote?.sellAmount) return
+    if (
+      !sellAmountExpected ||
+      status === TOP_UP_STATUS.ORDER_WAITING ||
+      status === TOP_UP_STATUS.SIGN_WAITING
+    )
+      return
 
-    if (wethAllowed.lt(quote.sellAmount)) {
+    if (wethAllowed.lt(sellAmountExpected)) {
       setStatus(TOP_UP_STATUS.NEED_APPROVAL)
       return
     }
 
     setStatus(TOP_UP_STATUS.NEED_SIGN)
-  }, [quote?.sellAmount, wethAllowed])
+  }, [sellAmountExpected, status, wethAllowed])
+
+  // @dev refetch allowance after approval
+  useEffect(() => {
+    if (wethApprove.isApproved && refetchAllowance) {
+      // console.log('refetching')
+      refetchAllowance()
+    }
+  }, [refetchAllowance, wethApprove.isApproved])
+
+  // @dev handle cow order success
+  useEffect(() => {
+    if (cowOrderWatch.success) {
+      setStatus(TOP_UP_STATUS.ORDER_SUCCESS)
+      onClose()
+      return
+    }
+  }, [cowOrderWatch.success, onClose])
 
   const onSign = useCallback(async () => {
     if (!quote || !signer) return
-    const order = {
-      ...quote,
-      sellAmount: (Number(quote.sellAmount) * (1 + slippage)).toString(),
-      partiallyFillable: false,
-    } as UnsignedOrder
+    setStatus(TOP_UP_STATUS.SIGN_WAITING)
 
-    const signedOrder = await OrderSigningUtils.signOrder(order, chainId, signer)
-    const orderId = await orderBookApi.sendOrder({
-      ...order,
-      ...signedOrder,
-    } as unknown as OrderCreation)
+    try {
+      const order = {
+        ...quote,
+        sellAmount: sellAmountExpected.toString(),
+        partiallyFillable: false,
+      } as UnsignedOrder
 
-    setStatus(TOP_UP_STATUS.ORDER_WAITING)
-    console.log(orderBookApi.getOrderLink(orderId)) // https://explorer.cow.fi/goerli/orders/${orderId}
-  }, [quote, signer])
+      const signedOrder = await OrderSigningUtils.signOrder(order, chainId(), signer)
+
+      const orderId = await orderBookApi.sendOrder({
+        ...order,
+        ...signedOrder,
+      } as unknown as OrderCreation)
+      // console.log('orderId', orderId)
+      // console.log(
+      //   orderBookApi.getOrderLink(orderId),
+      //   `https://explorer.cow.fi/${chainName.toLowerCase()}/orders/${orderId}`
+      // ) // https://explorer.cow.fi/goerli/orders/${orderId}
+      setSwapLink(`https://explorer.cow.fi/${chainName().toLowerCase()}/orders/${orderId}`) // https://explorer.cow.fi/goerli/orders/${orderId}
+      cowOrderWatch.setOrder(orderId, chainName())
+
+      setStatus(TOP_UP_STATUS.ORDER_WAITING)
+    } catch (error: any) {
+      // console.log(error.toString())
+      setStatus(TOP_UP_STATUS.NEED_SIGN)
+      showTxErrorToast(new Error('Signature error. Try again.'))
+    }
+  }, [quote, signer, sellAmountExpected, cowOrderWatch, showTxErrorToast])
 
   const onApproveWETH = useCallback(async () => {
     if (!quote?.sellAmount) return
@@ -182,7 +184,7 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
         'wei'
       ).toString()
     )
-    console.log(roundedWethToApprove.toString())
+
     wethApprove.approve(roundedWethToApprove)
   }, [quote?.sellAmount, wethApprove])
 
@@ -252,12 +254,20 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
             <Text as="span" fontWeight="normal">
               for
             </Text>{' '}
-            {roundEtherUp(formatToEtherString(quote?.sellAmount).toString(), 5)} WETH
+            <Skeleton
+              as={'span'}
+              display={'inline'}
+              isLoaded={!loadingQuote}
+              startColor={'gray.100'}
+            >
+              {roundEtherUp(formatToEtherString(quote?.sellAmount).toString(), 5)}
+            </Skeleton>{' '}
+            WETH
           </Text>
           {loadingQuote && <Spinner color="gray.400" size="sm" ml={2} />}
         </Flex>
         <Text color="gray.500" fontWeight="bold" mb={4}>
-          You&apos;ll be able to mint 3 NFTs
+          You&apos;ll be able to mint {ableToMint} NFTs
         </Text>
         <Button color="links.500" variant="link" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
           {isDetailsOpen ? <ChevronUpIcon w={6} h={6} /> : <ChevronDownIcon w={6} h={6} />}
@@ -285,7 +295,7 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
               </Text>
             </Text>
             <Text color="gray.500">
-              Network fees:{' '}
+              Estimated network fees:{' '}
               <Text as="span" color="gray.700">
                 {formatBigNumberUp(formatToEtherString(quote?.feeAmount), 12)} ETH
               </Text>
@@ -293,48 +303,106 @@ const TopUp = ({ printsBalance, onClose }: TopUpProps) => {
           </Box>
         </Collapse>
       </Box>
-      <Skeleton isLoaded={status !== TOP_UP_STATUS.LOADING && !loadingQuote}>
-        {status === TOP_UP_STATUS.NEED_APPROVAL && (
-          <Button
-            colorScheme="black"
-            w="full"
-            size="lg"
-            onClick={onApproveWETH}
-            isLoading={wethApprove.isLoading}
-            loadingText={wethApprove.txHash ? 'Waiting transaction' : 'Confirm the transaction'}
-          >
-            Approve WETH on CoW Swap
-          </Button>
-        )}
+      {/* <Skeleton isLoaded={status !== TOP_UP_STATUS.LOADING && !loadingQuote}> */}
+      {!loadingQuote && (
+        <>
+          {status === TOP_UP_STATUS.NEED_APPROVAL && (
+            <Button
+              colorScheme="black"
+              w="full"
+              size="lg"
+              onClick={onApproveWETH}
+              isLoading={wethApprove.isLoading || loadingQuote}
+              loadingText={wethApprove.txHash ? 'Waiting transaction' : 'Confirm the transaction'}
+              isDisabled={isWethInsufficient}
+            >
+              {isWethInsufficient ? 'Insufficient WETH' : 'Allow CoW to use WETH'}
+            </Button>
+          )}
 
-        {status !== TOP_UP_STATUS.NEED_APPROVAL && (
-          <Button
-            colorScheme="black"
-            w="full"
-            size="lg"
-            onClick={onSign}
-            isLoading={status === TOP_UP_STATUS.ORDER_WAITING}
-            loadingText={wethApprove.txHash ? 'Waiting transaction' : 'Sign the order'}
-          >
-            Buy 3.000 $PRINTS
-          </Button>
-        )}
-      </Skeleton>
-      <Text fontSize="xs" color="gray.500" textAlign="center" mt={6}>
-        You can also do this transaction using{' '}
-        <Link
-          color="links.500"
-          title="UniSwap"
-          href="https://uniswap.org/"
-          target="_blank"
-          style={{ textDecoration: 'none' }}
-          transition="opacity 0.2s"
-          _hover={{ opacity: 0.5 }}
+          {status !== TOP_UP_STATUS.NEED_APPROVAL && (
+            <Button
+              colorScheme="black"
+              w="full"
+              size="lg"
+              onClick={onSign}
+              isLoading={
+                status === TOP_UP_STATUS.SIGN_WAITING ||
+                status === TOP_UP_STATUS.ORDER_WAITING ||
+                loadingQuote
+              }
+              loadingText={swapLink ? 'Waiting order transaction' : 'Sign the order'}
+            >
+              Buy 3.000 $PRINTS
+            </Button>
+          )}
+        </>
+      )}
+
+      {loadingQuote && (
+        <Button
+          colorScheme="black"
+          w="full"
+          size="lg"
+          onClick={onSign}
+          isLoading={true}
+          loadingText={'Fetching quote'}
         >
-          CoW Swap
-        </Link>
-        .
-      </Text>
+          Fetching quote
+        </Button>
+      )}
+      {/* </Skeleton> */}
+      {/* <Text color="black">
+        {status}
+        <br />
+        {TOP_UP_STATUS.ORDER_WAITING}
+        <br />
+        {swapLink}
+        <br />
+        {status === TOP_UP_STATUS.ORDER_WAITING && swapLink}
+      </Text> */}
+      {status === TOP_UP_STATUS.ORDER_WAITING && swapLink && (
+        <Text fontSize="sm" color="gray.500" textAlign="center" mt={6}>
+          Check out the CoW Swap order status{' '}
+          <Link
+            color="links.500"
+            title="Order link"
+            href={swapLink}
+            target="_blank"
+            fontWeight={'bold'}
+          >
+            here
+          </Link>
+          .
+        </Text>
+      )}
+      {status !== TOP_UP_STATUS.ORDER_WAITING && (
+        <Text fontSize="xs" color="gray.500" textAlign="center" mt={6}>
+          {isWethInsufficient ? 'Wrap your ETH using ' : 'You can also do this transaction using '}
+          <Link
+            color="links.500"
+            title="UniSwap"
+            href={
+              isWethInsufficient
+                ? 'https://swap.cow.fi/#/1/swap/ETH/WETH?exactField=output&exactAmount=5000'
+                : 'https://swap.cow.fi/#/1/swap/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2/0x4dd28568D05f09b02220b09C2cb307bFd837cb95?exactField=output&exactAmount=5000'
+            }
+            target="_blank"
+            style={{ textDecoration: 'none' }}
+            transition="opacity 0.2s"
+            _hover={{ opacity: 0.5 }}
+          >
+            CoW Swap
+          </Link>
+          .
+          {!isWethInsufficient && (
+            <>
+              <br />
+              $PRINTS address: 0x4dd28568D05f09b02220b09C2cb307bFd837cb95
+            </>
+          )}
+        </Text>
+      )}
     </Box>
   )
 }
