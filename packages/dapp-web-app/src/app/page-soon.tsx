@@ -15,23 +15,15 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
         as="section"
         h={{ base: 'initial' }}
         minHeight="100vh"
-        minWidth='100vw'
+        minWidth="100vw"
         pos="fixed"
         bg={`url(${bgImage})`}
         bgSize="cover"
         bgPos="center"
         bgRepeat="no-repeat"
       >
-        <Box w="full" h="full" position="absolute" zIndex={1} bg="gray.900" opacity={0.8} />
-        <Flex
-          flexDir={'column'}
-          minHeight={'100vh'}
-          alignItems="center"
-          justifyContent="center"
-          position="relative"
-          zIndex={2}
-          px={10}
-        >
+        <Box w="full" h="full" position="absolute" zIndex={1} bg="black" opacity={0.6} />
+        <Flex flexDir={'column'} minHeight={'100vh'} alignItems="center" justifyContent="center" position="relative" zIndex={2} px={10}>
           <Box
             mb={10}
             _hover={{
@@ -44,7 +36,7 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
             </Link>
           </Box>
           <Box>
-            <Heading color="gray.50" as="h1" mb={6} fontSize={{base:'1.8em' ,md: '2.2em', xxl: '2.5em' }} textAlign={'center'}>
+            <Heading color="gray.50" as="h1" mb={6} fontSize={{ base: '1.8em', md: '2.2em', xxl: '2.5em' }} textAlign={'center'}>
               Fingerprints is Moving to Voxelglyph
             </Heading>
             <Heading color="gray.50" as="h2" size={['sm']} fontWeight="thin" mb={5} textAlign={'center'}>
@@ -57,21 +49,38 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
               Migration available August 16th.
             </Heading>
           </Box>
-          <Link href="https://www.addevent.com/calendar/kZ615607" target="_blank">
-            <Button
-              fontSize="md"
-              fontWeight="bold"
-              textAlign="center"
-              variant={'outline'}
-              colorScheme="white"
-              _hover={{
-                backgroundColor: 'white',
-                color: 'black',
-              }}
-            >
-              Add to Calendar
-            </Button>
-          </Link>
+          <Flex flexDir={'row'} gap={5}>
+            <Link href="info">
+              <Button
+                fontSize="md"
+                fontWeight="bold"
+                textAlign="center"
+                variant={'outline'}
+                colorScheme="white"
+                _hover={{
+                  backgroundColor: 'white',
+                  color: 'black',
+                }}
+              >
+                Learn More
+              </Button>
+            </Link>
+            <Link href="https://www.addevent.com/calendar/kZ615607" target="_blank">
+              <Button
+                fontSize="md"
+                fontWeight="bold"
+                textAlign="center"
+                variant={'outline'}
+                colorScheme="white"
+                _hover={{
+                  backgroundColor: 'white',
+                  color: 'black',
+                }}
+              >
+                Add to Calendar
+              </Button>
+            </Link>
+          </Flex>
         </Flex>
       </Box>
     </motion.div>
