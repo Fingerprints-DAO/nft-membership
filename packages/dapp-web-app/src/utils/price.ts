@@ -11,6 +11,7 @@ export const normalizeBigNumber = (n?: BN) => BigNumber(getNumberToStringOrZero(
 
 export const formatToEtherStringBN = (n?: BN) =>
   BigNumber(formatEther(getNumberToStringOrZero(n))).toString()
+
 export const formatToEtherString = (n?: string) => BigNumber(formatEther(n ?? '0'))
 
 export const formatBigNumberUp = (

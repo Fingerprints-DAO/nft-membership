@@ -2,10 +2,13 @@ import BigNumber from 'bignumber.js'
 import { useAuctionGetConfig as useGenAuctionGetConfig } from '../generated'
 import { Address } from 'viem'
 import { AuctionConfig } from 'types/auction'
+import { useNftMembershipContext } from 'contexts/nft-membership'
 
-const useAuctionGetConfig = (auctionContractAddress: string): AuctionConfig => {
+const useAuctionGetConfig = (): AuctionConfig => {
+  const { contracts } = useNftMembershipContext()
+
   const { data: config } = useGenAuctionGetConfig({
-    address: auctionContractAddress as Address,
+    address: contracts.Auction.address as Address,
   })
 
   if (!config) {

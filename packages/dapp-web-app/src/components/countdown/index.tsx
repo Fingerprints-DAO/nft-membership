@@ -9,9 +9,7 @@ interface CountdownProps {
 }
 
 const Countdown = ({ futureTimestamp }: CountdownProps) => {
-  const [timeLeft, setTimeLeft] = useState('')
-
-  //   console.log('futureTimestamp', futureTimestamp)
+  const [timeLeft, setTimeLeft] = useState('00:00')
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -24,13 +22,15 @@ const Countdown = ({ futureTimestamp }: CountdownProps) => {
         setTimeLeft('00:00')
       } else {
         const duration = dayjs.duration(diff)
-        // console.log('duration', duration)
 
+        const days = duration.days()
         const hours = duration.hours()
         const minutes = duration.minutes().toString().padStart(2, '0')
         const seconds = duration.seconds().toString().padStart(2, '0')
 
-        if (hours > 0) {
+        if (days > 0) {
+          setTimeLeft(`${days}d ${hours}h ${minutes}min`)
+        } else if (hours > 0) {
           setTimeLeft(`${hours}:${minutes}:${seconds}`)
         } else {
           setTimeLeft(`${minutes}:${seconds}`)
@@ -41,7 +41,7 @@ const Countdown = ({ futureTimestamp }: CountdownProps) => {
     return () => clearInterval(intervalId)
   }, [futureTimestamp])
 
-  return timeLeft
+  return <span>{timeLeft}</span>
 }
 
 export default Countdown

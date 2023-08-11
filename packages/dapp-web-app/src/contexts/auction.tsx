@@ -1,12 +1,15 @@
 import React, { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import useAuctionGetConfig from 'services/web3/auction/use-auction-get-config'
-import { useNftMembershipContext } from './nft-membership'
-import { AuctionState, AuctionConfig } from 'types/auction'
+import { AuctionState, AuctionConfig, AuctionData } from 'types/auction'
 import dayjs from 'dayjs'
+import useAuctionGetAuctionData from 'services/web3/auction/use-auction-get-data'
+import useAuctionGetMinBidValue from 'services/web3/auction/use-auction-get-min-bid-value'
 
 type AuctionContextState = {
   auctionConfig: AuctionConfig
+  auctionData: AuctionData
   auctionState: AuctionState
+  minBidValue: bigint
 }
 
 const DEFAULT_CONTEXT = {} as AuctionContextState
@@ -34,19 +37,21 @@ const getCurrentState = (startTime?: number, endTime?: number) => {
 }
 
 const AuctionProvider = ({ children }: PropsWithChildren) => {
-  const { contracts } = useNftMembershipContext()
-
-  const auctionConfig = useAuctionGetConfig(contracts.Auction.address)
+  const auctionConfig = useAuctionGetConfig()
+  const auctionData = useAuctionGetAuctionData()
+  const minBidValue = useAuctionGetMinBidValue()
 
   const value: AuctionContextState = useMemo(() => {
     return {
       auctionConfig,
+      auctionData,
+      minBidValue,
       auctionState: getCurrentState(
         auctionConfig.startTime.toNumber(),
         auctionConfig.endTime.toNumber()
       ),
     }
-  }, [auctionConfig])
+  }, [auctionConfig, auctionData, minBidValue])
 
   return <AuctionContext.Provider value={value}>{children}</AuctionContext.Provider>
 }

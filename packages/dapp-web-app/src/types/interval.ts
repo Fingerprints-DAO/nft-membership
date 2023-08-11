@@ -7,4 +7,5 @@ export enum Interval {
   TotalSupply = dayjs.duration(10, 'seconds').asMilliseconds(),
   Timer = dayjs.duration(1, 'minute').asMilliseconds(),
   ClaimableToken = dayjs.duration(15, 'seconds').asMilliseconds(),
+  Pooling = dayjs.duration(30, 'seconds').asMilliseconds(),
 }
