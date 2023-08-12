@@ -9,7 +9,7 @@
   "scripts": {
     "run:node": "hardhat node",
     "test:watch": "hardhat watch test",
-    "deploy:testnet": "hardhat deploy --network base-goerli",
+    "deploy:testnet": "hardhat deploy-testnet --network goerli",
     "task:run-local": "hardhat run-local",
     "dev": "hardhat run-local",
     "coverage": "TS_NODE_TRANSPILE_ONLY=1 HARDHAT_DEPLOY_FIXTURE=true CONTRACT_SIZER_STRICT_DISABLE=true hardhat coverage --solcoverjs ./.solcover.js",
@@ -17,7 +17,9 @@
     "compile": "hardhat compile",
     "build": "yarn compile --force && yarn build:ts && yarn build:declarations",
     "build:ts": "tsc -p tsconfig.json",
-    "build:declarations": "cp typechain-types/*.d.ts dist/typechain-types"
+    "build:declarations": "cp typechain-types/*.d.ts dist/typechain-types",
+    "upload:ipfs": "npx hardhat run scripts/ipfs.ts",
+    "migrate": "hardhat migrate"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
@@ -61,6 +63,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.2",
-    "operator-filter-registry": "^1.4.2"
+    "operator-filter-registry": "^1.4.2",
+    "stream-buffers": "^3.0.2"
   }
 }

@@ -21,7 +21,7 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
 
   const [deployer] = await ethers.getSigners()
   await  ethers.provider.getTransactionCount(deployer.address)
-  const baseUri = 'https://example.com/'
+  const baseUri = 'ipfs://QmNgQG8bmihY38CvuYoMeRo9xDGwfaW5zhxRjMfQoxQR1J/'
 
   const contracts: Record<LocalContractName, Contract> = {
     ERC20Mock: {
