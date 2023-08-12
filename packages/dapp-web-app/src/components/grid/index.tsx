@@ -17,8 +17,7 @@ const gridConfig = {
   w: {
     base: '100%',
     md: '100%',
-    lg: '1160px',
-    xl: '1360px',
+    lg: '1128px',
   },
 }
 

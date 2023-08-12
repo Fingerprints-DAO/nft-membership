@@ -44,7 +44,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
   return (
     <>
       <Grid as="header" py={8} position="relative" zIndex={10}>
-        <GridItem colSpan={{ base: 3, sm: 1 }} colStart={{ base: 1, xl: 2 }}>
+        <GridItem colSpan={{ base: 2, md: 2 }}>
           <Link href="/">
             <Box
               as={Image}
@@ -54,43 +54,41 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
             />
           </Link>
         </GridItem>
-        {pageState !== PageState.Soon && (
-          <GridItem colSpan={{ base: 1, sm: 5, md: 11, xl: 9 }}>
-            {isMobile ? (
-              <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
-                <Box color="gray.50" as="button" boxSize={[6, 25]} onClick={onOpen}>
-                  <HamburgerIcon display="block" boxSize="100%" />
-                </Box>
-              </Flex>
-            ) : (
-              <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
-                {nav.map((item, index) => {
-                  const isActive = pathname === item.href
+        <GridItem colSpan={{ base: 2, sm: 4, md: 10 }}>
+          {isMobile ? (
+            <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
+              <Box color="gray.50" as="button" boxSize={[6, 25]} onClick={onOpen}>
+                <HamburgerIcon display="block" boxSize="100%" />
+              </Box>
+            </Flex>
+          ) : (
+            <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
+              {nav.map((item, index) => {
+                const isActive = pathname === item.href
 
-                  return (
-                    <Box
-                      key={index}
-                      as={Link}
-                      href={item.href}
-                      title={item.label}
-                      mr={14}
-                      _hover={{ color: 'secondary.500' }}
-                      color={isActive ? 'secondary.500' : 'white'}
-                      transition="ease"
-                      transitionProperty="color"
-                      transitionDuration="0.2s"
-                    >
-                      <Text as="strong" fontSize="lg">
-                        {item.label}
-                      </Text>
-                    </Box>
-                  )
-                })}
-                <Wallet variant="header" buttonWidth="auto" />
-              </Flex>
-            )}
-          </GridItem>
-        )}
+                return (
+                  <Box
+                    key={index}
+                    as={Link}
+                    href={item.href}
+                    title={item.label}
+                    mr={14}
+                    _hover={{ color: 'secondary.500' }}
+                    color={isActive ? 'secondary.500' : 'white'}
+                    transition="ease"
+                    transitionProperty="color"
+                    transitionDuration="0.2s"
+                  >
+                    <Text as="strong" fontSize="lg">
+                      {item.label}
+                    </Text>
+                  </Box>
+                )
+              })}
+              <Wallet variant="header" buttonWidth="auto" />
+            </Flex>
+          )}
+        </GridItem>
       </Grid>
       <Drawer isOpen={isOpen} placement="left" size="full" isFullHeight={true} onClose={onClose}>
         <DrawerContent h="full" bg="gray.50">
