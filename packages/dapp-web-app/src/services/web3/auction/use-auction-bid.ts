@@ -6,8 +6,6 @@ import { useNftMembershipContext } from 'contexts/nft-membership'
 import { auctionABI } from '../generated'
 import { useQueryClient } from 'wagmi'
 import { getAuctionDataKey, getMinBidValueKey } from './keys'
-import BigNumber from 'bignumber.js'
-import { BigNumberish } from 'ethers'
 
 const useAuctionBid = () => {
   const queryClient = useQueryClient()

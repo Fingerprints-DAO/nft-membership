@@ -11,7 +11,7 @@ import Grid from 'components/grid'
 import Header from 'components/header'
 import Loading from 'components/loading'
 import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
-import { GiModernCity, GiHouse } from 'react-icons/gi'
+import { GiModernCity } from 'react-icons/gi'
 import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
 import ConvertPrintsPage from 'components/modal/convert'
@@ -89,7 +89,7 @@ const AnimateComponent = ({
   )
 }
 const HomePage = () => {
-  // const { push } = useRouter()
+  const { push } = useRouter()
   const searchParams = useSearchParams()
 
   const [animationEnded, setAnimationEnded] = useState(false)
@@ -100,8 +100,8 @@ const HomePage = () => {
 
   const modalName = searchParams.get('modal')
 
-  // const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
-  //   isConnected ? push('/?modal=convert') : show?.()
+  const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
+    isConnected ? push('/?modal=convert') : show?.()
 
   useEffect(() => {
     if (animationStarted) {

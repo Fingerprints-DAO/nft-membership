@@ -3,7 +3,7 @@
 import { Box } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
-import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 
 const Transition = ({ children }: PropsWithChildren) => {
   const pathname = usePathname()

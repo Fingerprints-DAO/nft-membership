@@ -182,3 +182,4 @@ export default AuctionContent
 
 // TODO:
 // Remover tabela de bids e mover para modal
+// Last bids: adicionar spinner quando tiver

@@ -49,6 +49,3 @@ const AuctionNotStarted = () => {
 }
 
 export default AuctionNotStarted
-
-// TODO:
-// Initial price: use min bid value

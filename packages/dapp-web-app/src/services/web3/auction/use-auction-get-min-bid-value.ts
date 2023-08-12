@@ -1,10 +1,11 @@
 import { auctionABI } from '../generated'
-import { Address } from 'viem'
+import { Address, formatEther } from 'viem'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { useQuery } from 'wagmi'
 import { readContract } from '@wagmi/core'
 import { getMinBidValueKey } from './keys'
 import { Interval } from 'types/interval'
+import BigNumber from 'bignumber.js'
 
 const useAuctionGetMinBidValue = () => {
   const { contracts } = useNftMembershipContext()
@@ -16,7 +17,7 @@ const useAuctionGetMinBidValue = () => {
       functionName: 'calculateMinBidIncrement',
     })
 
-    return data
+    return BigNumber(formatEther(data))
   }
 
   const { data: minBidValue } = useQuery(getMinBidValueKey, request, {
@@ -24,7 +25,7 @@ const useAuctionGetMinBidValue = () => {
     // refetchIntervalInBackground: true,
   })
 
-  return minBidValue || BigInt(0)
+  return minBidValue || BigNumber(0)
 }
 
 export default useAuctionGetMinBidValue
