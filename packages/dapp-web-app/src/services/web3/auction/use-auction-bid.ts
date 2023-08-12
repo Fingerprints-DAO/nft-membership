@@ -5,7 +5,7 @@ import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { auctionABI } from '../generated'
 import { useQueryClient } from 'wagmi'
-import { getAuctionDataKey, getMinBidValueKey } from './keys'
+import { getAuctionDataKey, getBidsKey, getMinBidValueKey } from './keys'
 
 const useAuctionBid = () => {
   const queryClient = useQueryClient()
@@ -52,6 +52,7 @@ const useAuctionBid = () => {
 
           queryClient.invalidateQueries(getAuctionDataKey)
           queryClient.invalidateQueries(getMinBidValueKey)
+          queryClient.invalidateQueries(getBidsKey)
         }
       }
     } catch (error: any) {

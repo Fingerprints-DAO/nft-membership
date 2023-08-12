@@ -17,3 +17,10 @@ export type AuctionData = {
   highestBidder: Address
   highestBid: BigNumber
 }
+
+export type Bid = {
+  amount: BigNumber
+  timeAgo: string
+  address?: Address
+  transactionHash?: string
+}

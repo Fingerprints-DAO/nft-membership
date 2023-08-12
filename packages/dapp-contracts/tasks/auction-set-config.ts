@@ -12,7 +12,9 @@ task('auction-set-config', 'Start the auction by setting the config').setAction(
     const auctionFactory = await ethers.getContractFactory('Auction')
 
     // set contract address
-    const auctionContract = auctionFactory.attach(contractAddresses[chainId].Auction)
+    const auctionContract = auctionFactory.attach(
+      contractAddresses[chainId].Auction,
+    )
 
     // const startTime = dayjs().add(1, 'days')
     // const startTimeUnix = startTime.unix()

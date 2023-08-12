@@ -6,6 +6,7 @@ import {
   Flex,
   GridItem,
   Heading,
+  Spinner,
   Table,
   Tbody,
   Td,
@@ -22,6 +23,11 @@ import Grid from 'components/grid'
 import { Avatar } from 'connectkit'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import LastBids from 'components/modal/last-bids'
+import useAuctionLastBids from 'services/web3/auction/use-auction-last-bids'
+import { shortenAddress } from 'utils/string'
+import TimeAgo from 'components/timeago'
+import { roundEtherUp } from 'utils/price'
+import { NumberSettings } from 'types/number-settings'
 import { getExternalEtherscanUrl, getExternalOpenseaUrl } from 'utils/getLink'
 import { getContracts } from 'utils/contract-addresses'
 
@@ -63,8 +69,15 @@ const contracts = getContracts()
 const smartContractLink = getExternalEtherscanUrl(contracts.Auction.address)
 const openSeaCollectionLink = getExternalOpenseaUrl(getContracts().Membership.address)
 
+const MAX_LAST_BIDS_COUNT = 4
+
 const AuctionContent = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const { bids, isLoading } = useAuctionLastBids()
+
+  const lastBids = bids.slice(0, MAX_LAST_BIDS_COUNT)
+
   return (
     <>
       <Grid pt={6} pb="88px" flex={1}>
@@ -87,79 +100,95 @@ const AuctionContent = () => {
               <Thead bgColor="gray.800">
                 <Tr color="gray.300">
                   <Th color="gray.100" textTransform="initial" border="none" colSpan={3} py={4}>
-                    <Text color="gray.300" fontSize="md" lineHeight="24px">
-                      Last bids
-                    </Text>
+                    <Flex alignItems="center">
+                      <Text color="gray.300" fontSize="md" lineHeight="24px" mr={2}>
+                        Last bids
+                      </Text>
+                      {isLoading && <Spinner color="gray.400" size="sm" />}
+                    </Flex>
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {Array.from(Array(4), (_, index) => {
-                  return (
-                    <Tr key={index} bg="gray.900">
-                      <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
-                        <Flex alignItems="center">
-                          <Box
-                            rounded="full"
-                            border="2px"
-                            borderColor="gray.700"
-                            bg="gray.300"
-                            mr={2}
-                          >
-                            <Avatar size={28} />
-                          </Box>
-                          <Tooltip
-                            label="0x135DE65DE65DE65DE65DE65DE65DE65DE65DE65DE6"
-                            placement="top"
-                          >
-                            <Text fontWeight="bold" fontSize={'md'} color="gray.100">
-                              0x13...5DE6
+                {Boolean(lastBids.length) ? (
+                  <>
+                    {lastBids.map((item, index) => {
+                      return (
+                        <Tr key={index} bg="gray.900">
+                          <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+                            <Flex alignItems="center">
+                              <Box
+                                rounded="full"
+                                border="2px"
+                                borderColor="gray.700"
+                                bg="gray.300"
+                                mr={2}
+                              >
+                                <Avatar address={item.address} size={28} />
+                              </Box>
+                              <Tooltip label={item.address} placement="top">
+                                <Text fontWeight="bold" fontSize={'md'} color="gray.100">
+                                  {shortenAddress(item.address)}
+                                </Text>
+                              </Tooltip>
+                            </Flex>
+                          </Td>
+                          <Td px={2} w={{ md: '15%' }}>
+                            <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }}>
+                              <TimeAgo date={item.timeAgo} />
                             </Text>
-                          </Tooltip>
-                        </Flex>
-                      </Td>
-                      <Td px={2} w={{ md: '15%' }}>
-                        <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }}>
-                          13 min
-                        </Text>
-                      </Td>
-                      <Td pl={2} pr={4} w={{ md: '20%' }}>
-                        <Button
-                          as="a"
-                          fontWeight="bold"
-                          rightIcon={
-                            <ExternalLinkIcon
-                              color="links.500"
+                          </Td>
+                          <Td pl={2} pr={4} w={{ md: '20%' }}>
+                            <Button
+                              as="a"
+                              fontWeight="bold"
+                              rightIcon={
+                                <ExternalLinkIcon
+                                  color="links.500"
+                                  transition="ease"
+                                  transitionProperty="color"
+                                  transitionDuration="0.2s"
+                                  mt={-1}
+                                />
+                              }
+                              bg="transparent"
+                              variant="link"
+                              href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${item.transactionHash}`}
+                              fontSize={'md'}
+                              title="View in Etherscan"
+                              target="_blank"
+                              color="gray.100"
+                              _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
                               transition="ease"
                               transitionProperty="color"
                               transitionDuration="0.2s"
-                            />
-                          }
-                          bg="transparent"
-                          variant="link"
-                          href="#"
-                          fontSize={'md'}
-                          title="View in Etherscan"
-                          target="_blank"
-                          color="gray.100"
-                          _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
-                          transition="ease"
-                          transitionProperty="color"
-                          transitionDuration="0.2s"
-                        >
-                          1.9795 ETH
-                        </Button>
-                      </Td>
-                    </Tr>
-                  )
-                })}
+                            >
+                              {roundEtherUp(item.amount.toString(), NumberSettings.DecimalsAuction)}{' '}
+                              ETH
+                            </Button>
+                          </Td>
+                        </Tr>
+                      )
+                    })}
+                  </>
+                ) : (
+                  <Tr>
+                    <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+                      <Text color="gray.400" fontStyle="italic">
+                        No bid so far
+                      </Text>
+                    </Td>
+                  </Tr>
+                )}
               </Tbody>
               <Tfoot>
                 <Tr bg="gray.900">
                   <Th colSpan={3} textAlign="center">
-                    <Button color="gray.500" variant="link" onClick={onOpen}>
-                      view all
-                    </Button>
+                    {bids.length > MAX_LAST_BIDS_COUNT && (
+                      <Button color="gray.500" variant="link" onClick={onOpen}>
+                        view all
+                      </Button>
+                    )}
                   </Th>
                 </Tr>
               </Tfoot>
@@ -182,7 +211,7 @@ const AuctionContent = () => {
           </Flex>
         </GridItem>
       </Grid>
-      {isOpen && <LastBids onClose={onClose} />}
+      {isOpen && <LastBids bids={bids} onClose={onClose} />}
     </>
   )
 }
@@ -190,5 +219,4 @@ const AuctionContent = () => {
 export default AuctionContent
 
 // TODO:
-// Remover tabela de bids e mover para modal
-// Last bids: adicionar spinner quando tiver
+// Investigar pq timeago está renderizando freneticamente
