@@ -13,17 +13,17 @@ import { zeroAddress } from 'viem'
 const AuctionStarted = () => {
   const { auctionData, minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
-
   const [amount, setAmount] = useState<NumberFormatValues>()
-
   const { isLoading: isSubmittingBig, bid } = useAuctionBid()
+  const minBidValueRoundUp = useMemo(
+    () => roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction),
+    [minBidValue]
+  )
 
   const isInvalidValue = useMemo(() => {
     const amountBn = BigNumber(amount?.floatValue || 0)
-    const minBidRounded = BigNumber(roundEtherUp(minBidValue.toString()))
-
-    return amountBn.lt(minBidRounded)
-  }, [minBidValue, amount])
+    return amountBn.lt(minBidValueRoundUp)
+  }, [amount?.floatValue, minBidValueRoundUp])
 
   const handleChange = (values: NumberFormatValues) => {
     setAmount(values)
@@ -33,15 +33,11 @@ const AuctionStarted = () => {
     async (e: any) => {
       try {
         e.preventDefault()
-
         const amountBn = BigNumber(amount?.value || 0)
-
         if (amountBn.lt(auctionData.highestBid)) {
           return
         }
-
         await bid(amount?.formattedValue || '0')
-
         setAmount(undefined)
       } catch (error) {
         console.log('handleSubmit', error)
@@ -64,7 +60,7 @@ const AuctionStarted = () => {
           <Text fontSize="md" color="gray.400" mb={2}>
             Auction ends in
           </Text>
-          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
+          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
             <Countdown futureTimestamp={countdownInMili} />
           </Text>
         </Box>
@@ -72,7 +68,7 @@ const AuctionStarted = () => {
           <Text fontSize="md" color="gray.400" mb={2}>
             {noBid ? 'Starting' : 'Winning'} bid
           </Text>
-          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
+          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
             {roundEtherUp(currentBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
@@ -83,9 +79,8 @@ const AuctionStarted = () => {
           value={amount?.value || ''}
           allowNegative={false}
           customInput={Input}
-          thousandSeparator=","
           decimalSeparator="."
-          decimalScale={4}
+          decimalScale={NumberSettings.DecimalsAuction}
           placeholder={`${roundEtherUp(
             minBidValue.toString(),
             NumberSettings.DecimalsAuction
@@ -105,7 +100,7 @@ const AuctionStarted = () => {
         </Button>
       </Flex>
       <Text color="gray.400" fontStyle="italic" mt={2} fontSize={{ base: 'xs' }}>
-        Min bid allowed: {roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
+        Min bid allowed: {minBidValueRoundUp} ETH
       </Text>
     </Skeleton>
   )

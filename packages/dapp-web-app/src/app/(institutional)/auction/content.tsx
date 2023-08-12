@@ -28,6 +28,8 @@ import { shortenAddress } from 'utils/string'
 import TimeAgo from 'components/timeago'
 import { roundEtherUp } from 'utils/price'
 import { NumberSettings } from 'types/number-settings'
+import { getExternalEtherscanUrl, getExternalOpenseaUrl } from 'utils/getLink'
+import { getContracts } from 'utils/contract-addresses'
 
 const LinkButton = ({ text = '', url = '' }) => (
   <Button
@@ -63,8 +65,9 @@ const PageTitle = () => (
   </Heading>
 )
 
-const smartContractLink = ''
-const openSeaCollectionLink = ''
+const contracts = getContracts()
+const smartContractLink = getExternalEtherscanUrl(contracts.Auction.address)
+const openSeaCollectionLink = getExternalOpenseaUrl(getContracts().Membership.address)
 
 const MAX_LAST_BIDS_COUNT = 4
 
