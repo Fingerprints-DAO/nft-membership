@@ -45,7 +45,7 @@ const useAuctionBid = () => {
 
         if (!!transactionHash) {
           showTxExecutedToast({
-            title: 'You successfully place your bid.',
+            title: 'You successfully placed your bid',
             txHash: transactionHash,
             id: 'bid-success',
           })

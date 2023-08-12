@@ -3,16 +3,17 @@ import Countdown from 'components/countdown'
 import { useAuctionContext } from 'contexts/auction'
 import useCountdownTime from 'hooks/use-countdown-timer'
 import { useCallback, useMemo, useState } from 'react'
-import { formatToEtherString } from 'utils/price'
+import { formatToEtherString, roundEtherUp } from 'utils/price'
 import { NumberFormatValues, NumericFormat } from 'react-number-format'
 import BigNumber from 'bignumber.js'
 import useAuctionBid from 'services/web3/auction/use-auction-bid'
+import { NumberSettings } from 'types/number-settings'
 
 const AuctionStarted = () => {
   const { auctionData, minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
 
-  console.log('auctionData', auctionData)
+  //   console.log('auctionData', auctionData)
 
   const [amount, setAmount] = useState<NumberFormatValues>()
 
@@ -23,8 +24,9 @@ const AuctionStarted = () => {
 
   const isInvalidValue = useMemo(() => {
     const amountBn = BigNumber(amount?.floatValue || 0)
+    const minBidRounded = BigNumber(roundEtherUp(minBidValueBn.toString()))
 
-    return amountBn.lte(minBidValueBn)
+    return amountBn.lt(minBidRounded)
   }, [minBidValueBn, amount])
 
   const handleChange = (values: NumberFormatValues) => {
@@ -68,7 +70,7 @@ const AuctionStarted = () => {
             Winning bid
           </Text>
           <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-            {highestBid.toFormat(4)} ETH
+            {roundEtherUp(highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
       </Flex>
@@ -81,7 +83,10 @@ const AuctionStarted = () => {
           thousandSeparator=","
           decimalSeparator="."
           decimalScale={4}
-          placeholder={`${minBidValueBn.toFormat(4)} ETH or more`}
+          placeholder={`${roundEtherUp(
+            minBidValueBn.toString(),
+            NumberSettings.DecimalsAuction
+          )} ETH or more`}
           variant="outline"
           mr={4}
           flex={1}
@@ -97,10 +102,15 @@ const AuctionStarted = () => {
         </Button>
       </Flex>
       <Text color="gray.400" fontStyle="italic" mt={2} fontSize={{ base: 'xs' }}>
-        Min bid allowed: {minBidValueBn.toFormat(4)} ETH
+        Min bid allowed: {roundEtherUp(minBidValueBn.toString(), NumberSettings.DecimalsAuction)}{' '}
+        ETH
       </Text>
     </Skeleton>
   )
 }
 
 export default AuctionStarted
+
+// TODO:
+// Verificar se o endereço de highest bid é zero e se for trocar o label para "Starting bid" e o valor vem do minBidValue
+// Se tiver bid, label fica como "winnning bid" e o valor vem do highestbid

@@ -36,3 +36,6 @@ const useAuctionGetAuctionData = (): AuctionData => {
 }
 
 export default useAuctionGetAuctionData
+
+// TODO:
+//  - check if address has ens

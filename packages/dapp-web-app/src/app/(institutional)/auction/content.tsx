@@ -183,8 +183,7 @@ const AuctionContent = () => {
               <Tr bg="gray.900">
                 <Th colSpan={3} textAlign="center">
                   <Button color="gray.500" variant="link">
-                    <ChevronDownIcon w={6} h={6} mr={1} />
-                    load more
+                    view all
                   </Button>
                 </Th>
               </Tr>
@@ -208,3 +207,6 @@ const AuctionContent = () => {
 }
 
 export default AuctionContent
+
+// TODO:
+// Remover tabela de bids e mover para modal

@@ -1,29 +1,15 @@
 'use client'
 
-import { ExternalLinkIcon } from '@chakra-ui/icons'
-import {
-  AspectRatio,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Flex,
-  Heading,
-  Input,
-  Link,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react'
-import { Avatar } from 'connectkit'
+import { AspectRatio, Box, Card, CardBody, Heading, Link, Text } from '@chakra-ui/react'
 import { useAuctionContext } from 'contexts/auction'
 import dayjs from 'dayjs'
-import useCountdownTime from 'hooks/use-countdown-timer'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { AuctionState } from 'types/auction'
 import duration from 'dayjs/plugin/duration'
 import AuctionNotStarted from './not-started'
 import AuctionStarted from './started'
+import AuctionEnded from './ended'
 
 dayjs.extend(duration)
 
@@ -39,55 +25,7 @@ const NftCard = () => {
       return <AuctionStarted />
     }
 
-    return (
-      <>
-        <Box mt={10} mb={6}>
-          <Text fontSize="md" color="gray.400" mb={2}>
-            Auction winner
-          </Text>
-          <Flex alignItems="center">
-            <Box rounded="full" border="2px" borderColor="gray.700" bg="gray.300" mr={2}>
-              <Avatar size={40} />
-            </Box>
-            <Tooltip label="0x135DE65DE65DE65DE65DE65DE65DE65DE65DE65DE6" placement="top">
-              <Button
-                as="a"
-                fontWeight="bold"
-                rightIcon={
-                  <ExternalLinkIcon
-                    color="links.500"
-                    transition="ease"
-                    transitionProperty="color"
-                    transitionDuration="0.2s"
-                  />
-                }
-                bg="transparent"
-                variant="link"
-                href="#"
-                fontSize="2xl"
-                title="View in Etherscan"
-                target="_blank"
-                color="gray.100"
-                _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
-                transition="ease"
-                transitionProperty="color"
-                transitionDuration="0.2s"
-              >
-                0x13...5DE6
-              </Button>
-            </Tooltip>
-          </Flex>
-        </Box>
-        <Box>
-          <Text fontSize="md" color="gray.400" mb={2}>
-            Winning bid
-          </Text>
-          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-            1.9795 ETH
-          </Text>
-        </Box>
-      </>
-    )
+    return <AuctionEnded />
   }, [auctionState])
 
   return (
