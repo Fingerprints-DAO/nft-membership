@@ -73,7 +73,7 @@ const AnimateComponent = ({
   forceRender,
 }: AnimateComponentType) => {
   if (forceRender) return <div>{children}</div>
-  if (!voxelAnimationEnded) return
+  if (!voxelAnimationEnded) return <div />
   return (
     <AnimatePresence>
       <motion.div
@@ -181,34 +181,36 @@ const HomePage = () => {
           voxelAnimationEnded={animationEnded || skippedAnimation}
           forceRender={animationEnded && skippedAnimation}
         >
-          <Box
-            position={'absolute'}
-            bottom={{ base: 6, sm: 10 }}
-            zIndex={3}
-            left={0}
-            right={0}
-            textAlign={'center'}
-            fontSize={{ base: 'md', sm: 'lg' }}
-          >
-            <LinkBox
-              as={motion.a}
-              onClick={() => {
-                setAnimationEnded(false)
-                setSkippedAnimation(true)
-              }}
-              ml={'auto'}
-              mr={'auto'}
-              mt={5}
-              cursor={'pointer'}
-              fontWeight={'bold'}
-              animate={pulseAnimation}
-              display={'inline-flex'}
-              alignItems={'center'}
+          {animationEnded && (
+            <Box
+              position={'absolute'}
+              bottom={{ base: 6, sm: 10 }}
+              zIndex={3}
+              left={0}
+              right={0}
+              textAlign={'center'}
+              fontSize={{ base: 'md', sm: 'lg' }}
             >
-              <Icon as={GiModernCity} mr={2} ml={-8} />
-              <span>Play with the Voxelglyph</span>
-            </LinkBox>
-          </Box>
+              <LinkBox
+                as={motion.a}
+                onClick={() => {
+                  setAnimationEnded(false)
+                  setSkippedAnimation(true)
+                }}
+                ml={'auto'}
+                mr={'auto'}
+                mt={5}
+                cursor={'pointer'}
+                fontWeight={'bold'}
+                animate={pulseAnimation}
+                display={'inline-flex'}
+                alignItems={'center'}
+              >
+                <Icon as={GiModernCity} mr={2} ml={-8} />
+                <span>Play with the Voxelglyph</span>
+              </LinkBox>
+            </Box>
+          )}
         </AnimateComponent>
         <AnimatePresence initial={false} mode="wait">
           <Suspense fallback={<Loading full />}>
