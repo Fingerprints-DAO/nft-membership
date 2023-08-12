@@ -7,7 +7,7 @@ import about2 from '../../../../public/images/about-2.png'
 
 const AboutPage = () => {
   return (
-    <Box as="section" pt={{ base: 12, md: '88px' }} pb="120px">
+    <Box as="section" pt={6} pb="120px" flex={1}>
       <Grid mb={{ base: 16, sm: '72px' }}>
         <GridItem colSpan={{ base: 4, sm: 6, md: 12 }}>
           <Text

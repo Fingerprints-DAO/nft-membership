@@ -2,6 +2,7 @@ import { Box, Flex, Skeleton, Text } from '@chakra-ui/react'
 import Countdown from 'components/countdown'
 import { useAuctionContext } from 'contexts/auction'
 import dayjs from 'dayjs'
+import { formatEther } from 'ethers/lib/utils'
 import useCountdownTime from 'hooks/use-countdown-timer'
 import { NumberSettings } from 'types/number-settings'
 import { roundEtherUp } from 'utils/price'
@@ -21,7 +22,7 @@ const AuctionNotStarted = () => {
         <Text fontSize="md" color="gray.400" mb={2}>
           Auction starts in
         </Text>
-        <Text fontSize={{ base: '2xl', md: '3xl' }} fontWeight="bold" color="gray.100">
+        <Text fontSize={{ base: 'xl', md: 'xl' }} fontWeight="bold" color="gray.100">
           <Countdown futureTimestamp={countdownInMili} />
         </Text>
       </Skeleton>
@@ -30,15 +31,15 @@ const AuctionNotStarted = () => {
           <Text fontSize="md" color="gray.400" mb={2}>
             Initial price
           </Text>
-          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-            {roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
+          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
+            {roundEtherUp(formatEther(minBidValue.toString()), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
         <Box flex={1}>
           <Text fontSize="md" color="gray.400" mb={2}>
             Duration
           </Text>
-          <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
+          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
             {hours} hour(s)
           </Text>
         </Box>

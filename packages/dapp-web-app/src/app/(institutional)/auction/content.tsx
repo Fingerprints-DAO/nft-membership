@@ -19,110 +19,78 @@ import {
 import NftCard from './nft-card'
 import Grid from 'components/grid'
 import { Avatar } from 'connectkit'
-import { ChevronDownIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+
+const LinkButton = ({ text = '', url = '' }) => (
+  <Button
+    as="a"
+    fontWeight="normal"
+    rightIcon={
+      <ExternalLinkIcon
+        color="links.500"
+        transition="ease"
+        transitionProperty="color"
+        transitionDuration="0.2s"
+      />
+    }
+    bg="transparent"
+    variant="link"
+    href={url}
+    title="View smart contract in Etherscan"
+    target="_blank"
+    color="links.500"
+    _hover={{ color: 'white', '> span svg': { color: 'white' } }}
+    transition="ease"
+    transitionProperty="color"
+    transitionDuration="0.2s"
+    mb={2}
+  >
+    {text}
+  </Button>
+)
+
+const PageTitle = () => (
+  <Heading color="gray.50" mb={{ base: 4, md: 8 }} mt={2} fontSize={{ base: 'xl', md: '2xl' }}>
+    Fingerprints Membership auction
+  </Heading>
+)
+
+const smartContractLink = ''
+const openSeaCollectionLink = ''
 
 const AuctionContent = () => {
   return (
-    <Grid pt={{ base: 12, md: '88px' }} pb="88px">
-      <GridItem colStart={{ md: 2 }} colSpan={{ base: 4, sm: 3, md: 4 }}>
+    <Grid pt={6} pb="88px" flex={1}>
+      <GridItem hideFrom={'sm'} colSpan={4}>
+        <PageTitle />
+      </GridItem>
+      <GridItem colSpan={{ base: 4, sm: 2, md: 4 }}>
         <NftCard />
       </GridItem>
-      <GridItem colStart={{ md: 6 }} colSpan={{ base: 4, sm: 3, md: 6 }}>
-        <Heading color="gray.50" mb={8} fontSize="3xl">
-          Fingerprints Membership auction
-        </Heading>
-        <Flex flexDir="column" alignItems="flex-start" mb={8}>
-          <Button
-            as="a"
-            fontWeight="normal"
-            rightIcon={
-              <ExternalLinkIcon
-                color="links.500"
-                transition="ease"
-                transitionProperty="color"
-                transitionDuration="0.2s"
-              />
-            }
-            bg="transparent"
-            variant="link"
-            href="#"
-            title="View smart contract in Etherscan"
-            target="_blank"
-            color="links.500"
-            _hover={{ color: 'white', '> span svg': { color: 'white' } }}
-            transition="ease"
-            transitionProperty="color"
-            transitionDuration="0.2s"
-            mb={2}
-          >
-            View smart contract in Etherscan
-          </Button>
-          <Button
-            as="a"
-            fontWeight="normal"
-            rightIcon={
-              <ExternalLinkIcon
-                color="links.500"
-                transition="ease"
-                transitionProperty="color"
-                transitionDuration="0.2s"
-              />
-            }
-            bg="transparent"
-            variant="link"
-            href="#"
-            title="View collection in OpenSea"
-            target="_blank"
-            color="links.500"
-            _hover={{ color: 'white', '> span svg': { color: 'white' } }}
-            transition="ease"
-            transitionProperty="color"
-            transitionDuration="0.2s"
-            mb={2}
-          >
-            View collection in OpenSea
-          </Button>
-          <Button
-            as="a"
-            fontWeight="normal"
-            rightIcon={
-              <ExternalLinkIcon
-                color="links.500"
-                transition="ease"
-                transitionProperty="color"
-                transitionDuration="0.2s"
-              />
-            }
-            bg="transparent"
-            variant="link"
-            href="#"
-            title="View project GitHub"
-            target="_blank"
-            color="links.500"
-            _hover={{ color: 'white', '> span svg': { color: 'white' } }}
-            transition="ease"
-            transitionProperty="color"
-            transitionDuration="0.2s"
-          >
-            View project GitHub
-          </Button>
+      <GridItem colSpan={{ base: 4, sm: 4, md: 8 }}>
+        <Box hideBelow={'sm'}>
+          <PageTitle />
+        </Box>
+        <Flex flexDir="column" alignItems="flex-start" mb={8} hideBelow={'sm'}>
+          <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
+          <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
         </Flex>
         <Box rounded="lg" overflow={['auto', 'hidden']} mb={8}>
           <Table>
             <Thead bgColor="gray.800">
               <Tr color="gray.300">
-                <Th color="gray.100" textTransform="initial" border="none" colSpan={3} p={4}>
-                  <Text color="gray.300" fontSize="lg" lineHeight="24px">
+                <Th color="gray.100" textTransform="initial" border="none" colSpan={3} py={4}>
+                  <Text color="gray.300" fontSize="md" lineHeight="24px">
                     Last bids
                   </Text>
                 </Th>
               </Tr>
             </Thead>
             <Tbody>
-              {Array.from(Array(5), (_, index) => {
+              {Array.from(Array(4), (_, index) => {
                 return (
                   <Tr key={index} bg="gray.900">
-                    <Td pl={4} pr={2} w={{ md: '65%' }}>
+                    <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
                       <Flex alignItems="center">
                         <Box
                           rounded="full"
@@ -131,20 +99,20 @@ const AuctionContent = () => {
                           bg="gray.300"
                           mr={2}
                         >
-                          <Avatar size={32} />
+                          <Avatar size={28} />
                         </Box>
                         <Tooltip
                           label="0x135DE65DE65DE65DE65DE65DE65DE65DE65DE65DE6"
                           placement="top"
                         >
-                          <Text fontWeight="bold" fontSize={{ md: 'lg' }} color="gray.100">
+                          <Text fontWeight="bold" fontSize={'md'} color="gray.100">
                             0x13...5DE6
                           </Text>
                         </Tooltip>
                       </Flex>
                     </Td>
                     <Td px={2} w={{ md: '15%' }}>
-                      <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'lg' }}>
+                      <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }}>
                         13 min
                       </Text>
                     </Td>
@@ -163,7 +131,7 @@ const AuctionContent = () => {
                         bg="transparent"
                         variant="link"
                         href="#"
-                        fontSize={{ md: 'lg' }}
+                        fontSize={'md'}
                         title="View in Etherscan"
                         target="_blank"
                         color="gray.100"
@@ -201,6 +169,10 @@ const AuctionContent = () => {
             experience for Fingerprints community members.
           </Text>
         </Box>
+        <Flex flexDir="column" alignItems="flex-start" mt={8} hideFrom={'sm'}>
+          <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
+          <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
+        </Flex>
       </GridItem>
     </Grid>
   )

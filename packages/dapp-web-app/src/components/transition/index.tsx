@@ -26,15 +26,20 @@ const Transition = ({ children }: PropsWithChildren) => {
   return (
     <AnimatePresence initial={false} mode="wait">
       <Suspense fallback={null}>
-        <motion.div
+        <Box
+          as={motion.div}
           key={pathname}
           variants={variants}
           animate="in"
           initial="out"
           exit="out"
+          minH={'100vh'}
+          display={'flex'}
+          flexDir={'column'}
+          justifyContent={'flex-start'}
         >
           {children}
-        </motion.div>
+        </Box>
       </Suspense>
     </AnimatePresence>
   )
