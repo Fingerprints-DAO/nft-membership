@@ -1,9 +1,7 @@
 'use client'
 
 import { Box, GridItem, Link, Text } from '@chakra-ui/react'
-import Footer from 'components/footer'
 import Grid from 'components/grid'
-import Header from 'components/header'
 
 const questions = [
   {
@@ -11,7 +9,8 @@ const questions = [
     answer: `Fingerprints DAO believes that ERC-721 NFTs offer a more immersive and unique representation of membership, enhancing the value and engagement of our community.`,
   },
   {
-    question: 'Will there be any costs associated with the transition from ERC-20 tokens to ERC-721 NFTs?',
+    question:
+      'Will there be any costs associated with the transition from ERC-20 tokens to ERC-721 NFTs?',
     answer: `Fingerprints DAO is committed to minimizing costs for token holders during the transition process. Details regarding any associated costs, if applicable, will be communicated transparently.`,
   },
   {
@@ -20,14 +19,16 @@ const questions = [
   },
   {
     question: 'Who will be creating the NFTs for Fingerprints DAO?',
-    answer: 'Fingerprints DAO has partnered with renowned NFT creators, such as LarvaLabs, to design and create the NFTs for the transition.',
+    answer:
+      'Fingerprints DAO has partnered with renowned NFT creators, such as LarvaLabs, to design and create the NFTs for the transition.',
   },
   {
-    question: 'Can you provide more information about the rules and guidelines for the auction of NFTs?',
+    question:
+      'Can you provide more information about the rules and guidelines for the auction of NFTs?',
     answer: (
       <>
-        Fingerprints DAO will provide detailed information about the rules, guidelines, and procedures for NFT auctions, including the auction for the
-        inaugural NFT, in{' '}
+        Fingerprints DAO will provide detailed information about the rules, guidelines, and
+        procedures for NFT auctions, including the auction for the inaugural NFT, in{' '}
         <Link
           color="links.500"
           title="auction page"
@@ -43,7 +44,8 @@ const questions = [
     ),
   },
   {
-    question: 'Will there be limitations on the utility of NFTs acquired through the auction for governance purposes?',
+    question:
+      'Will there be limitations on the utility of NFTs acquired through the auction for governance purposes?',
     answer:
       'NFTs acquired through the auction will retain their utility for governance within Fingerprints DAO, allowing holders to continue participating in the decision-making processes.',
   },
@@ -67,7 +69,13 @@ const FaqPage = () => {
               const isLastChild = questions.length - 1 === index
 
               return (
-                <Box py={8} borderBottomColor="gray.700" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`}>
+                <Box
+                  py={8}
+                  borderBottomColor="gray.700"
+                  borderBottomWidth={!isLastChild ? 1 : 0}
+                  key={index}
+                  id={`q-${index}`}
+                >
                   <Text as="strong" fontSize="lg" display="block" color="gray.100">
                     {item.question}
                   </Text>

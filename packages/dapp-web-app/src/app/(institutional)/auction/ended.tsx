@@ -35,7 +35,7 @@ const AuctionEnded = () => {
               }
               bg="transparent"
               variant="link"
-              href="#"
+              href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/address/${auctionData.highestBidder}`}
               fontSize="2xl"
               title="View in Etherscan"
               target="_blank"

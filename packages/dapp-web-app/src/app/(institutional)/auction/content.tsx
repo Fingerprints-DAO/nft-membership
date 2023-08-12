@@ -19,7 +19,7 @@ import {
 import NftCard from './nft-card'
 import Grid from 'components/grid'
 import { Avatar } from 'connectkit'
-import { ChevronDownIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 const AuctionContent = () => {
   return (

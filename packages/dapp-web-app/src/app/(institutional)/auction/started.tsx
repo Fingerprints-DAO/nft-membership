@@ -8,12 +8,11 @@ import { NumberFormatValues, NumericFormat } from 'react-number-format'
 import BigNumber from 'bignumber.js'
 import useAuctionBid from 'services/web3/auction/use-auction-bid'
 import { NumberSettings } from 'types/number-settings'
+import { zeroAddress } from 'viem'
 
 const AuctionStarted = () => {
   const { auctionData, minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
-
-  //   console.log('auctionData', auctionData)
 
   const [amount, setAmount] = useState<NumberFormatValues>()
 
@@ -51,6 +50,13 @@ const AuctionStarted = () => {
     [amount, bid, auctionData.highestBid]
   )
 
+  const noBid = useMemo(
+    () => zeroAddress === auctionData.highestBidder.toLowerCase(),
+    [auctionData.highestBidder]
+  )
+
+  const currentBidValue = noBid ? minBidValue : auctionData.highestBid
+
   return (
     <Skeleton isLoaded={countdown > 0}>
       <Flex>
@@ -64,10 +70,10 @@ const AuctionStarted = () => {
         </Box>
         <Box flex={1}>
           <Text fontSize="md" color="gray.400" mb={2}>
-            Winning bid
+            {noBid ? 'Starting' : 'Winning'} bid
           </Text>
           <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-            {roundEtherUp(auctionData.highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
+            {roundEtherUp(currentBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
       </Flex>
@@ -106,7 +112,3 @@ const AuctionStarted = () => {
 }
 
 export default AuctionStarted
-
-// TODO:
-// Verificar se o endereço de highest bid é zero e se for trocar o label para "Starting bid" e o valor vem do minBidValue
-// Se tiver bid, label fica como "winnning bid" e o valor vem do highestbid

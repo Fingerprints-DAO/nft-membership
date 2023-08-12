@@ -19,7 +19,7 @@ task('auction-set-config', 'Start the auction by setting the config').setAction(
     const startTime = dayjs()
     // .add(2, 'minutes')
     const startTimeUnix = startTime.unix()
-    const endTimeUnix = startTime.add(1, 'minutes').unix()
+    const endTimeUnix = startTime.add(15, 'minutes').unix()
 
     const minBidIncrement = ethers.parseEther('0.2')
     const startingBid = ethers.parseEther('4.8')

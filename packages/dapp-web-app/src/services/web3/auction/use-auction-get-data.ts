@@ -2,8 +2,8 @@ import { auctionABI } from '../generated'
 import { Address, formatEther } from 'viem'
 import { AuctionData } from 'types/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import { useQuery } from 'wagmi'
-import { fetchEnsName, readContract } from '@wagmi/core'
+import { useEnsName, useQuery } from 'wagmi'
+import { readContract } from '@wagmi/core'
 import { getAuctionDataKey } from './keys'
 import { Interval } from 'types/interval'
 import BigNumber from 'bignumber.js'
@@ -12,24 +12,27 @@ const useAuctionGetAuctionData = (): AuctionData => {
   const { contracts } = useNftMembershipContext()
 
   const request = async () => {
-    const data = await readContract({
-      address: contracts.Auction.address as Address,
-      abi: auctionABI,
-      functionName: 'getData',
-    })
+    try {
+      const data = await readContract({
+        address: contracts.Auction.address as Address,
+        abi: auctionABI,
+        functionName: 'getData',
+      })
 
-    const ensName = await fetchEnsName({ address: data.highestBidder })
-
-    return {
-      highestBidder: (ensName || data.highestBidder) as Address,
-      //   highestBid: BigNumber(formatEther(data.highestBid || BigInt(0))),
-      highestBid: data.highestBid,
+      return data
+    } catch (error) {
+      console.log('error', error)
     }
   }
 
   const { data: auctionData } = useQuery(getAuctionDataKey, request, {
     // refetchInterval: Interval.Pooling,
     // refetchIntervalInBackground: true,
+  })
+
+  const { data: ensName } = useEnsName({
+    address: auctionData?.highestBidder,
+    enabled: !!auctionData?.highestBidder,
   })
 
   if (!auctionData) {
@@ -40,7 +43,7 @@ const useAuctionGetAuctionData = (): AuctionData => {
   }
 
   return {
-    ...auctionData,
+    highestBidder: (ensName || auctionData.highestBidder) as Address,
     highestBid: BigNumber(formatEther(auctionData.highestBid)),
   }
 }
