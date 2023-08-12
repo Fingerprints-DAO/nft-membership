@@ -14,13 +14,13 @@ task('auction-set-config', 'Start the auction by setting the config').setAction(
     // set contract address
     const auctionContract = auctionFactory.attach(contractAddresses[chainId].Auction)
 
-    // const secondsInADay = 24 * 60 * 60
-    // const startTimeUnix = Math.floor(Date.now() / 1000) + 2 * secondsInADay
-    // const endTimeUnix = startTimeUnix + 5 * 3600 // 5 hours
+    // const startTime = dayjs().add(1, 'days')
+    // const startTimeUnix = startTime.unix()
+    // const endTimeUnix = startTime.add(25, 'hours').unix()
 
-    const startTime = dayjs().add(1, 'days')
+    const startTime = dayjs().add(2, 'minutes')
     const startTimeUnix = startTime.unix()
-    const endTimeUnix = startTime.add(25, 'hours').unix()
+    const endTimeUnix = startTime.add(2, 'minutes').unix()
 
     const minBidIncrement = ethers.parseEther('0.2')
     const startingBid = ethers.parseEther('4.8')

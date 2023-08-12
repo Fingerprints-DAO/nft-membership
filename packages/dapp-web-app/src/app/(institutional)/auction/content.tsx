@@ -22,6 +22,8 @@ import Grid from 'components/grid'
 import { Avatar } from 'connectkit'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import LastBids from 'components/modal/last-bids'
+import { getExternalEtherscanUrl, getExternalOpenseaUrl } from 'utils/getLink'
+import { getContracts } from 'utils/contract-addresses'
 
 const LinkButton = ({ text = '', url = '' }) => (
   <Button
@@ -57,8 +59,9 @@ const PageTitle = () => (
   </Heading>
 )
 
-const smartContractLink = ''
-const openSeaCollectionLink = ''
+const contracts = getContracts()
+const smartContractLink = getExternalEtherscanUrl(contracts.Auction.address)
+const openSeaCollectionLink = getExternalOpenseaUrl(getContracts().Membership.address)
 
 const AuctionContent = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()

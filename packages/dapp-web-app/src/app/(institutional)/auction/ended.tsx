@@ -19,37 +19,41 @@ const AuctionEnded = () => {
         </Text>
         <Flex alignItems="center">
           <Box rounded="full" border="2px" borderColor="gray.700" bg="gray.300" mr={2}>
-            <Avatar address={auctionData.highestBidder} size={40} />
+            <Avatar address={auctionData.highestBidder} size={35} />
           </Box>
-          <Tooltip label={auctionData.highestBidder} placement="top">
-            <Button
-              as="a"
-              fontWeight="bold"
-              rightIcon={
-                <ExternalLinkIcon
-                  color="links.500"
-                  transition="ease"
-                  transitionProperty="color"
-                  transitionDuration="0.2s"
-                />
-              }
-              bg="transparent"
-              variant="link"
-              href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/address/${auctionData.highestBidder}`}
-              fontSize="2xl"
-              title="View in Etherscan"
-              target="_blank"
-              color="gray.100"
-              _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
-              transition="ease"
-              transitionProperty="color"
-              transitionDuration="0.2s"
-            >
-              {auctionData.highestBidder === address
-                ? 'You'
-                : shortenAddress(auctionData.highestBidder)}
-            </Button>
-          </Tooltip>
+          {auctionData.highestBidder === address ? (
+            <Text fontWeight="bold" color="gray.100" fontSize="xl">
+              You
+            </Text>
+          ) : (
+            <Tooltip label={auctionData.highestBidder} placement="top">
+              <Button
+                as="a"
+                fontWeight="bold"
+                rightIcon={
+                  <ExternalLinkIcon
+                    color="links.500"
+                    transition="ease"
+                    transitionProperty="color"
+                    transitionDuration="0.2s"
+                  />
+                }
+                bg="transparent"
+                variant="link"
+                href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/address/${auctionData.highestBidder}`}
+                fontSize="xl"
+                title="View in Etherscan"
+                target="_blank"
+                color="gray.100"
+                _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
+                transition="ease"
+                transitionProperty="color"
+                transitionDuration="0.2s"
+              >
+                {shortenAddress(auctionData.highestBidder)}
+              </Button>
+            </Tooltip>
+          )}
         </Flex>
       </Box>
       <Box>
@@ -59,6 +63,12 @@ const AuctionEnded = () => {
         <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
           {roundEtherUp(auctionData.highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
         </Text>
+
+        {auctionData.highestBidder === address && (
+          <Text color="gray.400" fontStyle="italic" mt={2} fontSize={'sm'}>
+            Fingerprints DAO is settling the auction. Soon, Voxelglyph #1 will be in your wallet.
+          </Text>
+        )}
       </Box>
     </>
   )

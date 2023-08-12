@@ -21,8 +21,8 @@ const useAuctionGetMinBidValue = () => {
   }
 
   const { data: minBidValue } = useQuery(getMinBidValueKey, request, {
-    // refetchInterval: Interval.Pooling,
-    // refetchIntervalInBackground: true,
+    refetchInterval: Interval.Pooling,
+    refetchIntervalInBackground: true,
   })
 
   return minBidValue || BigNumber(0)

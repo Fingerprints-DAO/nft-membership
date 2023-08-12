@@ -13,10 +13,7 @@ type FooterProps = {
   pageState?: PageState
 }
 
-const Footer = ({
-  isHome = false,
-  pageState = PageState.Released,
-}: FooterProps) => {
+const Footer = ({ isHome = false, pageState = PageState.Released }: FooterProps) => {
   const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   return (
@@ -27,14 +24,8 @@ const Footer = ({
       position="relative"
       zIndex={10}
     >
-      <Grid
-        gridTemplateColumns={isMobile ? 'none' : undefined}
-        alignItems={'center'}
-      >
-        <GridItem
-          colSpan={{ base: 4, sm: 4, md: 9, xl: 8 }}
-          colStart={{ base: 1, xl: 2 }}
-        >
+      <Grid gridTemplateColumns={isMobile ? 'none' : undefined} alignItems={'center'}>
+        <GridItem colSpan={{ base: 4, sm: 4, md: 9, xl: 8 }} colStart={{ base: 1, xl: 2 }}>
           <Flex
             mb={{ base: 6, sm: 'unset' }}
             flexDirection="column"
@@ -97,7 +88,7 @@ const Footer = ({
             </Link>
             {pageState !== PageState.Soon && (
               <Link
-                href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/maschine`}
+                href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
                 title="OpenSea"
                 target="_blank"
                 color="#7a7a7a"
