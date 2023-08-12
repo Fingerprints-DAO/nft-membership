@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import { Address, parseEther } from 'viem'
 import { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import useTxToast from 'hooks/use-tx-toast'
@@ -6,7 +6,11 @@ import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
 import { printsABI } from '../generated'
 
-const usePrintsApprove = (allowance: BigNumber, toAllow: BigNumber, totalAvailableToSpend: BigNumber) => {
+const usePrintsApprove = (
+  allowance: BigNumber,
+  toAllow: BigNumber,
+  totalAvailableToSpend: BigNumber
+) => {
   const { contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
@@ -30,7 +34,7 @@ const usePrintsApprove = (allowance: BigNumber, toAllow: BigNumber, totalAvailab
         address: contracts.ERC20.address as Address,
         abi: printsABI,
         functionName: 'approve',
-        args: [contracts.Migration.address as Address, toAllow.integerValue() as any],
+        args: [contracts.Migration.address as Address, parseEther(toAllow.toString())],
       })
 
       const { hash } = await writeContract(config)
