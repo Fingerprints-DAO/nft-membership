@@ -24,13 +24,11 @@ import Wallet from 'components/wallet'
 import { PageState } from 'types/page'
 
 const nav = [
-  { href: '/auction', label: 'auction' },
+  // { href: '/auction', label: 'auction' },
   // { href: '/', label: 'home' },
   { href: '/about', label: 'about' },
   { href: '/faq', label: 'FAQ' },
 ]
-
-const mobileNav = [...nav, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' }]
 
 type HeaderProps = {
   pageState?: PageState
@@ -72,7 +70,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                     as={Link}
                     href={item.href}
                     title={item.label}
-                    mr={14}
+                    ml={14}
                     _hover={{ color: 'secondary.500' }}
                     color={isActive ? 'secondary.500' : 'white'}
                     transition="ease"
@@ -85,7 +83,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                   </Box>
                 )
               })}
-              <Wallet variant="header" buttonWidth="auto" />
+              {/* <Wallet variant="header" buttonWidth="auto" /> */}
             </Flex>
           )}
         </GridItem>
@@ -110,8 +108,8 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
             </GridItem>
           </Grid>
           <DrawerBody mt={8} px={8}>
-            {mobileNav.map((item, index) => {
-              const isLastChild = mobileNav.length - 1 === index
+            {nav.map((item, index) => {
+              const isLastChild = nav.length - 1 === index
               const isActive = pathname === item.href
 
               return (
@@ -132,9 +130,9 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
               )
             })}
           </DrawerBody>
-          <DrawerFooter px={8} pb={12}>
+          {/* <DrawerFooter px={8} pb={12}>
             <Wallet variant="drawer" />
-          </DrawerFooter>
+          </DrawerFooter> */}
         </DrawerContent>
       </Drawer>
     </>
