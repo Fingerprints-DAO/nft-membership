@@ -28,8 +28,9 @@ const components = {
     sizes: {
       lg: {
         fontWeight: 'bold',
-        height: 16,
-        px: 7,
+        height: 12,
+        fontSize: 16,
+        px: 4,
       },
     },
     variants: {
