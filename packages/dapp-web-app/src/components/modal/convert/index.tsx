@@ -11,6 +11,7 @@ import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import useMediaQuery from 'hooks/use-media-query'
 import { useRouter } from 'next/navigation'
 import { formatBigNumberFloor } from 'utils/price'
+import BigNumber from 'bignumber.js'
 
 type Action = '' | 'top-up' | 'convert'
 
@@ -22,12 +23,12 @@ const ConvertPrintsPage = () => {
   const printsBalance = usePrintsGetBalance()
   const { pricePerMembership } = useNftMembershipContext()
 
-  console.log('allowance', allowance.toNumber())
+  // console.log('allowance', allowance.toNumber())
 
   // const [action, setAction] = useState<Action>('top-up')
   const [action, setAction] = useState<Action>('')
 
-  const leftovers = useMemo(
+  const leftovers: BigNumber = useMemo(
     () => printsBalance.value.mod(pricePerMembership),
     [printsBalance, pricePerMembership]
   )
@@ -39,11 +40,21 @@ const ConvertPrintsPage = () => {
     [printsBalance.value, pricePerMembership]
   )
 
-  const onBack = useCallback(() => setAction(''), [])
+  const onStateBack = useCallback(() => setAction(''), [])
+  const onCloseModal = useCallback(() => push('/'), [push])
 
   const render = useMemo(() => {
     if (action === 'top-up') {
-      return <TopUp printsBalance={printsBalance} onClose={onBack} />
+      // console.log(leftovers.toString(), pricePerMembership.toString())
+      // console.log(pricePerMembership.minus(leftovers).toString())
+      return (
+        <TopUp
+          printsBalance={printsBalance}
+          onClose={onStateBack}
+          amount={pricePerMembership.minus(leftovers)}
+          ableToMint={nftsMintables + 1}
+        />
+      )
     }
 
     if (action === 'convert') {
@@ -53,7 +64,7 @@ const ConvertPrintsPage = () => {
           allowance={allowance}
           toAllow={toAllow}
           totalAvailableToSpend={totalAvailableToSpend}
-          onClose={onBack}
+          onClose={onCloseModal}
         />
       )
     }
@@ -63,7 +74,7 @@ const ConvertPrintsPage = () => {
         nftsMintables={nftsMintables}
         leftovers={leftovers}
         printsBalance={printsBalance}
-        onClose={onBack}
+        onClose={onCloseModal}
         onAction={setAction}
       />
     )
@@ -72,7 +83,9 @@ const ConvertPrintsPage = () => {
     nftsMintables,
     leftovers,
     printsBalance,
-    onBack,
+    onCloseModal,
+    onStateBack,
+    pricePerMembership,
     allowance,
     toAllow,
     totalAvailableToSpend,
@@ -84,7 +97,7 @@ const ConvertPrintsPage = () => {
       isOpen={true}
       scrollBehavior={isMobile ? 'inside' : 'outside'}
       motionPreset={isMobile ? 'slideInBottom' : 'scale'}
-      onClose={onBack}
+      onClose={onStateBack}
     >
       <ModalOverlay height="100vh" />
       <ModalContent
