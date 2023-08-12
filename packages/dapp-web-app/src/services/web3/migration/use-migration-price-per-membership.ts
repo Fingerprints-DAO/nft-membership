@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { Address } from 'wagmi'
 import { useMigrationPricePerMembershipInWei } from '../generated'
+import { formatEther } from 'viem'
 
 const useMigrationPricePerMembership = (migrationContractAddress: string) => {
   const { data: pricePerMembershipInWei } = useMigrationPricePerMembershipInWei({
@@ -11,7 +12,7 @@ const useMigrationPricePerMembership = (migrationContractAddress: string) => {
     return BigNumber(0)
   }
 
-  return BigNumber(pricePerMembershipInWei as any)
+  return BigNumber(formatEther(pricePerMembershipInWei))
 }
 
 export default useMigrationPricePerMembership

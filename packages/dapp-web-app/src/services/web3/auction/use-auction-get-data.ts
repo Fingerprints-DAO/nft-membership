@@ -21,8 +21,8 @@ const useAuctionGetAuctionData = (): AuctionData => {
   }
 
   const { data: auctionData } = useQuery(getAuctionDataKey, request, {
-    refetchInterval: Interval.Pooling,
-    refetchIntervalInBackground: true,
+    // refetchInterval: Interval.Pooling,
+    // refetchIntervalInBackground: true,
   })
 
   if (!auctionData) {
