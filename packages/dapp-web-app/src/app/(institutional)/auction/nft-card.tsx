@@ -85,3 +85,6 @@ const NftCard = () => {
 }
 
 export default NftCard
+
+// TODO:
+// fazer o card atualizar quando o estado do leilão mudar

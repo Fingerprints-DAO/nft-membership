@@ -22,9 +22,9 @@ const { chains } = configureChains(selectedChain, [
 export const config = createConfig(
   getDefaultConfig({
     autoConnect: true,
-    appName: 'My wagmi + ConnectKit App',
+    appName: 'NFT Membership',
     walletConnectProjectId,
     infuraId: process.env.NEXT_PUBLIC_PROVIDER_KEY,
     chains,
-  }),
+  })
 )
