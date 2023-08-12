@@ -1,5 +1,14 @@
 import { CheckIcon, WarningIcon } from '@chakra-ui/icons'
-import { As, CloseButton, Flex, Icon, Text, ToastId, UseToastOptions, useToast } from '@chakra-ui/react'
+import {
+  As,
+  CloseButton,
+  Flex,
+  Icon,
+  Text,
+  ToastId,
+  UseToastOptions,
+  useToast,
+} from '@chakra-ui/react'
 import { TxMessage } from 'components/tx-message'
 
 type ToastContentProps = {
@@ -15,13 +24,21 @@ type ToastContentProps = {
   onClose: (toastId: ToastId) => void
 }
 
-const ToastContent = ({ title, description, txHash, status, toastId, icon, onClose }: ToastContentProps) => {
+const ToastContent = ({
+  title,
+  description,
+  txHash,
+  status,
+  toastId,
+  icon,
+  onClose,
+}: ToastContentProps) => {
   return (
     <Flex
       alignItems="center"
       justifyContent="center"
       bg={status === 'success' ? 'gray.300' : '#F76B8B'}
-      p={['84px 16px 72px', 4]}
+      p={['18px 16px', 4]}
       position="relative"
     >
       {Boolean(icon) && <Icon {...icon} mr={2} />}
@@ -34,7 +51,16 @@ const ToastContent = ({ title, description, txHash, status, toastId, icon, onClo
           </>
         )}
       </Text>
-      <CloseButton color="gray.900" position="absolute" right="7px" top="7px" w="44px" h="44px" size="lg" onClick={() => onClose(toastId)} />
+      <CloseButton
+        color="gray.900"
+        position="absolute"
+        right="7px"
+        top="7px"
+        w="44px"
+        h="44px"
+        size="lg"
+        onClick={() => onClose(toastId)}
+      />
     </Flex>
   )
 }
@@ -58,7 +84,15 @@ export const useTxToast = () => {
       },
       duration: 9000,
       position: 'top',
-      render: () => <ToastContent title="Transaction sent" txHash={txHash} status="success" toastId={toastId} onClose={toast.close} />,
+      render: () => (
+        <ToastContent
+          title="Transaction sent"
+          txHash={txHash}
+          status="success"
+          toastId={toastId}
+          onClose={toast.close}
+        />
+      ),
     })
   }
 
@@ -170,7 +204,12 @@ export const useTxToast = () => {
       render: () => (
         <ToastContent
           title="An error occured: "
-          description={revertError.reason ?? revertError.cause?.shortMessage ?? revertError.message ?? revertError.details}
+          description={
+            revertError.reason ??
+            revertError.cause?.shortMessage ??
+            revertError.message ??
+            revertError.details
+          }
           status="error"
           icon={{ as: WarningIcon, color: 'gray.900' }}
           toastId={id}

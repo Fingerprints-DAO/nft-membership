@@ -142,14 +142,14 @@ describe('Auction', function () {
       ).to.be.revertedWithCustomError(newAuction, 'InvalidAmountInWei')
       //test wrong minBidIncrementPercentage
 
-      const endTimeIn3Days5 = startTimeIn7Days + 7 * 24 * 60 * 60 + 1 // 7 days + 1
+      const endTimeIn7DaysPlus15 = startTimeIn7Days + 7 * 24 * 60 * 60 + 1 // 7 days + 1
       const startingBid5 = 100
       const minBidIncrementPercentage5 = 0
 
       await expect(
         newAuction.setConfig(
           startTimeIn7Days,
-          endTimeIn3Days5,
+          endTimeIn7DaysPlus15,
           minBidIncrementPercentage5,
           startingBid5,
         ),

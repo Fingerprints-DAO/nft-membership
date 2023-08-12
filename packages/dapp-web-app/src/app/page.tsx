@@ -1,17 +1,17 @@
 import { Metadata } from 'next'
-import { PageState } from 'types/page'
+// import { PageState } from 'types/page'
 // import SoonPage from './page-soon'
 import ReleasedPage from './page-released'
 
 export const metadata: Metadata = {
-  title: 'Home',
+  title: 'Home | Fingerprints Membership Migration',
 }
 
 // const state = PageState.Soon
 
 const HomePage = () => {
   // if (state === PageState.Soon)
-  //   return <SoonPage bgImage="/images/bg-hero-soon.jpg" />
+  //   return <SoonPage bgImage="/images/voxelgif-opt.gif" />
 
   return <ReleasedPage />
 }
