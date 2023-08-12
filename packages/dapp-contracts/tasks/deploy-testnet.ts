@@ -97,5 +97,14 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
     mintTo: await contracts.Auction?.instance?.getAddress(),
   })
 
+  // const now = Math.floor(Date.now() / 1000)
+  // const oneDayInSeconds = 86400
+  // await run('set-auction-config', {
+  //   startTime: now,
+  //   endTime: now + oneDayInSeconds,
+  //   minBidIncrementInWei: ethers.parseEther('0.1').toString(),
+  //   startAmountInWei: ethers.toBigInt(100).toString(),
+  // })
+
   return contracts
 })
