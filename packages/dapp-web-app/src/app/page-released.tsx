@@ -206,7 +206,7 @@ const HomePage = () => {
               alignItems={'center'}
             >
               <Icon as={GiModernCity} mr={2} ml={-8} />
-              <span>Play the Voxelglyph</span>
+              <span>Play with the Voxelglyph</span>
             </LinkBox>
           </Box>
         </AnimateComponent>
