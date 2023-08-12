@@ -4,14 +4,12 @@ import { Avatar } from 'connectkit'
 import { useAuctionContext } from 'contexts/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { NumberSettings } from 'types/number-settings'
-import { formatToEtherString, roundEtherUp } from 'utils/price'
+import { roundEtherUp } from 'utils/price'
 import { shortenAddress } from 'utils/string'
 
 const AuctionEnded = () => {
   const { auctionData } = useAuctionContext()
   const { address } = useNftMembershipContext()
-
-  const highestBid = formatToEtherString(auctionData.highestBid.toString())
 
   return (
     <>
@@ -59,7 +57,7 @@ const AuctionEnded = () => {
           Bid winner
         </Text>
         <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-          {roundEtherUp(highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
+          {roundEtherUp(auctionData.highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
         </Text>
       </Box>
     </>

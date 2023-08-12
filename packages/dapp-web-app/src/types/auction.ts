@@ -10,10 +10,10 @@ export enum AuctionState {
 export type AuctionConfig = {
   startTime: BigNumber
   endTime: BigNumber
-  minBidIncrementInWei: bigint
+  minBidIncrementInWei: BigNumber
 }
 
 export type AuctionData = {
   highestBidder: Address
-  highestBid: bigint
+  highestBid: BigNumber
 }

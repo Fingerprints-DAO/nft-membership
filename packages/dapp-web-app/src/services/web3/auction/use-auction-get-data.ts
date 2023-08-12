@@ -1,11 +1,12 @@
 import { auctionABI } from '../generated'
-import { Address } from 'viem'
+import { Address, formatEther } from 'viem'
 import { AuctionData } from 'types/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
 import { useQuery } from 'wagmi'
-import { readContract } from '@wagmi/core'
+import { fetchEnsName, readContract } from '@wagmi/core'
 import { getAuctionDataKey } from './keys'
 import { Interval } from 'types/interval'
+import BigNumber from 'bignumber.js'
 
 const useAuctionGetAuctionData = (): AuctionData => {
   const { contracts } = useNftMembershipContext()
@@ -17,7 +18,13 @@ const useAuctionGetAuctionData = (): AuctionData => {
       functionName: 'getData',
     })
 
-    return data
+    const ensName = await fetchEnsName({ address: data.highestBidder })
+
+    return {
+      highestBidder: (ensName || data.highestBidder) as Address,
+      //   highestBid: BigNumber(formatEther(data.highestBid || BigInt(0))),
+      highestBid: data.highestBid,
+    }
   }
 
   const { data: auctionData } = useQuery(getAuctionDataKey, request, {
@@ -28,14 +35,14 @@ const useAuctionGetAuctionData = (): AuctionData => {
   if (!auctionData) {
     return {
       highestBidder: '' as Address,
-      highestBid: BigInt(0),
+      highestBid: BigNumber(0),
     }
   }
 
-  return auctionData
+  return {
+    ...auctionData,
+    highestBid: BigNumber(formatEther(auctionData.highestBid)),
+  }
 }
 
 export default useAuctionGetAuctionData
-
-// TODO:
-//  - check if address has ens

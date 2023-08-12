@@ -16,13 +16,10 @@ task('auction-set-config', 'Start the auction by setting the config').setAction(
       contractAddresses[chainId].Auction,
     )
 
-    const secondsInADay = 24 * 60 * 60
-    const startTimeUnix = Math.floor(Date.now() / 1000) + 2 * secondsInADay
-    const endTimeUnix = startTimeUnix + 5 * 3600 // 5 hours
-
-    // const startTime = dayjs()
-    // const startTimeUnix = startTime.unix()
-    // const endTimeUnix = startTime.add(5, 'minutes').unix()
+    const startTime = dayjs()
+    // .add(2, 'minutes')
+    const startTimeUnix = startTime.unix()
+    const endTimeUnix = startTime.add(1, 'minutes').unix()
 
     const minBidIncrement = ethers.parseEther('0.2')
     const startingBid = ethers.parseEther('4.8')

@@ -4,12 +4,13 @@ import { AuctionState, AuctionConfig, AuctionData } from 'types/auction'
 import dayjs from 'dayjs'
 import useAuctionGetAuctionData from 'services/web3/auction/use-auction-get-data'
 import useAuctionGetMinBidValue from 'services/web3/auction/use-auction-get-min-bid-value'
+import BigNumber from 'bignumber.js'
 
 type AuctionContextState = {
   auctionConfig: AuctionConfig
   auctionData: AuctionData
   auctionState: AuctionState
-  minBidValue: bigint
+  minBidValue: BigNumber
 }
 
 const DEFAULT_CONTEXT = {} as AuctionContextState
