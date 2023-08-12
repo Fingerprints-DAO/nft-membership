@@ -3,10 +3,11 @@ import Countdown from 'components/countdown'
 import { useAuctionContext } from 'contexts/auction'
 import dayjs from 'dayjs'
 import useCountdownTime from 'hooks/use-countdown-timer'
-import { formatEther } from 'viem'
+import { NumberSettings } from 'types/number-settings'
+import { roundEtherUp } from 'utils/price'
 
 const AuctionNotStarted = () => {
-  const { auctionConfig } = useAuctionContext()
+  const { auctionConfig, minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
 
   const start = dayjs.unix(auctionConfig.startTime.toNumber())
@@ -30,7 +31,7 @@ const AuctionNotStarted = () => {
             Initial price
           </Text>
           <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-            {formatEther(auctionConfig.minBidIncrementInWei)} ETH
+            {roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
         <Box flex={1}>
@@ -47,3 +48,6 @@ const AuctionNotStarted = () => {
 }
 
 export default AuctionNotStarted
+
+// TODO:
+// Initial price: use min bid value
