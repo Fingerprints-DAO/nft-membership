@@ -127,6 +127,26 @@ describe('Membership', function () {
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })
+
+    it('Can change royalties', async function () {
+      const previousRoyaltyInfo = await membership.royaltyInfo(1, ethers.parseEther('100'))
+      expect(previousRoyaltyInfo[0]).to.eql(owner.address)
+      expect(previousRoyaltyInfo[1]).to.eql(ethers.parseEther('10'))
+
+      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 500) // 5%
+      const royaltyInfo = await membership.connect(owner).royaltyInfo(1, ethers.parseEther('100'))
+      expect(royaltyInfo[0]).to.eql(otherAccount.address)
+      expect(royaltyInfo[1]).to.eql(ethers.parseEther('5'))
+    })
+
+    it('Can remove royalties', async function () {
+      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 0) // 0%
+      const royaltyInfo = await membership
+        .connect(owner)
+        .royaltyInfo(1, ethers.parseEther('100000'))
+      expect(royaltyInfo[0]).to.eql(otherAccount.address)
+      expect(royaltyInfo[1]).to.eql(ethers.parseEther('0'))
+    })
   })
 
   describe('Burn', function () {
@@ -162,28 +182,6 @@ describe('Membership', function () {
       await membership.connect(owner).delegate(otherAccount.address)
 
       expect(await membership.getVotes(otherAccount.address)).to.be.equal(amount)
-    })
-  })
-
-  describe('Royalties', function () {
-    it('Can change royalties', async function () {
-      const previousRoyaltyInfo = await membership.royaltyInfo(1, ethers.parseEther('100'))
-      expect(previousRoyaltyInfo[0]).to.eql(owner.address)
-      expect(previousRoyaltyInfo[1]).to.eql(ethers.parseEther('10'))
-
-      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 500) // 5%
-      const royaltyInfo = await membership.connect(owner).royaltyInfo(1, ethers.parseEther('100'))
-      expect(royaltyInfo[0]).to.eql(otherAccount.address)
-      expect(royaltyInfo[1]).to.eql(ethers.parseEther('5'))
-    })
-
-    it('Can remove royalties', async function () {
-      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 0) // 0%
-      const royaltyInfo = await membership
-        .connect(owner)
-        .royaltyInfo(1, ethers.parseEther('100000'))
-      expect(royaltyInfo[0]).to.eql(otherAccount.address)
-      expect(royaltyInfo[1]).to.eql(ethers.parseEther('0'))
     })
   })
 
