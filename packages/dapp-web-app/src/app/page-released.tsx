@@ -154,7 +154,7 @@ const HomePage = () => {
               fontSize={{ base: 'md', sm: 'lg' }}
               animate={pulseAnimation}
             >
-              {firstRender ? (
+              {firstRender && !skippedAnimation ? (
                 <>
                   <span>Skip intro</span>
                 </>
