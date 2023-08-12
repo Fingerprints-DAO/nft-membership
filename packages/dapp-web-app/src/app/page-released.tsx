@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PageState } from 'types/page'
@@ -19,7 +19,7 @@ import Link from 'next/link'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
-const variants = {
+const variantsOverlay = {
   out: {
     opacity: 0,
     transition: {
@@ -34,7 +34,7 @@ const variants = {
     opacity: 1,
     zIndex: 2,
     transition: {
-      duration: 0.8,
+      duration: 0.6,
       ease: 'easeIn',
     },
   },
@@ -50,12 +50,51 @@ const pulseAnimation = {
   },
 } as TargetAndTransition
 
+const voxelAnimationInMs = 8000
+const animationDelays = {
+  headline: 1,
+  ctas: 2,
+  header: 3,
+  playButton: 5,
+}
+
+type AnimateComponentType = PropsWithChildren<{
+  delay: number
+  voxelAnimationEnded: Boolean
+  forceRender?: Boolean
+  name: string
+}>
+
+const AnimateComponent = ({
+  children,
+  name,
+  delay,
+  voxelAnimationEnded,
+  forceRender,
+}: AnimateComponentType) => {
+  if (forceRender) return <div>{children}</div>
+  if (!voxelAnimationEnded) return
+  return (
+    <AnimatePresence>
+      <motion.div
+        key={name}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8, ease: 'easeIn', delay }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  )
+}
 const HomePage = () => {
-  const { push } = useRouter()
+  // const { push } = useRouter()
   const searchParams = useSearchParams()
 
   const [animationEnded, setAnimationEnded] = useState(false)
   const [animationStarted, setAnimationStarted] = useState(false)
+  const [skippedAnimation, setSkippedAnimation] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
 
   const modalName = searchParams.get('modal')
@@ -68,7 +107,7 @@ const HomePage = () => {
       setTimeout(() => {
         setAnimationEnded(true)
         setFirstRender(false)
-      }, 8000)
+      }, voxelAnimationInMs)
     }
   }, [animationStarted])
 
@@ -100,7 +139,10 @@ const HomePage = () => {
           {animationStarted && !animationEnded && (
             <LinkBox
               as={motion.a}
-              onClick={() => setAnimationEnded(true)}
+              onClick={() => {
+                setAnimationEnded(true)
+                setSkippedAnimation(true)
+              }}
               position={'fixed'}
               bottom={{ base: 6, sm: 10 }}
               zIndex={2}
@@ -133,8 +175,12 @@ const HomePage = () => {
             </LinkBox>
           )}
         </Box>
-
-        {animationEnded && (
+        <AnimateComponent
+          name={'playButton'}
+          delay={animationDelays.playButton}
+          voxelAnimationEnded={animationEnded || skippedAnimation}
+          forceRender={animationEnded && skippedAnimation}
+        >
           <Box
             position={'absolute'}
             bottom={{ base: 6, sm: 10 }}
@@ -146,7 +192,10 @@ const HomePage = () => {
           >
             <LinkBox
               as={motion.a}
-              onClick={() => setAnimationEnded(false)}
+              onClick={() => {
+                setAnimationEnded(false)
+                setSkippedAnimation(true)
+              }}
               ml={'auto'}
               mr={'auto'}
               mt={5}
@@ -160,12 +209,13 @@ const HomePage = () => {
               <span>Play the Voxelglyph</span>
             </LinkBox>
           </Box>
-        )}
+        </AnimateComponent>
         <AnimatePresence initial={false} mode="wait">
           <Suspense fallback={<Loading full />}>
             <motion.div
+              layout
               key={'home'}
-              variants={variants}
+              variants={variantsOverlay}
               animate={animationEnded ? 'in' : 'out'}
               initial="out"
               exit={'out'}
@@ -183,7 +233,14 @@ const HomePage = () => {
               />
               <Flex flexDir={'column'} minHeight={'100vh'} justifyContent={'space-between'}>
                 <Box pb={5}>
-                  <Header pageState={PageState.Released} />
+                  <AnimateComponent
+                    name={'header'}
+                    delay={animationDelays.header}
+                    voxelAnimationEnded={animationEnded}
+                    forceRender={skippedAnimation}
+                  >
+                    <Header pageState={PageState.Released} />
+                  </AnimateComponent>
                 </Box>
                 <Grid>
                   <GridItem colStart={{ base: 0, md: 5 }} colSpan={{ base: 6, md: 8 }}>
@@ -197,29 +254,47 @@ const HomePage = () => {
                       textAlign={{ base: 'right' }}
                       pb={{ base: '30%', sm: '20%' }}
                     >
-                      <Heading color="gray.50" as="h1" mb={6} fontSize={{ base: 'xl', sm: '2xl' }}>
-                        Fingerprints is Moving to Voxelglyph
-                      </Heading>
-                      <Heading
-                        color="gray.50"
-                        as="h2"
-                        fontSize={{ base: 'sm', sm: 'md' }}
-                        fontWeight="normal"
-                        mb={2}
+                      <AnimateComponent
+                        name={'headline'}
+                        delay={animationDelays.headline}
+                        voxelAnimationEnded={animationEnded}
+                        forceRender={skippedAnimation}
                       >
-                        Our membership is migrating from 5,000 $PRINTS to an NFT designed by Larva
-                        Labs.
-                      </Heading>
-                      <Heading
-                        color="gray.50"
-                        as="h2"
-                        fontSize={{ base: 'sm', sm: 'md' }}
-                        fontWeight="normal"
-                        mb={6}
+                        <Heading
+                          color="gray.50"
+                          as="h1"
+                          mb={6}
+                          fontSize={{ base: 'xl', sm: '2xl' }}
+                        >
+                          Fingerprints is Moving to Voxelglyph
+                        </Heading>
+                        <Heading
+                          color="gray.50"
+                          as="h2"
+                          fontSize={{ base: 'sm', sm: 'md' }}
+                          fontWeight="normal"
+                          mb={2}
+                        >
+                          Our membership is migrating from 5,000 $PRINTS to an NFT designed by Larva
+                          Labs.
+                        </Heading>
+                        <Heading
+                          color="gray.50"
+                          as="h2"
+                          fontSize={{ base: 'sm', sm: 'md' }}
+                          fontWeight="normal"
+                          mb={6}
+                        >
+                          Auction for token #1 available August 15th. Migration available August
+                          16th.
+                        </Heading>
+                      </AnimateComponent>
+                      <AnimateComponent
+                        name={'ctas'}
+                        delay={animationDelays.ctas}
+                        voxelAnimationEnded={animationEnded}
+                        forceRender={skippedAnimation}
                       >
-                        Auction for token #1 available August 15th. Migration available August 16th.
-                      </Heading>
-                      <div>
                         <Button
                           as={Link}
                           size={{ base: 'md', sm: 'lg' }}
@@ -256,7 +331,7 @@ const HomePage = () => {
                             )
                           }}
                         </ConnectKitButton.Custom> */}
-                      </div>
+                      </AnimateComponent>
                     </Flex>
                   </GridItem>
                 </Grid>
