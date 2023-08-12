@@ -1,6 +1,6 @@
 'use client'
 
-import React, { PropsWithChildren, useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PageState } from 'types/page'
@@ -96,6 +96,7 @@ const HomePage = () => {
   const [animationStarted, setAnimationStarted] = useState(false)
   const [skippedAnimation, setSkippedAnimation] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
+  const timeoutIDRef = useRef<null | ReturnType<typeof setTimeout>>(null)
 
   const modalName = searchParams.get('modal')
 
@@ -104,17 +105,37 @@ const HomePage = () => {
 
   useEffect(() => {
     if (animationStarted) {
-      setTimeout(() => {
+      timeoutIDRef.current = setTimeout(() => {
         setAnimationEnded(true)
         setFirstRender(false)
       }, voxelAnimationInMs)
     }
+    return () => {
+      if (timeoutIDRef.current) {
+        clearTimeout(timeoutIDRef.current)
+        timeoutIDRef.current = null
+      }
+    }
   }, [animationStarted])
+
+  useEffect(() => {
+    if (skippedAnimation) {
+      if (timeoutIDRef.current) {
+        clearTimeout(timeoutIDRef.current)
+        timeoutIDRef.current = null
+      }
+    }
+  }, [animationStarted, skippedAnimation])
 
   useEffect(() => {
     if (modalName && !animationEnded) {
       setAnimationEnded(true)
+      setSkippedAnimation(true)
       setFirstRender(false)
+      if (timeoutIDRef.current) {
+        clearTimeout(timeoutIDRef.current)
+        timeoutIDRef.current = null
+      }
     }
   }, [animationEnded, modalName])
 
