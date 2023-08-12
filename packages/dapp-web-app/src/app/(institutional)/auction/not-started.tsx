@@ -14,7 +14,7 @@ const AuctionNotStarted = () => {
   const start = dayjs.unix(auctionConfig.startTime.toNumber())
   const end = dayjs.unix(auctionConfig.endTime.toNumber())
   const diff = end.diff(start, 'hours')
-  const hours = dayjs.duration(diff, 'hours').hours()
+  // const hours = dayjs.duration(diff, 'hours').hours()
 
   return (
     <>
@@ -40,7 +40,8 @@ const AuctionNotStarted = () => {
             Duration
           </Text>
           <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
-            {hours} hour(s)
+            {/* {hours} hour(s) */}
+            24 hours
           </Text>
         </Box>
       </Flex>
