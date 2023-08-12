@@ -246,12 +246,12 @@ const HomePage = () => {
                   <GridItem colStart={{ base: 0, md: 5 }} colSpan={{ base: 6, md: 8 }}>
                     <Flex
                       flexDir="column"
-                      alignItems={{ base: 'flex-end' }}
+                      alignItems={{ base: 'center', sm: 'flex-end' }}
                       // justifyContent="center"
                       position="relative"
                       zIndex={2}
                       h="100%"
-                      textAlign={{ base: 'right' }}
+                      textAlign={{ base: 'center', sm: 'right' }}
                       pb={{ base: '30%', sm: '20%' }}
                     >
                       <AnimateComponent
