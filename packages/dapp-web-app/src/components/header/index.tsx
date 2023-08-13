@@ -1,17 +1,6 @@
 'use client'
 
-import {
-  Box,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  Flex,
-  GridItem,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Box, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, Flex, GridItem, Text, useDisclosure } from '@chakra-ui/react'
 import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
 import logoFPDark from '/public/images/logo-fp-dark.svg'
@@ -24,16 +13,12 @@ import Wallet from 'components/wallet'
 import { PageState } from 'types/page'
 
 const nav = [
-  { href: '/', label: 'home' },
   { href: '/about', label: 'about' },
   { href: '/faq', label: 'FAQ' },
   { href: '/auction', label: 'auction' },
 ]
 
-const mobileNav = [
-  ...nav,
-  { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' },
-]
+const mobileNav = [...nav, { href: 'mailto:contact@fingerprintsdao.xyz', label: 'contact us' }]
 
 type HeaderProps = {
   pageState?: PageState
@@ -49,36 +34,21 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
       <Grid as="header" py={8} position="relative" zIndex={10}>
         <GridItem colSpan={{ base: 3, sm: 1 }} colStart={{ base: 1, xl: 2 }}>
           <Link href="/">
-            <Image src={logoFP} alt="Fingerprints DAO" />
+            <Box boxSize={{base:'42',md:'45'}}>
+              <Image src={logoFP} alt="Fingerprints DAO" />
+            </Box>
           </Link>
         </GridItem>
         {pageState !== PageState.Soon && (
           <GridItem colSpan={{ base: 1, sm: 5, md: 11, xl: 9 }}>
             {isMobile ? (
-              <Flex
-                as="nav"
-                display="flex"
-                alignItems="center"
-                justifyContent="flex-end"
-                h="full"
-              >
-                <Box
-                  color="gray.50"
-                  as="button"
-                  boxSize={[6, 25]}
-                  onClick={onOpen}
-                >
+              <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
+                <Box color="gray.50" as="button" boxSize={[6, 25]} onClick={onOpen}>
                   <HamburgerIcon display="block" boxSize="100%" />
                 </Box>
               </Flex>
             ) : (
-              <Flex
-                as="nav"
-                display="flex"
-                alignItems="center"
-                justifyContent="flex-end"
-                h="full"
-              >
+              <Flex as="nav" display="flex" alignItems="center" justifyContent="flex-end" h="full">
                 {nav.map((item, index) => {
                   const isActive = pathname === item.href
 
@@ -107,34 +77,18 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
           </GridItem>
         )}
       </Grid>
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        size="full"
-        isFullHeight={true}
-        onClose={onClose}
-      >
+      <Drawer isOpen={isOpen} placement="left" size="full" isFullHeight={true} onClose={onClose}>
         <DrawerContent h="full" bg="gray.50">
           <Grid as="header" py={8}>
             <GridItem colSpan={3}>
+            <Box boxSize={{base:'42',md:'45'}}>
               <Link href="/">
-                <Image
-                  src={logoFPDark}
-                  alt="Fingerprints DAO"
-                  width={54}
-                  height={64}
-                />
+                <Image src={logoFPDark} alt="Fingerprints DAO" />
               </Link>
+              </Box>
             </GridItem>
             <GridItem as={Flex} justifyContent="end" alignItems="center">
-              <DrawerCloseButton
-                position="static"
-                color="gray.900"
-                size="lg"
-                w={12}
-                h={12}
-                mr={-4}
-              />
+              <DrawerCloseButton position="static" color="gray.900" size="lg" w={10} h={10} mr={-2} />
             </GridItem>
           </Grid>
           <DrawerBody mt={8} px={8}>

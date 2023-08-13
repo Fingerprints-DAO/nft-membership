@@ -1,56 +1,101 @@
 'use client'
 
 import { Box, GridItem, Link, Text } from '@chakra-ui/react'
-import Footer from 'components/footer'
 import Grid from 'components/grid'
-import Header from 'components/header'
 
 const questions = [
   {
-    question: 'Why is Fingerprints DAO transitioning from ERC-20 tokens to ERC-721 NFTs?',
-    answer: `Fingerprints DAO believes that ERC-721 NFTs offer a more immersive and unique representation of membership, enhancing the value and engagement of our community.`,
+    question: 'How will the migration work?',
+    answer:
+      "Starting at 11:00am ET on Aug 16, holders of Fingerprints' current token ($PRINTS) will be able to exchange 5,000 units for one Voxelglyph via this website.",
   },
   {
-    question: 'Will there be any costs associated with the transition from ERC-20 tokens to ERC-721 NFTs?',
-    answer: `Fingerprints DAO is committed to minimizing costs for token holders during the transition process. Details regarding any associated costs, if applicable, will be communicated transparently.`,
+    question: 'Do I get to keep my 5,000 $PRINTS and the Voxelglyph after migrating?',
+    answer: 'No, once you have executed the migration the $PRINTS tokens will be burned and you will receive your Voxelglyph.',
   },
   {
-    question: 'How will ERC-721 NFTs be utilized for governance within Fingerprints DAO?',
-    answer: `ERC-721 NFTs will serve as a representation of membership and influence within the DAO, allowing holders to participate in governance decisions and access exclusive experiences.`,
+    question: 'How long will members be able to migrate their $PRINTS for?',
+    answer:
+      'The migration website will be launched on August 16th and will remain open indefinitely, so you can migrate your $PRINTS whenever you feel like.',
   },
   {
-    question: 'Who will be creating the NFTs for Fingerprints DAO?',
-    answer: 'Fingerprints DAO has partnered with renowned NFT creators, such as LarvaLabs, to design and create the NFTs for the transition.',
-  },
-  {
-    question: 'Can you provide more information about the rules and guidelines for the auction of NFTs?',
+    question: "I don't have 5,000 $PRINTS, how can I acquire it?",
     answer: (
       <>
-        Fingerprints DAO will provide detailed information about the rules, guidelines, and procedures for NFT auctions, including the auction for the
-        inaugural NFT, in{' '}
+        Just follow the instructions{' '}
         <Link
           color="links.500"
-          title="auction page"
-          href="/auction"
+          href="https://fingerprintsdao.xyz/join"
           style={{ textDecoration: 'none' }}
           transition="opacity 0.2s"
           _hover={{ opacity: 0.5 }}
         >
-          auction page
+          on this page.
         </Link>{' '}
-        and communications.
       </>
     ),
   },
   {
-    question: 'Will there be limitations on the utility of NFTs acquired through the auction for governance purposes?',
+    question: 'I have a multiple of 5,000 $PRINTS, can I get multiple Voxelglyphs?',
     answer:
-      'NFTs acquired through the auction will retain their utility for governance within Fingerprints DAO, allowing holders to continue participating in the decision-making processes.',
+      'Yes! For every 5,000 $PRINTS burned, you get 1 Voxelglyph. If you have 10,000 $PRINTS, you can exchange them for 2 Voxelgyphs. If you have 14,000 $PRINTS, you can top up to 15,000 using the pool and migrate to get yourself 3 Voxelgyphs, and so on.',
   },
   {
-    question: 'Will there be opportunities to acquire NFTs outside of the auction?',
+    question: 'Will all Voxelglyphs be the same?',
     answer:
-      'Yes, Fingerprints DAO provide opportunities for token holders to exchange their $PRINTS tokens for membership NFTs outside of the auction. This ensures an alternative method for acquiring NFTs that represent Fingerprints DAO membership. Further details and instructions for the token-to-NFT exchange will be communicated through official channels.',
+      'Yes, Voxelglyph will be an edition piece of up to 2,000 equal pieces, the only difference between them being their token IDs, which will be assigned in order of migration.',
+  },
+  {
+    question: 'What is the maximum supply of Voxelglyphs?',
+    answer:
+      'Voxelglyphs can only be created through the burning of $PRINTS. Since there are just 10M $PRINTS tokens, using the exchange rate of 1:5000, the max supply of Voxelglyphs will be exactly 2,000 pieces.',
+  },
+  {
+    question: 'I want to get Voxelglyph #1, should I arrive early and try to migrate before everyone else?',
+    answer:
+      'No, in celebration of this landmark event, the DAO will Auction the first generated Voxelglyph, starting a day before the migration, on August 15 and ending on the day of the migration launch.',
+  },
+  {
+    question: 'I executed the migration and received my Voxelglyph, could I now turn my Voxelglyph into 5,000 $PRINTS again?',
+    answer:
+      "No. The migration is one-way, meaning once you have migrated your ERC-20 $PRINTS tokens into the Voxelglyph you won't be able to swap it back, ensuring a full transition to the new governance standard in the long-run.",
+  },
+  {
+    question: "I don't want to go through the process of buying 5,000 $PRINTS and then exchange them, can I just buy a Voxelglyph somewhere?",
+    answer:
+      'As an NFT, Voxelglyph will be on NFT marketplaces like Opensea and Blur, but you will have to wait for members to migrate and then list their Voxelglyphs for sale (if anyone chooses to do so).',
+  },
+  {
+    question: 'Why is Fingerprints transitioning from ERC-20 to ERC-721?',
+    answer:
+      'This transition will yield many benefits to our DAO, such as: (1) easier access to membership through NFT marketplaces, (2) making membership itself more appealing by incorporating a piece of art from Larva Labs, (3)  simplifying the membership experience and onboarding, (4) freeing resources from existing liquidity pools and (5) enabling the potential for direct on-chain governance in the future.',
+  },
+  {
+    question: 'I still have some questions that were not answered in this FAQ, where can I ask them?',
+    answer: (
+      <>
+        <Link
+          color="links.500"
+          href="https://discord.gg/Mg7wx36upM"
+          style={{ textDecoration: 'none' }}
+          transition="opacity 0.2s"
+          _hover={{ opacity: 0.5 }}
+        >
+          Through our discord
+        </Link>
+        , where we will try to answer all the questions we can. If you have questions regarding Fingerprints itself, you can also check{' '}
+        <Link
+          color="links.500"
+          href="https://fingerprintsdao.xyz/"
+          style={{ textDecoration: 'none' }}
+          transition="opacity 0.2s"
+          _hover={{ opacity: 0.5 }}
+        >
+          our website
+        </Link>
+        .
+      </>
+    ),
   },
 ]
 
@@ -60,18 +105,18 @@ const FaqPage = () => {
       <Grid>
         <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
           <Text as="h1" fontSize="3xl" fontWeight="bold" mb={8}>
-            FAQ
+            Frequently Asked Questions
           </Text>
           <Box>
             {questions.map((item, index) => {
               const isLastChild = questions.length - 1 === index
 
               return (
-                <Box py={8} borderBottomColor="gray.700" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`}>
-                  <Text as="strong" fontSize="lg" display="block" color="gray.100">
+                <Box py={8} borderBottomColor="white" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`} opacity={0.9}>
+                  <Text as="strong" fontSize="lg" display="block" color="white">
                     {item.question}
                   </Text>
-                  <Text color="gray.300">{item.answer}</Text>
+                  <Text color="white">{item.answer}</Text>
                 </Box>
               )
             })}

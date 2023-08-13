@@ -23,7 +23,7 @@ const Footer = ({
     <Box
       as="footer"
       py={[8, 6]}
-      bg={isHome ? 'transparent' : 'gray.900'}
+      bg={'transparent'}
       position="relative"
       zIndex={10}
     >
@@ -44,9 +44,8 @@ const Footer = ({
               fontSize="xs"
               color="#7a7a7a"
               textAlign={{ base: 'center', sm: 'left' }}
-              // mb={[3, 1]}
             >
-              By Fingerprints DAO & developed by{' '}
+              By Fingerprints DAO, developed by{' '}
               <Link
                 color="links.500"
                 title="arod.studio"
