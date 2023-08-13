@@ -30,6 +30,11 @@ import { roundEtherUp } from 'utils/price'
 import { NumberSettings } from 'types/number-settings'
 import { getExternalEtherscanUrl, getExternalOpenseaUrl } from 'utils/getLink'
 import { getContracts } from 'utils/contract-addresses'
+import { useAuctionContext } from 'contexts/auction'
+import { AuctionState } from 'types/auction'
+import { useNftMembershipContext } from 'contexts/nft-membership'
+import Image from 'next/image'
+import logoFP from '/public/images/logo-fp.svg'
 
 const LinkButton = ({ text = '', url = '' }) => (
   <Button
@@ -61,7 +66,7 @@ const LinkButton = ({ text = '', url = '' }) => (
 
 const PageTitle = () => (
   <Heading color="gray.50" mb={{ base: 4, md: 8 }} mt={2} fontSize={{ base: 'xl', md: '2xl' }}>
-    Fingerprints Membership auction
+    Fingerprints Membership Auction
   </Heading>
 )
 
@@ -72,6 +77,8 @@ const openSeaCollectionLink = getExternalOpenseaUrl(getContracts().Membership.ad
 const MAX_LAST_BIDS_COUNT = 4
 
 const AuctionContent = () => {
+  const { auctionState } = useAuctionContext()
+  const { address } = useNftMembershipContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { bids, isLoading } = useAuctionLastBids()
@@ -95,105 +102,135 @@ const AuctionContent = () => {
             <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
             <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
           </Flex>
-          <Box rounded="lg" overflow={['auto', 'hidden']} mb={8}>
-            <Table>
-              <Thead bgColor="gray.800">
-                <Tr color="gray.300">
-                  <Th color="gray.100" textTransform="initial" border="none" colSpan={3} py={4}>
-                    <Flex alignItems="center">
-                      <Text color="gray.300" fontSize="md" lineHeight="24px" mr={2}>
-                        Last bids
-                      </Text>
-                      {isLoading && <Spinner color="gray.400" size="sm" />}
-                    </Flex>
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {Boolean(lastBids.length) ? (
-                  <>
-                    {lastBids.map((item, index) => {
-                      return (
-                        <Tr key={index} bg="gray.900">
-                          <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
-                            <Flex alignItems="center">
-                              <Box
-                                rounded="full"
-                                border="2px"
-                                borderColor="gray.700"
-                                bg="gray.300"
-                                mr={2}
-                              >
-                                <Avatar address={item.address} size={28} />
-                              </Box>
-                              <Tooltip label={item.address} placement="top">
-                                <Text fontWeight="bold" fontSize={'md'} color="gray.100">
-                                  {shortenAddress(item.address)}
-                                </Text>
-                              </Tooltip>
-                            </Flex>
-                          </Td>
-                          <Td px={2} w={{ md: '15%' }}>
-                            <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }}>
-                              <TimeAgo date={item.timeAgo} />
-                            </Text>
-                          </Td>
-                          <Td pl={2} pr={4} w={{ md: '20%' }}>
-                            <Button
-                              as="a"
-                              fontWeight="bold"
-                              rightIcon={
-                                <ExternalLinkIcon
-                                  color="links.500"
-                                  transition="ease"
-                                  transitionProperty="color"
-                                  transitionDuration="0.2s"
-                                  mt={-1}
-                                />
-                              }
-                              bg="transparent"
-                              variant="link"
-                              href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${item.transactionHash}`}
-                              fontSize={'md'}
-                              title="View in Etherscan"
-                              target="_blank"
-                              color="gray.100"
-                              _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
-                              transition="ease"
-                              transitionProperty="color"
-                              transitionDuration="0.2s"
-                            >
-                              {roundEtherUp(item.amount.toString(), NumberSettings.DecimalsAuction)}{' '}
-                              ETH
-                            </Button>
-                          </Td>
-                        </Tr>
-                      )
-                    })}
-                  </>
-                ) : (
-                  <Tr>
-                    <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
-                      <Text color="gray.400" fontStyle="italic">
-                        No bid so far
-                      </Text>
-                    </Td>
+          {auctionState !== AuctionState.NOT_STARTED && (
+            <Box rounded="lg" overflow={['auto', 'hidden']} mb={8}>
+              <Table>
+                <Thead bgColor="gray.800">
+                  <Tr color="gray.300">
+                    <Th color="gray.100" textTransform="initial" border="none" colSpan={3} py={4}>
+                      <Flex alignItems="center">
+                        <Text color="gray.300" fontSize="md" lineHeight="24px" mr={2}>
+                          Last bids
+                        </Text>
+                        {isLoading && <Spinner color="gray.400" size="sm" />}
+                      </Flex>
+                    </Th>
                   </Tr>
-                )}
-              </Tbody>
-              <Tfoot>
-                <Tr bg="gray.900">
-                  <Th colSpan={3} textAlign="center">
-                    {bids.length > MAX_LAST_BIDS_COUNT && (
-                      <Button color="gray.500" variant="link" onClick={onOpen}>
-                        view all
-                      </Button>
-                    )}
-                  </Th>
-                </Tr>
-              </Tfoot>
-            </Table>
-          </Box>
+                </Thead>
+                <Tbody>
+                  {Boolean(lastBids.length) ? (
+                    <>
+                      {lastBids.map((item, index) => {
+                        return (
+                          <Tr key={index} bg="gray.900">
+                            <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+                              <Flex alignItems="center">
+                                <Box
+                                  rounded="full"
+                                  border="2px"
+                                  borderColor="gray.700"
+                                  bg="gray.300"
+                                  mr={2}
+                                >
+                                  <Avatar address={item.address} size={28} />
+                                </Box>
+                                {item.address === address ? (
+                                  <Text fontWeight="bold" fontSize={'md'} color="gray.100">
+                                    You
+                                  </Text>
+                                ) : (
+                                  <Tooltip label={item.address} placement="top">
+                                    <Text fontWeight="bold" fontSize={'md'} color="gray.100">
+                                      {shortenAddress(item.address)}
+                                    </Text>
+                                  </Tooltip>
+                                )}
+                                {index === 0 && (
+                                  <Box ml={2}>
+                                    <Tooltip
+                                      label={
+                                        auctionState === AuctionState.ENDED
+                                          ? 'Winner'
+                                          : 'Winning bid'
+                                      }
+                                      placement="top"
+                                    >
+                                      <Image src={logoFP} alt="Winning bid" width={15} />
+                                    </Tooltip>
+                                  </Box>
+                                )}
+                              </Flex>
+                            </Td>
+                            <Td px={2} w={{ base: '10%', md: '15%' }}>
+                              <Text
+                                color="gray.100"
+                                whiteSpace="nowrap"
+                                fontSize={{ md: 'md' }}
+                                hideBelow={'sm'}
+                              >
+                                <TimeAgo timestamp={item.timeAgo} />
+                              </Text>
+                            </Td>
+                            <Td pl={2} pr={4} w={{ base: '25%', md: '20%' }}>
+                              <Button
+                                as="a"
+                                fontWeight="bold"
+                                rightIcon={
+                                  <ExternalLinkIcon
+                                    color="links.500"
+                                    transition="ease"
+                                    transitionProperty="color"
+                                    transitionDuration="0.2s"
+                                    mt={-1}
+                                  />
+                                }
+                                bg="transparent"
+                                variant="link"
+                                href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${item.transactionHash}`}
+                                fontSize={'md'}
+                                title="View in Etherscan"
+                                target="_blank"
+                                color="gray.100"
+                                _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
+                                transition="ease"
+                                transitionProperty="color"
+                                transitionDuration="0.2s"
+                              >
+                                {roundEtherUp(
+                                  item.amount.toString(),
+                                  NumberSettings.DecimalsAuction
+                                )}{' '}
+                                ETH
+                              </Button>
+                            </Td>
+                          </Tr>
+                        )
+                      })}
+                    </>
+                  ) : (
+                    <Tr bg="gray.900">
+                      <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+                        <Text color="gray.400" fontStyle="italic">
+                          No bid so far
+                        </Text>
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+                <Tfoot>
+                  <Tr bg="gray.900">
+                    <Th colSpan={3} textAlign="center">
+                      {bids.length > MAX_LAST_BIDS_COUNT && (
+                        <Button color="gray.500" variant="link" onClick={onOpen}>
+                          view all
+                        </Button>
+                      )}
+                    </Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+            </Box>
+          )}
           <Box>
             <Text color="gray.300" fontWeight="bold" mb="6px" fontSize="lg">
               About
@@ -217,6 +254,3 @@ const AuctionContent = () => {
 }
 
 export default AuctionContent
-
-// TODO:
-// Investigar pq timeago está renderizando freneticamente

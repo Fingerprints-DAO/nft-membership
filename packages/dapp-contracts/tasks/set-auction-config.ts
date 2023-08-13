@@ -4,18 +4,8 @@ import { Auction as AuctionType } from '../typechain-types'
 import { getAddresses } from './utils/_getAddresses'
 
 task('set-auction-config', 'Set auction config')
-  .addParam(
-    'startTime',
-    'The timestamp when the auction starts',
-    undefined,
-    types.int,
-  )
-  .addParam(
-    'endTime',
-    'The timestamp when the auction ends',
-    undefined,
-    types.int,
-  )
+  .addParam('startTime', 'The timestamp when the auction starts', undefined, types.int)
+  .addParam('endTime', 'The timestamp when the auction ends', undefined, types.int)
   .addParam('minBidIncrementInWei', 'The minimum bid increment amount in wei')
   .addParam('startAmountInWei', 'The starting bid amount in wei')
   .setAction(
@@ -28,19 +18,13 @@ task('set-auction-config', 'Set auction config')
       },
       hre: HardhatRuntimeEnvironment,
     ) => {
-      const { startTime, endTime, minBidIncrementInWei, startAmountInWei } =
-        taskArgs
+      const { startTime, endTime, minBidIncrementInWei, startAmountInWei } = taskArgs
       const contractAddresses = await getAddresses(hre.ethers.provider)
 
       const Auction = await hre.ethers.getContractFactory('Auction')
       const auction = Auction.attach(contractAddresses.Auction) as AuctionType
 
-      const tx = await auction.setConfig(
-        startTime,
-        endTime,
-        minBidIncrementInWei,
-        startAmountInWei,
-      )
+      const tx = await auction.setConfig(startTime, endTime, minBidIncrementInWei, startAmountInWei)
 
       console.log(
         `Setting auction config with startTime: ${startTime}, endTime: ${endTime}, minBidIncrementInWei: ${minBidIncrementInWei}, startAmountInWei: ${startAmountInWei}`,

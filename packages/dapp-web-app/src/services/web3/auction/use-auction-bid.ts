@@ -60,6 +60,7 @@ const useAuctionBid = () => {
       setHasError(true)
       showTxErrorToast(error)
       setIsSuccess(false)
+      throw error
     } finally {
       setIsLoading(false)
     }

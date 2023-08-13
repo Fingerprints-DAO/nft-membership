@@ -11,9 +11,9 @@ const AuctionNotStarted = () => {
   const { auctionConfig, minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
 
-  const start = dayjs.unix(auctionConfig.startTime.toNumber())
-  const end = dayjs.unix(auctionConfig.endTime.toNumber())
-  const diff = end.diff(start, 'hours')
+  // const start = dayjs.unix(auctionConfig.startTime.toNumber())
+  // const end = dayjs.unix(auctionConfig.endTime.toNumber())
+  // const diff = end.diff(start, 'hours')
   // const hours = dayjs.duration(diff, 'hours').hours()
 
   return (
@@ -32,7 +32,7 @@ const AuctionNotStarted = () => {
             Initial price
           </Text>
           <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.100">
-            {roundEtherUp(formatEther(minBidValue.toString()), NumberSettings.DecimalsAuction)} ETH
+            {roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction)} ETH
           </Text>
         </Box>
         <Box flex={1}>

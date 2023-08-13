@@ -1,4 +1,12 @@
-import React, { createContext, PropsWithChildren, useContext, useMemo } from 'react'
+import React, {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import useAuctionGetConfig from 'services/web3/auction/use-auction-get-config'
 import { AuctionState, AuctionConfig, AuctionData } from 'types/auction'
 import dayjs from 'dayjs'
@@ -42,17 +50,52 @@ const AuctionProvider = ({ children }: PropsWithChildren) => {
   const auctionData = useAuctionGetAuctionData()
   const minBidValue = useAuctionGetMinBidValue()
 
+  // Add useState for auctionState
+  const [auctionState, setAuctionState] = useState<AuctionState>(
+    getCurrentState(auctionConfig.startTime.toNumber(), auctionConfig.endTime.toNumber())
+  )
+
+  const intervalRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => {
+    const checkAndUpdateState = () => {
+      const now = dayjs().unix()
+      const ONE_MINUTE = 60 // in seconds
+
+      const isCloseToStartOrEnd =
+        Math.abs(now - auctionConfig.startTime.toNumber()) <= ONE_MINUTE ||
+        Math.abs(now - auctionConfig.endTime.toNumber()) <= ONE_MINUTE
+
+      setAuctionState(
+        getCurrentState(auctionConfig.startTime.toNumber(), auctionConfig.endTime.toNumber())
+      )
+
+      // If past endTime, clear interval and exit
+      if (now > auctionConfig.endTime.toNumber()) {
+        clearInterval(intervalRef.current!)
+        return
+      }
+
+      console.log(new Date())
+      if (isCloseToStartOrEnd) {
+        clearInterval(intervalRef.current!)
+        intervalRef.current = setInterval(checkAndUpdateState, 1000)
+      }
+    }
+
+    intervalRef.current = setInterval(checkAndUpdateState, 30000)
+
+    return () => clearInterval(intervalRef.current!)
+  }, [auctionConfig.startTime, auctionConfig.endTime])
+
   const value: AuctionContextState = useMemo(() => {
     return {
       auctionConfig,
       auctionData,
       minBidValue,
-      auctionState: getCurrentState(
-        auctionConfig.startTime.toNumber(),
-        auctionConfig.endTime.toNumber()
-      ),
+      auctionState, // use the state instead
     }
-  }, [auctionConfig, auctionData, minBidValue])
+  }, [auctionConfig, auctionData, minBidValue, auctionState]) // add auctionState to dependency array
 
   return <AuctionContext.Provider value={value}>{children}</AuctionContext.Provider>
 }

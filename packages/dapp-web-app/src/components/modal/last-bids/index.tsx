@@ -19,11 +19,15 @@ import {
 } from '@chakra-ui/react'
 import Timeago from 'components/timeago'
 import { Avatar } from 'connectkit'
+import { useNftMembershipContext } from 'contexts/nft-membership'
 import useMediaQuery from 'hooks/use-media-query'
-import { Bid } from 'types/auction'
+import Image from 'next/image'
+import { AuctionState, Bid } from 'types/auction'
 import { NumberSettings } from 'types/number-settings'
 import { roundEtherUp } from 'utils/price'
 import { shortenAddress } from 'utils/string'
+import logoFP from '/public/images/logo-fp-dark.svg'
+import { useAuctionContext } from 'contexts/auction'
 
 type LastBidsProps = {
   bids: Bid[]
@@ -31,7 +35,9 @@ type LastBidsProps = {
 }
 
 const LastBids = ({ bids, onClose }: LastBidsProps) => {
+  const { auctionState } = useAuctionContext()
   const [isMobile] = useMediaQuery('(max-width: 1023px)')
+  const { address } = useNftMembershipContext()
 
   return (
     <Modal
@@ -48,8 +54,9 @@ const LastBids = ({ bids, onClose }: LastBidsProps) => {
         bottom={{ base: '0px', sm: 'unset' }}
         mb={{ base: '0', sm: 'auto' }}
         borderRadius={{ base: '1rem 1rem 0 0', sm: '1rem' }}
-        maxW={{ base: 'lg', md: '900px' }}
+        maxW={{ base: 'lg', md: '700px' }}
         p={6}
+        overflow={{ base: 'auto', md: 'initial' }}
       >
         <Box position="relative" py="13px" mb={7}>
           <Text
@@ -72,13 +79,13 @@ const LastBids = ({ bids, onClose }: LastBidsProps) => {
             size="lg"
           />
         </Box>
-        <TableContainer>
+        <TableContainer overflowY={{ base: 'auto', md: 'initial' }}>
           <Table colorScheme="whiteAlpha">
             <Tbody>
               {bids.map((item, index) => {
                 return (
                   <Tr key={index}>
-                    <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+                    <Td py={3} pl={2} pr={2} w={{ md: '65%' }} borderColor={'gray.100'}>
                       <Flex alignItems="center">
                         <Box
                           rounded="full"
@@ -89,19 +96,40 @@ const LastBids = ({ bids, onClose }: LastBidsProps) => {
                         >
                           <Avatar address={item.address} size={28} />
                         </Box>
-                        <Tooltip label={item.address} placement="top">
+                        {item.address === address ? (
                           <Text fontWeight="bold" fontSize={'md'} color="gray.500">
-                            {isMobile ? shortenAddress(item.address) : item.address}
+                            You
                           </Text>
-                        </Tooltip>
+                        ) : (
+                          <Tooltip label={item.address} placement="top">
+                            <Text fontWeight="bold" fontSize={'md'} color="gray.500">
+                              {shortenAddress(item.address, 8, 8)}
+                            </Text>
+                          </Tooltip>
+                        )}
+                        {index === 0 && (
+                          <Box ml={2}>
+                            <Tooltip
+                              label={auctionState === AuctionState.ENDED ? 'Winner' : 'Winning bid'}
+                              placement="top"
+                            >
+                              <Image src={logoFP} alt="Winning bid" width={15} />
+                            </Tooltip>
+                          </Box>
+                        )}
                       </Flex>
                     </Td>
-                    <Td px={2} w={{ md: '15%' }}>
-                      <Text color="gray.500" whiteSpace="nowrap" fontSize={{ md: 'md' }}>
-                        <Timeago date={item.timeAgo} />
+                    <Td px={2} w={{ base: '10%', md: '15%' }} borderColor={'gray.100'}>
+                      <Text
+                        color="gray.500"
+                        whiteSpace="nowrap"
+                        fontSize={{ md: 'md' }}
+                        hideBelow={'sm'}
+                      >
+                        <Timeago timestamp={item.timeAgo} />
                       </Text>
                     </Td>
-                    <Td pl={2} pr={4} w={{ md: '20%' }}>
+                    <Td pl={2} pr={2} w={{ base: '25%', md: '20%' }} borderColor={'gray.100'}>
                       <Button
                         as="a"
                         fontWeight="bold"

@@ -15,6 +15,7 @@ const AuctionStarted = () => {
   const { countdown, countdownInMili } = useCountdownTime()
   const [amount, setAmount] = useState<NumberFormatValues>()
   const { isLoading: isSubmittingBig, bid } = useAuctionBid()
+
   const minBidValueRoundUp = useMemo(
     () => roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction),
     [minBidValue]
