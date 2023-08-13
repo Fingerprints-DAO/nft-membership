@@ -6,7 +6,7 @@ import Grid from 'components/grid'
 import { BsDiscord } from 'react-icons/bs'
 import { BsTwitter } from 'react-icons/bs'
 import { SiOpensea } from 'react-icons/si'
-import { isAfterPreAuction } from 'utils/currentStage'
+import { PageState, isAfterStage } from 'utils/currentStage'
 
 const Footer = () => {
   // const [isMobile] = useMediaQuery('(max-width: 767px)')
@@ -70,7 +70,7 @@ const Footer = () => {
             >
               <Icon as={BsDiscord} w={8} h={8} display="block" />
             </Link>
-            {isAfterPreAuction() && (
+            {isAfterStage(PageState.PreAuction) && (
               <Link
                 href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
                 title="OpenSea"

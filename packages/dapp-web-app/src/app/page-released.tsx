@@ -15,7 +15,7 @@ import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
 import ConvertPrintsPage from 'components/modal/convert'
 import Link from 'next/link'
-import { PageState, getCurrentStage } from 'utils/currentStage'
+import { PageState, getEffectiveStage, isAfterStage, isBeforeStage } from 'utils/currentStage'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
@@ -308,9 +308,9 @@ const HomePage = () => {
                           fontWeight="normal"
                           mb={6}
                         >
-                          {getCurrentStage() === PageState.Auction &&
+                          {getEffectiveStage() === PageState.Auction &&
                             'The auction for token #1 is currently live.'}
-                          {getCurrentStage() === PageState.Released &&
+                          {isBeforeStage(PageState.Auction) &&
                             'Auction for token #1 available August 15th. Migration available August 16th.'}
                         </Heading>
                       </AnimateComponent>
@@ -332,7 +332,7 @@ const HomePage = () => {
                         >
                           Learn More
                         </Button>
-                        {getCurrentStage() === PageState.Released && (
+                        {getEffectiveStage() === PageState.Released && (
                           <Button
                             as={Link}
                             size={{ base: 'md', sm: 'lg' }}
@@ -344,7 +344,7 @@ const HomePage = () => {
                             Add to Calendar
                           </Button>
                         )}
-                        {getCurrentStage() === PageState.Auction && (
+                        {isBeforeStage(PageState.Migration) && isAfterStage(PageState.Released) && (
                           <Button
                             as={Link}
                             size={{ base: 'md', sm: 'lg' }}
@@ -355,7 +355,7 @@ const HomePage = () => {
                             View Auction
                           </Button>
                         )}
-                        {getCurrentStage() === PageState.Migration && (
+                        {getEffectiveStage() === PageState.Migration && (
                           <ConnectKitButton.Custom>
                             {({ isConnected, show }) => {
                               return (
@@ -380,7 +380,7 @@ const HomePage = () => {
           </Suspense>
         </AnimatePresence>
       </Box>
-      {getCurrentStage() === PageState.Migration && modalName === 'convert' && (
+      {getEffectiveStage() === PageState.Migration && modalName === 'convert' && (
         <ConvertPrintsPage />
       )}
     </Suspense>

@@ -21,9 +21,9 @@ import useMediaQuery from 'hooks/use-media-query'
 import { usePathname } from 'next/navigation'
 import Grid from 'components/grid'
 import Wallet from 'components/wallet'
-import { isAfterPreAuction, isAfterReleased } from 'utils/currentStage'
+import { isAfterStage, PageState } from 'utils/currentStage'
 
-let nav = isAfterReleased() ? [{ href: '/auction', label: 'auction' }] : []
+let nav = isAfterStage(PageState.Released) ? [{ href: '/auction', label: 'auction' }] : []
 nav = [...nav, { href: '/about', label: 'about' }, { href: '/faq', label: 'FAQ' }]
 
 const Header = () => {
@@ -62,8 +62,8 @@ const Header = () => {
                     as={Link}
                     href={item.href}
                     title={item.label}
-                    mr={isAfterPreAuction() ? 14 : 0}
-                    ml={isAfterPreAuction() ? 0 : 14}
+                    mr={isAfterStage(PageState.PreAuction) ? 14 : 0}
+                    ml={isAfterStage(PageState.PreAuction) ? 0 : 14}
                     _hover={{ color: 'secondary.500' }}
                     color={isActive ? 'secondary.500' : 'white'}
                     transition="ease"
@@ -76,7 +76,7 @@ const Header = () => {
                   </Box>
                 )
               })}
-              {isAfterPreAuction() && <Wallet variant="header" buttonWidth="auto" />}
+              {isAfterStage(PageState.PreAuction) && <Wallet variant="header" buttonWidth="auto" />}
             </Flex>
           )}
         </GridItem>
@@ -125,7 +125,7 @@ const Header = () => {
               )
             })}
           </DrawerBody>
-          {isAfterPreAuction() && (
+          {isAfterStage(PageState.PreAuction) && (
             <DrawerFooter px={8} pb={12}>
               <Wallet variant="drawer" />
             </DrawerFooter>
