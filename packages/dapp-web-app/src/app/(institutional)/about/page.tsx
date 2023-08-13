@@ -15,7 +15,7 @@ const AboutPage = () => {
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.5, duration: 1 }}>
             <Text fontSize={'lg'}>
-              There's a lot hidden below the surface of Voxelglyph. <br />
+              There&apos;s a lot hidden below the surface of Voxelglyph. <br />
               More than a 3D piece, Voxelglyph is your entrance to the world of blockchain art.
             </Text>
           </motion.div>
