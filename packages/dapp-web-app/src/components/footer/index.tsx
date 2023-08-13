@@ -13,38 +13,19 @@ type FooterProps = {
   pageState?: PageState
 }
 
-const Footer = ({
-  isHome = false,
-  pageState = PageState.Released,
-}: FooterProps) => {
+const Footer = ({ isHome = false, pageState = PageState.Released }: FooterProps) => {
   const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   return (
-    <Box
-      as="footer"
-      py={[8, 6]}
-      bg={'transparent'}
-      position="relative"
-      zIndex={10}
-    >
-      <Grid
-        gridTemplateColumns={isMobile ? 'none' : undefined}
-        alignItems={'center'}
-      >
-        <GridItem
-          colSpan={{ base: 4, sm: 4, md: 9, xl: 8 }}
-          colStart={{ base: 1, xl: 2 }}
-        >
+    <Box as="footer" py={[8, 6]} bg={'transparent'} position="relative" zIndex={10}>
+      <Grid alignItems={'center'}>
+        <GridItem colSpan={{ base: 4, sm: 4, md: 8 }}>
           <Flex
             mb={{ base: 6, sm: 'unset' }}
             flexDirection="column"
             alignItems={{ base: '', sm: 'flex-start' }}
           >
-            <Text
-              fontSize="xs"
-              color="#7a7a7a"
-              textAlign={{ base: 'center', sm: 'left' }}
-            >
+            <Text fontSize="xs" color="#7a7a7a" textAlign={{ base: 'center', sm: 'left' }}>
               By Fingerprints DAO, developed by{' '}
               <Link
                 color="links.500"
@@ -68,7 +49,7 @@ const Footer = ({
             </Text> */}
           </Flex>
         </GridItem>
-        <GridItem colSpan={{ base: 4, sm: 2, md: 3, xl: 2 }}>
+        <GridItem colSpan={{ base: 4, sm: 2, md: 4 }}>
           <Flex justifyContent={{ base: 'center', sm: 'flex-end' }} gap={4}>
             <Link
               href="https://twitter.com/FingerprintsDAO"
@@ -96,7 +77,7 @@ const Footer = ({
             </Link>
             {pageState !== PageState.Soon && (
               <Link
-                href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/maschine`}
+                href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
                 title="OpenSea"
                 target="_blank"
                 color="#7a7a7a"

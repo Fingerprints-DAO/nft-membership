@@ -107,9 +107,9 @@ const questions = [
 
 const FaqPage = () => {
   return (
-    <Box as="section" pt={{ base: 12, md: '88px' }} pb={{ base: 10, md: 20 }}>
+    <Box as="section" pt={6} pb={{ base: 10, md: 20 }}>
       <Grid>
-        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
+        <GridItem colSpan={{ base: 4, sm: 6, md: 12 }}>
           <Text
             as="h1"
             fontWeight="bold"

@@ -24,7 +24,7 @@ const gridConfig = {
 
 const Grid = ({ children, ...props }: PropsWithChildren<GridProps>) => {
   return (
-    <CKGrid {...props} {...gridConfig}>
+    <CKGrid {...gridConfig} {...props}>
       {children}
     </CKGrid>
   )

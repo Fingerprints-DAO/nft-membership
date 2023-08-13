@@ -2,11 +2,10 @@ import { task } from 'hardhat/config'
 import { BaseContract } from 'ethers'
 
 type LocalContractName = 'ERC20Mock' | 'Membership' | 'Migration' | 'Auction'
-type CombinedContract = Contract & BaseContract;
-
+type CombinedContract = Contract & BaseContract
 
 interface Contract {
-  args?: (string | number | (() => string | undefined)  | (() => Promise<string>) )[]
+  args?: (string | number | (() => string | undefined) | (() => Promise<string>))[]
   instance?: CombinedContract
   libraries?: () => Record<string, string>
   waitForConfirmation?: boolean
@@ -20,7 +19,7 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
   }
 
   const [deployer] = await ethers.getSigners()
-  await  ethers.provider.getTransactionCount(deployer.address)
+  await ethers.provider.getTransactionCount(deployer.address)
   const baseUri = 'ipfs://QmNgQG8bmihY38CvuYoMeRo9xDGwfaW5zhxRjMfQoxQR1J/'
 
   const contracts: Record<LocalContractName, Contract> = {
@@ -35,7 +34,7 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
         deployer.address,
         async () => await contracts.Membership.instance!.getAddress(),
         async () => await contracts.ERC20Mock.instance!.getAddress(),
-        5000,
+        ethers.parseEther('5000').toString(),
       ],
     },
     Auction: {
@@ -53,7 +52,9 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
       libraries: contract?.libraries?.(),
     })
 
-    const deployedContract = await factory.deploy(...(contract.args?.map((a) => (typeof a === 'function' ? a() : a)) ?? []))
+    const deployedContract = await factory.deploy(
+      ...(contract.args?.map((a) => (typeof a === 'function' ? a() : a)) ?? []),
+    )
 
     if (contract.waitForConfirmation) {
       await deployedContract.waitForDeployment()

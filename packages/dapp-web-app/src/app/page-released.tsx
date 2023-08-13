@@ -11,7 +11,7 @@ import Grid from 'components/grid'
 import Header from 'components/header'
 import Loading from 'components/loading'
 import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
-import { GiModernCity, GiHouse } from 'react-icons/gi'
+import { GiModernCity } from 'react-icons/gi'
 import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
 import ConvertPrintsPage from 'components/modal/convert'
@@ -89,7 +89,7 @@ const AnimateComponent = ({
   )
 }
 const HomePage = () => {
-  // const { push } = useRouter()
+  const { push } = useRouter()
   const searchParams = useSearchParams()
 
   const [animationEnded, setAnimationEnded] = useState(false)
@@ -100,8 +100,8 @@ const HomePage = () => {
 
   const modalName = searchParams.get('modal')
 
-  // const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
-  //   isConnected ? push('/?modal=convert') : show?.()
+  const handleCTAClick = (isConnected: boolean, show?: () => void) => () =>
+    isConnected ? push('/?modal=convert') : show?.()
 
   useEffect(() => {
     if (animationStarted) {
@@ -182,7 +182,7 @@ const HomePage = () => {
               ) : (
                 <Box
                   as={'span'}
-                  ml={-8}
+                  ml={{ md: -8 }}
                   display={'inline-flex'}
                   alignItems={'center'}
                   justifyContent={'center'}
@@ -227,7 +227,7 @@ const HomePage = () => {
                 display={'inline-flex'}
                 alignItems={'center'}
               >
-                <Icon as={GiModernCity} mr={2} ml={-8} />
+                <Icon as={GiModernCity} mr={2} ml={{ md: -4 }} />
                 <span>Play with the Voxelglyph</span>
               </LinkBox>
             </Box>
@@ -308,8 +308,7 @@ const HomePage = () => {
                           fontWeight="normal"
                           mb={6}
                         >
-                          Auction for token #1 available August 15th. Migration available August
-                          16th.
+                          The auction for token #1 is currently live.
                         </Heading>
                       </AnimateComponent>
                       <AnimateComponent
@@ -328,17 +327,16 @@ const HomePage = () => {
                           colorScheme="white"
                           href={'/about'}
                         >
-                          Learn more
+                          Learn More
                         </Button>
                         <Button
                           as={Link}
                           size={{ base: 'md', sm: 'lg' }}
                           colorScheme="white"
                           w={{ base: 'auto', sm: 'auto' }}
-                          href={'https://www.addevent.com/calendar/kZ615607'}
-                          target="_blank"
+                          href={'/auction'}
                         >
-                          Add to Calendar
+                          View Auction
                         </Button>
                         {/* <ConnectKitButton.Custom>
                           {({ isConnected, show }) => {
