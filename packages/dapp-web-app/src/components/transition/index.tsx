@@ -33,7 +33,7 @@ const Transition = ({ children }: PropsWithChildren) => {
           animate="in"
           initial="out"
           exit="out"
-          minH={'100vh'}
+          height={'full'}
           display={'flex'}
           flexDir={'column'}
           justifyContent={'flex-start'}

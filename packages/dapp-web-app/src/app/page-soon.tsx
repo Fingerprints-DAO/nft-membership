@@ -14,7 +14,7 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
       <Box
         as="section"
         h={{ base: 'initial' }}
-        minHeight="100vh"
+        minHeight="full"
         minWidth="100vw"
         pos="fixed"
         bg={`url(${bgImage})`}
@@ -23,7 +23,15 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
         bgRepeat="no-repeat"
       >
         <Box w="full" h="full" position="absolute" zIndex={1} bg="black" opacity={0.6} />
-        <Flex flexDir={'column'} minHeight={'100vh'} alignItems="center" justifyContent="center" position="relative" zIndex={2} px={10}>
+        <Flex
+          flexDir={'column'}
+          minHeight={'full'}
+          alignItems="center"
+          justifyContent="center"
+          position="relative"
+          zIndex={2}
+          px={10}
+        >
           <Box
             mb={10}
             _hover={{
@@ -32,20 +40,51 @@ const SoonPage = ({ bgImage }: SoonPageProps) => (
             }}
           >
             <Link href="https://fingerprintsdao.xyz">
-              <Image src={'/images/logo-fp.svg'} alt="Fingerprints DAO" width={{ base: 50, xxl: 75 }} />
+              <Image
+                src={'/images/logo-fp.svg'}
+                alt="Fingerprints DAO"
+                width={{ base: 50, xxl: 75 }}
+              />
             </Link>
           </Box>
           <Box>
-            <Heading color="gray.50" as="h1" mb={6} fontSize={{ base: '1.8em', md: '2.2em', xxl: '2.5em' }} textAlign={'center'}>
+            <Heading
+              color="gray.50"
+              as="h1"
+              mb={6}
+              fontSize={{ base: '1.8em', md: '2.2em', xxl: '2.5em' }}
+              textAlign={'center'}
+            >
               Fingerprints is Moving to Voxelglyph
             </Heading>
-            <Heading color="gray.50" as="h2" size={['sm']} fontWeight="thin" mb={5} textAlign={'center'}>
+            <Heading
+              color="gray.50"
+              as="h2"
+              size={['sm']}
+              fontWeight="thin"
+              mb={5}
+              textAlign={'center'}
+            >
               Our membership is moving from 5,000 $PRINTS to an NFT designed by Larva Labs.
             </Heading>
-            <Heading color="gray.50" as="h2" size={['sm']} fontWeight="thin" mb={5} textAlign={'center'}>
+            <Heading
+              color="gray.50"
+              as="h2"
+              size={['sm']}
+              fontWeight="thin"
+              mb={5}
+              textAlign={'center'}
+            >
               Auction for token #1 available August 15th.
             </Heading>
-            <Heading color="gray.50" as="h2" size={['sm']} fontWeight="thin" mb={10} textAlign={'center'}>
+            <Heading
+              color="gray.50"
+              as="h2"
+              size={['sm']}
+              fontWeight="thin"
+              mb={10}
+              textAlign={'center'}
+            >
               Migration available August 16th.
             </Heading>
           </Box>
