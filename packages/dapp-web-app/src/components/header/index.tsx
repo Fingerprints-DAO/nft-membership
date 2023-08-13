@@ -92,18 +92,20 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
         <DrawerContent h="full" bg="gray.50">
           <Grid as="header" py={8}>
             <GridItem colSpan={3}>
-              <Link href="/">
-                <Image src={logoFPDark} alt="Fingerprints DAO" width={30} />
-              </Link>
+              <Box boxSize={{ base: '42', md: '45' }}>
+                <Link href="/">
+                  <Image src={logoFPDark} alt="Fingerprints DAO" width={30} />
+                </Link>
+              </Box>
             </GridItem>
             <GridItem as={Flex} justifyContent="end" alignItems="center">
               <DrawerCloseButton
                 position="static"
                 color="gray.900"
                 size="lg"
-                w={12}
-                h={12}
-                mr={-4}
+                w={10}
+                h={10}
+                mr={-2}
               />
             </GridItem>
           </Grid>
