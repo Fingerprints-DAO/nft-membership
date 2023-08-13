@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js'
 import useAuctionBid from 'services/web3/auction/use-auction-bid'
 import { NumberSettings } from 'types/number-settings'
 import { zeroAddress } from 'viem'
+import { ConnectKitButton } from 'connectkit'
 
 const AuctionStarted = () => {
   const { auctionData, minBidValue } = useAuctionContext()
@@ -74,35 +75,48 @@ const AuctionStarted = () => {
           </Text>
         </Box>
       </Flex>
-      <Flex as="form" mt={6} onSubmit={handleSubmit}>
-        <NumericFormat
-          defaultValue=""
-          value={amount?.value || ''}
-          allowNegative={false}
-          customInput={Input}
-          decimalSeparator="."
-          decimalScale={NumberSettings.DecimalsAuction}
-          placeholder={`${roundEtherUp(
-            minBidValue.toString(),
-            NumberSettings.DecimalsAuction
-          )} ETH or more`}
-          variant="outline"
-          mr={4}
-          flex={1}
-          onValueChange={handleChange}
-        />
-        <Button
-          isLoading={isSubmittingBig}
-          isDisabled={isInvalidValue || isSubmittingBig}
-          type="submit"
-          colorScheme="white"
-        >
-          Place bid
-        </Button>
-      </Flex>
-      <Text color="gray.400" fontStyle="italic" mt={2} fontSize={{ base: 'xs' }}>
-        Min bid allowed: {minBidValueRoundUp} ETH
-      </Text>
+
+      <ConnectKitButton.Custom>
+        {({ isConnected, show }) =>
+          isConnected ? (
+            <>
+              <Flex as="form" mt={6} onSubmit={handleSubmit}>
+                <NumericFormat
+                  defaultValue=""
+                  value={amount?.value || ''}
+                  allowNegative={false}
+                  customInput={Input}
+                  decimalSeparator="."
+                  decimalScale={NumberSettings.DecimalsAuction}
+                  placeholder={`${roundEtherUp(
+                    minBidValue.toString(),
+                    NumberSettings.DecimalsAuction
+                  )} ETH or more`}
+                  variant="outline"
+                  mr={4}
+                  flex={1}
+                  onValueChange={handleChange}
+                />
+                <Button
+                  isLoading={isSubmittingBig}
+                  isDisabled={isInvalidValue || isSubmittingBig}
+                  type="submit"
+                  colorScheme="white"
+                >
+                  Place bid
+                </Button>
+              </Flex>
+              <Text color="gray.400" fontStyle="italic" mt={2} fontSize={{ base: 'xs' }}>
+                Min bid allowed: {minBidValueRoundUp} ETH
+              </Text>
+            </>
+          ) : (
+            <Button colorScheme="white" onClick={show} flex={1} mt={6} width={'full'}>
+              Connect to bid
+            </Button>
+          )
+        }
+      </ConnectKitButton.Custom>
     </Skeleton>
   )
 }
