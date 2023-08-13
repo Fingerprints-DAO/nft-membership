@@ -143,8 +143,7 @@ const HomePage = () => {
     <Suspense fallback={<Loading full />}>
       <Box
         as="section"
-        h={{ base: 'initial' }}
-        minHeight="100vh"
+        height="full"
         pos="relative"
         bgRepeat="no-repeat"
         display="flex"
@@ -242,6 +241,7 @@ const HomePage = () => {
               animate={animationEnded ? 'in' : 'out'}
               initial="out"
               exit={'out'}
+              style={{ height: '100%' }}
             >
               <Box
                 w="full"
@@ -254,7 +254,7 @@ const HomePage = () => {
                 opacity={0.8}
                 mixBlendMode={'multiply'}
               />
-              <Flex flexDir={'column'} minHeight={'100vh'} justifyContent={'space-between'}>
+              <Flex flexDir={'column'} minHeight={'full'} justifyContent={'space-between'}>
                 <Box pb={5}>
                   <AnimateComponent
                     name={'header'}
@@ -273,7 +273,7 @@ const HomePage = () => {
                       // justifyContent="center"
                       position="relative"
                       zIndex={2}
-                      h="100%"
+                      h="full"
                       textAlign={{ base: 'center', sm: 'right' }}
                       pb={{ base: '30%', sm: '20%' }}
                     >
