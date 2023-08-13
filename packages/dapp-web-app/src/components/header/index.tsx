@@ -21,20 +21,12 @@ import useMediaQuery from 'hooks/use-media-query'
 import { usePathname } from 'next/navigation'
 import Grid from 'components/grid'
 import Wallet from 'components/wallet'
-import { PageState } from 'types/page'
+import { isAfterPreAuction, isAfterReleased } from 'utils/currentStage'
 
-const nav = [
-  { href: '/auction', label: 'auction' },
-  // { href: '/', label: 'home' },
-  { href: '/about', label: 'about' },
-  { href: '/faq', label: 'FAQ' },
-]
+let nav = isAfterReleased() ? [{ href: '/auction', label: 'auction' }] : []
+nav = [...nav, { href: '/about', label: 'about' }, { href: '/faq', label: 'FAQ' }]
 
-type HeaderProps = {
-  pageState?: PageState
-}
-
-const Header = ({ pageState = PageState.Released }: HeaderProps) => {
+const Header = () => {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 767px)')
@@ -70,7 +62,8 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                     as={Link}
                     href={item.href}
                     title={item.label}
-                    mr={14}
+                    mr={isAfterPreAuction() ? 14 : 0}
+                    ml={isAfterPreAuction() ? 0 : 14}
                     _hover={{ color: 'secondary.500' }}
                     color={isActive ? 'secondary.500' : 'white'}
                     transition="ease"
@@ -83,7 +76,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                   </Box>
                 )
               })}
-              <Wallet variant="header" buttonWidth="auto" />
+              {isAfterPreAuction() && <Wallet variant="header" buttonWidth="auto" />}
             </Flex>
           )}
         </GridItem>
@@ -132,9 +125,11 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
               )
             })}
           </DrawerBody>
-          <DrawerFooter px={8} pb={12}>
-            <Wallet variant="drawer" />
-          </DrawerFooter>
+          {isAfterPreAuction() && (
+            <DrawerFooter px={8} pb={12}>
+              <Wallet variant="drawer" />
+            </DrawerFooter>
+          )}
         </DrawerContent>
       </Drawer>
     </>

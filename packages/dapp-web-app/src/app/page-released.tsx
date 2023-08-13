@@ -3,7 +3,6 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { PageState } from 'types/page'
 import { Suspense } from 'react'
 import { Box, Button, Flex, GridItem, Heading, Icon, LinkBox } from '@chakra-ui/react'
 // import Footer from 'components/footer'
@@ -16,6 +15,7 @@ import Image from 'next/image'
 import logoFP from '/public/images/logo-fp.svg'
 import ConvertPrintsPage from 'components/modal/convert'
 import Link from 'next/link'
+import { PageState, getCurrentStage } from 'utils/currentStage'
 
 const Spline = React.lazy(() => import('@splinetool/react-spline'))
 
@@ -55,7 +55,7 @@ const animationDelays = {
   headline: 1,
   ctas: 2,
   header: 3,
-  playButton: 5,
+  playButton: 4,
 }
 
 type AnimateComponentType = PropsWithChildren<{
@@ -262,7 +262,7 @@ const HomePage = () => {
                     voxelAnimationEnded={animationEnded}
                     forceRender={skippedAnimation}
                   >
-                    <Header pageState={PageState.Released} />
+                    <Header />
                   </AnimateComponent>
                 </Box>
                 <Grid>
@@ -308,7 +308,10 @@ const HomePage = () => {
                           fontWeight="normal"
                           mb={6}
                         >
-                          The auction for token #1 is currently live.
+                          {getCurrentStage() === PageState.Auction &&
+                            'The auction for token #1 is currently live.'}
+                          {getCurrentStage() === PageState.Released &&
+                            'Auction for token #1 available August 15th. Migration available August 16th.'}
                         </Heading>
                       </AnimateComponent>
                       <AnimateComponent
@@ -329,42 +332,57 @@ const HomePage = () => {
                         >
                           Learn More
                         </Button>
-                        <Button
-                          as={Link}
-                          size={{ base: 'md', sm: 'lg' }}
-                          colorScheme="white"
-                          w={{ base: 'auto', sm: 'auto' }}
-                          href={'/auction'}
-                        >
-                          View Auction
-                        </Button>
-                        {/* <ConnectKitButton.Custom>
-                          {({ isConnected, show }) => {
-                            return (
-                              <Button
-                                size="lg"
-                                colorScheme="white"
-                                w={{ base: 'full', sm: 'auto' }}
-                                onClick={handleCTAClick(isConnected, show)}
-                              >
-                                Convert your $PRINTS
-                              </Button>
-                            )
-                          }}
-                        </ConnectKitButton.Custom> */}
+                        {getCurrentStage() === PageState.Released && (
+                          <Button
+                            as={Link}
+                            size={{ base: 'md', sm: 'lg' }}
+                            colorScheme="white"
+                            w={{ base: 'auto', sm: 'auto' }}
+                            href="https://www.addevent.com/calendar/kZ615607"
+                            target="_blank"
+                          >
+                            Add to Calendar
+                          </Button>
+                        )}
+                        {getCurrentStage() === PageState.Auction && (
+                          <Button
+                            as={Link}
+                            size={{ base: 'md', sm: 'lg' }}
+                            colorScheme="white"
+                            w={{ base: 'auto', sm: 'auto' }}
+                            href={'/auction'}
+                          >
+                            View Auction
+                          </Button>
+                        )}
+                        {getCurrentStage() === PageState.Migration && (
+                          <ConnectKitButton.Custom>
+                            {({ isConnected, show }) => {
+                              return (
+                                <Button
+                                  size="lg"
+                                  colorScheme="white"
+                                  w={{ base: 'full', sm: 'auto' }}
+                                  onClick={handleCTAClick(isConnected, show)}
+                                >
+                                  Convert your $PRINTS
+                                </Button>
+                              )
+                            }}
+                          </ConnectKitButton.Custom>
+                        )}
                       </AnimateComponent>
                     </Flex>
                   </GridItem>
                 </Grid>
-                {/* <Box pt={5}>
-                  <Footer isHome={true} pageState={PageState.Released} />
-                </Box> */}
               </Flex>
             </motion.div>
           </Suspense>
         </AnimatePresence>
       </Box>
-      {modalName === 'convert' && <ConvertPrintsPage />}
+      {getCurrentStage() === PageState.Migration && modalName === 'convert' && (
+        <ConvertPrintsPage />
+      )}
     </Suspense>
   )
 }

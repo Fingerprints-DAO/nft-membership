@@ -2,19 +2,14 @@
 
 import { Link, Box, Flex, Icon, Text, GridItem } from '@chakra-ui/react'
 import Grid from 'components/grid'
-import useMediaQuery from 'hooks/use-media-query'
+// import useMediaQuery from 'hooks/use-media-query'
 import { BsDiscord } from 'react-icons/bs'
 import { BsTwitter } from 'react-icons/bs'
 import { SiOpensea } from 'react-icons/si'
-import { PageState } from 'types/page'
+import { isAfterPreAuction } from 'utils/currentStage'
 
-type FooterProps = {
-  isHome?: boolean
-  pageState?: PageState
-}
-
-const Footer = ({ isHome = false, pageState = PageState.Released }: FooterProps) => {
-  const [isMobile] = useMediaQuery('(max-width: 767px)')
+const Footer = () => {
+  // const [isMobile] = useMediaQuery('(max-width: 767px)')
 
   return (
     <Box as="footer" py={[8, 6]} bg={'transparent'} position="relative" zIndex={10}>
@@ -75,7 +70,7 @@ const Footer = ({ isHome = false, pageState = PageState.Released }: FooterProps)
             >
               <Icon as={BsDiscord} w={8} h={8} display="block" />
             </Link>
-            {pageState !== PageState.Soon && (
+            {isAfterPreAuction() && (
               <Link
                 href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
                 title="OpenSea"
