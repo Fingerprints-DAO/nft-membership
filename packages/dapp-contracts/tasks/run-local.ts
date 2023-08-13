@@ -2,6 +2,8 @@ import fs from 'fs'
 import { TASK_COMPILE, TASK_NODE } from 'hardhat/builtin-tasks/task-names'
 import { task } from 'hardhat/config'
 import { writeLogs } from './utils/_write-logs'
+import { WETH_GOERLI_ADDRESS } from './utils/_addresses'
+import dayjs from 'dayjs'
 
 task(
   'run-local',
@@ -30,32 +32,53 @@ task(
   //   }),
   // ])
 
+  const erc20MockAddress = await contracts.ERC20Mock.instance?.getAddress()
+  const membershipAddress = await contracts.Membership.instance?.getAddress()
+  const migrationAddress = await contracts.Migration.instance?.getAddress()
+  const auctionAddress = await contracts.Auction.instance?.getAddress()
+
   console.log(
     `arod.studio template contracts deployed to local node at http://localhost:8545 (Chain ID: ${chainId})`,
   )
-  console.log(
-    `ERC20 Mock ($PRINTS) address: ${await contracts.ERC20Mock.instance.getAddress()}`,
-  )
-  console.log(
-    `Membership address: ${await contracts.Membership.instance.getAddress()}`,
-  )
-  console.log(
-    `Migration address: ${await contracts.Migration.instance.getAddress()}`,
-  )
+  console.log(`ERC20 Mock ($PRINTS) address: ${erc20MockAddress}`)
+  console.log(`Membership address: ${membershipAddress}`)
+  console.log(`Migration address: ${migrationAddress}`)
+  console.log(`Auction address: ${auctionAddress}`)
 
   writeLogs(
     network.chainId,
-    await contracts.ERC20Mock.instance?.getAddress(),
-    await contracts.Membership.instance?.getAddress(),
-    await contracts.Migration.instance?.getAddress(),
+    erc20MockAddress,
+    membershipAddress,
+    migrationAddress,
+    auctionAddress,
+    WETH_GOERLI_ADDRESS,
   )
 
   // Set local node mining interval
   await ethers.provider.send('evm_setIntervalMining', [12_000])
 
   await run('grant-role', {
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: migrationAddress,
     role: 'MINTER_ROLE',
+  })
+
+  await run('mint-tokens', {
+    mintTo: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+  })
+
+  await run('unpause-migration')
+
+  const startTime = dayjs().add(1, 'minutes')
+  const startTimeUnix = startTime.unix()
+  const endTimeUnix = startTime.add(10, 'minutes').unix()
+
+  const minBidIncrementInWei = ethers.parseEther('0.2').toString()
+  const startAmountInWei = ethers.parseEther('4.8').toString()
+  await run('set-auction-config', {
+    startTime: startTimeUnix,
+    endTime: endTimeUnix,
+    minBidIncrementInWei,
+    startAmountInWei,
   })
 
   await new Promise(() => {

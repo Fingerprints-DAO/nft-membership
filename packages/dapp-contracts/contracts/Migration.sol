@@ -39,10 +39,6 @@ contract Migration is Pausable, AccessControl {
   /// @dev The price is immutable and is set in the constructor.
   uint256 public immutable pricePerMembershipInWei;
 
-  /// @notice The ERC20 token for prints.
-  /// @dev The token is set in the constructor.
-  IERC20 public token;
-
   constructor(
     address _adminAddress,
     address _nftAddress,
@@ -54,7 +50,6 @@ contract Migration is Pausable, AccessControl {
     nftAddress = _nftAddress;
     printsAddress = _printsAddress;
     pricePerMembershipInWei = _pricePerMembershipInWei;
-    token = IERC20(printsAddress);
 
     _pause();
   }
@@ -70,32 +65,18 @@ contract Migration is Pausable, AccessControl {
   /// @notice Migrates membership from ERC20 to ERC721, locks print and mints NFT.
   /// @dev This function can only be called when the contract is not paused or by an admin.
   /// @param _to The address of the future owner of the token.
-  /// @param _amount The amount of tokens to migrate.
-  function migrate(address _to, uint16 _amount) public whenNotPausedOrAdmin {
-    require(_amount > 0, 'Migration: amount must be greater than 0');
+  /// @param _qty The amount of NFTs to migrate.
+  function migrate(address _to, uint16 _qty) public whenNotPausedOrAdmin {
+    require(_qty > 0, 'Migration: amount must be greater than 0');
     require(_to != address(0), 'Migration: cannot migrate to zero address');
 
-    uint256 printsAmount = _amount * pricePerMembershipInWei;
-    uint256 balance = IERC20(printsAddress).balanceOf(msg.sender);
+    uint256 printsAmount = _qty * pricePerMembershipInWei;
 
-    require(balance >= printsAmount, 'Migration: insufficient balance');
+    IERC20(printsAddress).transferFrom(msg.sender, address(this), printsAmount);
 
-    (bool success, bytes memory data) = address(token).call(
-      abi.encodeWithSelector(
-        token.transferFrom.selector,
-        msg.sender,
-        address(this),
-        printsAmount
-      )
-    );
-    require(
-      success && (data.length == 0 || abi.decode(data, (bool))),
-      'Migration: token transfer from sender failed'
-    );
+    IMembership(nftAddress).safeMint(_to, _qty);
 
-    IMembership(nftAddress).safeMint(_to, _amount);
-
-    emit Migrated(_to, _amount);
+    emit Migrated(_to, _qty);
   }
 
   /// @notice Pauses all token migrations.

@@ -17,14 +17,14 @@ const gridConfig = {
   w: {
     base: '100%',
     md: '100%',
-    lg: '1160px',
-    xl: '1360px',
+    lg: '1128px',
+    xl: '1128px',
   },
 }
 
 const Grid = ({ children, ...props }: PropsWithChildren<GridProps>) => {
   return (
-    <CKGrid {...props} {...gridConfig}>
+    <CKGrid {...gridConfig} {...props}>
       {children}
     </CKGrid>
   )

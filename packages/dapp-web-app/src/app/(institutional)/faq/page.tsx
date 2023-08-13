@@ -11,7 +11,8 @@ const questions = [
   },
   {
     question: 'Do I get to keep my 5,000 $PRINTS and the Voxelglyph after migrating?',
-    answer: 'No, once you have executed the migration the $PRINTS tokens will be burned and you will receive your Voxelglyph.',
+    answer:
+      'No, once you have executed the migration the $PRINTS tokens will be burned and you will receive your Voxelglyph.',
   },
   {
     question: 'How long will members be able to migrate their $PRINTS for?',
@@ -51,17 +52,20 @@ const questions = [
       'Voxelglyphs can only be created through the burning of $PRINTS. Since there are just 10M $PRINTS tokens, using the exchange rate of 1:5000, the max supply of Voxelglyphs will be exactly 2,000 pieces.',
   },
   {
-    question: 'I want to get Voxelglyph #1, should I arrive early and try to migrate before everyone else?',
+    question:
+      'I want to get Voxelglyph #1, should I arrive early and try to migrate before everyone else?',
     answer:
       'No, in celebration of this landmark event, the DAO will Auction the first generated Voxelglyph, starting a day before the migration, on August 15 and ending on the day of the migration launch.',
   },
   {
-    question: 'I executed the migration and received my Voxelglyph, could I now turn my Voxelglyph into 5,000 $PRINTS again?',
+    question:
+      'I executed the migration and received my Voxelglyph, could I now turn my Voxelglyph into 5,000 $PRINTS again?',
     answer:
       "No. The migration is one-way, meaning once you have migrated your ERC-20 $PRINTS tokens into the Voxelglyph you won't be able to swap it back, ensuring a full transition to the new governance standard in the long-run.",
   },
   {
-    question: "I don't want to go through the process of buying 5,000 $PRINTS and then exchange them, can I just buy a Voxelglyph somewhere?",
+    question:
+      "I don't want to go through the process of buying 5,000 $PRINTS and then exchange them, can I just buy a Voxelglyph somewhere?",
     answer:
       'As an NFT, Voxelglyph will be on NFT marketplaces like Opensea and Blur, but you will have to wait for members to migrate and then list their Voxelglyphs for sale (if anyone chooses to do so).',
   },
@@ -71,7 +75,8 @@ const questions = [
       'This transition will yield many benefits to our DAO, such as: (1) easier access to membership through NFT marketplaces, (2) making membership itself more appealing by incorporating a piece of art from Larva Labs, (3)  simplifying the membership experience and onboarding, (4) freeing resources from existing liquidity pools and (5) enabling the potential for direct on-chain governance in the future.',
   },
   {
-    question: 'I still have some questions that were not answered in this FAQ, where can I ask them?',
+    question:
+      'I still have some questions that were not answered in this FAQ, where can I ask them?',
     answer: (
       <>
         <Link
@@ -83,7 +88,8 @@ const questions = [
         >
           Through our discord
         </Link>
-        , where we will try to answer all the questions we can. If you have questions regarding Fingerprints itself, you can also check{' '}
+        , where we will try to answer all the questions we can. If you have questions regarding
+        Fingerprints itself, you can also check{' '}
         <Link
           color="links.500"
           href="https://fingerprintsdao.xyz/"
@@ -101,10 +107,15 @@ const questions = [
 
 const FaqPage = () => {
   return (
-    <Box as="section" pt={{ base: 14, md: '88px' }} pb={{ base: 10, md: 20 }}>
+    <Box as="section" pt={6} pb={{ base: 10, md: 20 }}>
       <Grid>
-        <GridItem colStart={{ xl: 2 }} colSpan={{ base: 4, sm: 6, md: 12, xl: 10 }}>
-          <Text as="h1" fontSize="3xl" fontWeight="bold" mb={8}>
+        <GridItem colSpan={{ base: 4, sm: 6, md: 12 }}>
+          <Text
+            as="h1"
+            fontWeight="bold"
+            fontSize={{ base: 'xl', md: '2xl' }}
+            mb={{ base: 4, md: 8 }}
+          >
             Frequently Asked Questions
           </Text>
           <Box>
@@ -112,11 +123,24 @@ const FaqPage = () => {
               const isLastChild = questions.length - 1 === index
 
               return (
-                <Box py={8} borderBottomColor="white" borderBottomWidth={!isLastChild ? 1 : 0} key={index} id={`q-${index}`} opacity={0.9}>
-                  <Text as="strong" fontSize="lg" display="block" color="white">
+                <Box
+                  py={8}
+                  borderBottomColor="gray.700"
+                  borderBottomWidth={!isLastChild ? 1 : 0}
+                  key={index}
+                  id={`q-${index}`}
+                >
+                  <Text
+                    as="strong"
+                    fontSize={{ base: 'md', md: 'lg' }}
+                    display="block"
+                    color="gray.100"
+                  >
                     {item.question}
                   </Text>
-                  <Text color="white">{item.answer}</Text>
+                  <Text color="gray.300" mt={4}>
+                    {item.answer}
+                  </Text>
                 </Box>
               )
             })}

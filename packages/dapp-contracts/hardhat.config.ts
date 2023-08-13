@@ -26,8 +26,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 const accounts = {
-  mnemonic:
-    process.env.MNEMONIC || 'abc abc abc abc abc abc abc abc abc abc abc abc',
+  mnemonic: process.env.MNEMONIC || 'abc abc abc abc abc abc abc abc abc abc abc abc',
 }
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -43,7 +42,9 @@ const config: HardhatUserConfig = {
 
   networks: {
     goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: process.env.ALCHEMY_API_KEY
+        ? `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
+        : `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : accounts,
       chainId: 5,
     },

@@ -1,11 +1,13 @@
-import { Addressable } from 'ethers'
+import { AddressLike } from 'ethers'
 import fs from 'fs'
 
 export const writeLogs = (
   chainId: bigint,
-  ERC20Mock: Addressable,
-  Membership: Addressable,
-  Migration: Addressable,
+  ERC20Mock: AddressLike,
+  Membership: AddressLike,
+  Migration: AddressLike,
+  Auction: AddressLike,
+  WETH: AddressLike,
 ) => {
   if (!fs.existsSync('logs')) {
     fs.mkdirSync('logs')
@@ -17,6 +19,8 @@ export const writeLogs = (
     ERC20Mock,
     Membership,
     Migration,
+    Auction,
+    WETH,
     chainId: Number(chainId),
   }
 

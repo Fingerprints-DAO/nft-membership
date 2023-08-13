@@ -1,5 +1,14 @@
 import { CheckIcon, WarningIcon } from '@chakra-ui/icons'
-import { As, CloseButton, Flex, Icon, Text, ToastId, UseToastOptions, useToast } from '@chakra-ui/react'
+import {
+  As,
+  CloseButton,
+  Flex,
+  Icon,
+  Text,
+  ToastId,
+  UseToastOptions,
+  useToast,
+} from '@chakra-ui/react'
 import { TxMessage } from 'components/tx-message'
 
 type ToastContentProps = {
@@ -15,13 +24,21 @@ type ToastContentProps = {
   onClose: (toastId: ToastId) => void
 }
 
-const ToastContent = ({ title, description, txHash, status, toastId, icon, onClose }: ToastContentProps) => {
+const ToastContent = ({
+  title,
+  description,
+  txHash,
+  status,
+  toastId,
+  icon,
+  onClose,
+}: ToastContentProps) => {
   return (
     <Flex
       alignItems="center"
       justifyContent="center"
       bg={status === 'success' ? 'gray.300' : '#F76B8B'}
-      p={['84px 16px 72px', 4]}
+      p={['18px 16px', 4]}
       position="relative"
     >
       {Boolean(icon) && <Icon {...icon} mr={2} />}
@@ -34,7 +51,16 @@ const ToastContent = ({ title, description, txHash, status, toastId, icon, onClo
           </>
         )}
       </Text>
-      <CloseButton color="gray.900" position="absolute" right="7px" top="7px" w="44px" h="44px" size="lg" onClick={() => onClose(toastId)} />
+      <CloseButton
+        color="gray.900"
+        position="absolute"
+        right="7px"
+        top="7px"
+        w="44px"
+        h="44px"
+        size="lg"
+        onClick={() => onClose(toastId)}
+      />
     </Flex>
   )
 }
@@ -43,6 +69,10 @@ export const useTxToast = () => {
   const toast = useToast()
 
   const showTxSentToast = (toastId: ToastId, txHash?: string) => {
+    if (toast.isActive(toastId)) {
+      return
+    }
+
     toast({
       id: toastId,
       isClosable: true,
@@ -54,7 +84,15 @@ export const useTxToast = () => {
       },
       duration: 9000,
       position: 'top',
-      render: () => <ToastContent title="Transaction sent" txHash={txHash} status="success" toastId={toastId} onClose={toast.close} />,
+      render: () => (
+        <ToastContent
+          title="Transaction sent"
+          txHash={txHash}
+          status="success"
+          toastId={toastId}
+          onClose={toast.close}
+        />
+      ),
     })
   }
 
@@ -117,6 +155,8 @@ export const useTxToast = () => {
   const showTxErrorToast = (error: Error) => {
     const revertError = error as any
 
+    // console.log('error', JSON.stringify(error))
+
     const toastConfig = (id: ToastId): UseToastOptions => ({
       title: `An error occured: `,
       status: 'error',
@@ -129,53 +169,29 @@ export const useTxToast = () => {
       },
     })
 
-    if (revertError.errorName) {
-      const id = 'error-name'
+    // if (revertError.errorName) {
+    //   const id = 'error-name'
 
-      if (toast.isActive(id)) {
-        return
-      }
+    //   if (toast.isActive(id)) {
+    //     return
+    //   }
 
-      toast({
-        ...toastConfig(id),
-        render: () => (
-          <ToastContent
-            title="An error occured: "
-            description={`Error reverted ${revertError.errorName}`}
-            status="error"
-            icon={{ as: WarningIcon, color: 'gray.900' }}
-            toastId={id}
-            onClose={toast.close}
-          />
-        ),
-      })
+    //   toast({
+    //     ...toastConfig(id),
+    //     render: () => (
+    //       <ToastContent
+    //         title="An error occured: "
+    //         description={`Error reverted ${revertError.errorName}`}
+    //         status="error"
+    //         icon={{ as: WarningIcon, color: 'gray.900' }}
+    //         toastId={id}
+    //         onClose={toast.close}
+    //       />
+    //     ),
+    //   })
 
-      return
-    }
-
-    if (revertError.code === 'ACTION_REJECTED') {
-      const id = 'user-rejected'
-
-      if (toast.isActive(id)) {
-        return
-      }
-
-      toast({
-        ...toastConfig(id),
-        render: () => (
-          <ToastContent
-            title="An error occured: "
-            description="user rejected metamask tx"
-            status="error"
-            icon={{ as: WarningIcon, color: 'gray.900' }}
-            toastId={id}
-            onClose={toast.close}
-          />
-        ),
-      })
-
-      return
-    }
+    //   return
+    // }
 
     const id = 'error'
 
@@ -188,7 +204,12 @@ export const useTxToast = () => {
       render: () => (
         <ToastContent
           title="An error occured: "
-          description={revertError.reason ?? revertError.cause ?? revertError.message}
+          description={
+            revertError.reason ??
+            revertError.cause?.shortMessage ??
+            revertError.message ??
+            revertError.details
+          }
           status="error"
           icon={{ as: WarningIcon, color: 'gray.900' }}
           toastId={id}

@@ -28,8 +28,9 @@ const components = {
     sizes: {
       lg: {
         fontWeight: 'bold',
-        height: 16,
-        px: 7,
+        height: 12,
+        fontSize: 16,
+        px: 4,
       },
     },
     variants: {
@@ -48,9 +49,10 @@ const components = {
         borderColor: `${colorScheme}.500`,
         borderWidth: 2,
         color: `${colorScheme}.500`,
-        _hover: {
-          background: `${colorScheme}.100`,
-        },
+        // _hover: {
+        //   background: `${colorScheme}.100`,
+        //   color: 'black',
+        // },
       })),
     },
     baseStyle: {
