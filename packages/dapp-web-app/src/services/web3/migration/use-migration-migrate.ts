@@ -27,7 +27,7 @@ const useMigrationMigrate = (qty: number) => {
         address: contracts.Migration.address as Address,
         abi: migrationABI,
         functionName: 'migrate',
-        args: [address as Address, qty], // TODO: qual endereço devo passar?
+        args: [address as Address, qty],
       })
 
       const { hash } = await writeContract(config)

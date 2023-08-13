@@ -18,3 +18,5 @@ export const getChain = () => {
 
   return mainnet
 }
+
+export const isHardhat = getChainId() === 31337

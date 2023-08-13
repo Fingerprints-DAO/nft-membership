@@ -3,6 +3,27 @@ import { BigNumberish as BN } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import { NumberSettings } from 'types/number-settings'
 
+BigNumber.config({
+  FORMAT: {
+    // string to prepend
+    prefix: '',
+    // the decimal separator
+    decimalSeparator: '.',
+    // the grouping separator of the integer part
+    groupSeparator: '',
+    // the primary grouping size of the integer part
+    groupSize: 3,
+    // the secondary grouping size of the integer part
+    secondaryGroupSize: 0,
+    // the grouping separator of the fraction part
+    fractionGroupSeparator: ' ',
+    // the grouping size of the fraction part
+    fractionGroupSize: 0,
+    // string to append
+    suffix: '',
+  },
+})
+
 type DecimalsType = number | NumberSettings.Decimals
 
 export const getNumberToStringOrZero = (n?: BN) => n?.toString() ?? 0
@@ -11,6 +32,7 @@ export const normalizeBigNumber = (n?: BN) => BigNumber(getNumberToStringOrZero(
 
 export const formatToEtherStringBN = (n?: BN) =>
   BigNumber(formatEther(getNumberToStringOrZero(n))).toString()
+
 export const formatToEtherString = (n?: string) => BigNumber(formatEther(n ?? '0'))
 
 export const formatBigNumberUp = (

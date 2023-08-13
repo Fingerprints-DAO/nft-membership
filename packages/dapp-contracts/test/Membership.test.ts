@@ -15,9 +15,7 @@ describe('Membership', function () {
   async function deployMembership() {
     const [owner, otherAccount] = await ethers.getSigners()
 
-    const MembershipFactory = (await ethers.getContractFactory(
-      'Membership',
-    )) as Membership__factory
+    const MembershipFactory = (await ethers.getContractFactory('Membership')) as Membership__factory
     const adminAddress = await owner.getAddress()
     const payoutAddress = await owner.getAddress()
     const royaltyFee = 1000 // 10%
@@ -41,8 +39,9 @@ describe('Membership', function () {
   }
 
   beforeEach(async function () {
-    ;({ membership, owner, otherAccount, minterRole, defaultAdminRole } =
-      await loadFixture(deployMembership))
+    ;({ membership, owner, otherAccount, minterRole, defaultAdminRole } = await loadFixture(
+      deployMembership,
+    ))
   })
 
   describe('Deploy', function () {
@@ -56,10 +55,7 @@ describe('Membership', function () {
 
   describe('Mint', function () {
     it('Minter can mint', async function () {
-      expect(await membership.safeMint(otherAccount.address, 1)).to.emit(
-        membership,
-        'Transfer',
-      )
+      expect(await membership.safeMint(otherAccount.address, 1)).to.emit(membership, 'Transfer')
     })
 
     it('Only minter can mint', async function () {
@@ -71,10 +67,7 @@ describe('Membership', function () {
     })
 
     it('Minter can mint multiple', async function () {
-      expect(await membership.safeMint(otherAccount.address, 2)).to.emit(
-        membership,
-        'Transfer',
-      )
+      expect(await membership.safeMint(otherAccount.address, 2)).to.emit(membership, 'Transfer')
 
       expect(await membership.balanceOf(otherAccount.address)).to.be.equal(2)
     })
@@ -83,40 +76,33 @@ describe('Membership', function () {
       for (let i = 0; i < 100; i++) {
         await membership.safeMint(otherAccount.address, 20)
       }
-      await expect(
-        membership.safeMint(otherAccount.address, 1),
-      ).to.be.revertedWithCustomError(membership, 'MaxSupplyExceeded')
+      await expect(membership.safeMint(otherAccount.address, 1)).to.be.revertedWithCustomError(
+        membership,
+        'MaxSupplyExceeded',
+      )
     })
   })
 
   describe('Pause', function () {
     it('Owner can pause and unpause', async function () {
-      await expect(membership.connect(owner).pause()).to.emit(
-        membership,
-        'Paused',
-      )
-      await expect(membership.connect(owner).unpause()).to.emit(
-        membership,
-        'Unpaused',
-      )
+      await expect(membership.connect(owner).pause()).to.emit(membership, 'Paused')
+      await expect(membership.connect(owner).unpause()).to.emit(membership, 'Unpaused')
     })
 
     it('Only owner can pause and unpause', async function () {
       await expect(membership.connect(otherAccount).pause()).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
-      await expect(
-        membership.connect(otherAccount).unpause(),
-      ).to.be.revertedWith(
+      await expect(membership.connect(otherAccount).unpause()).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })
 
     it('Cannot mint when paused', async function () {
       await membership.connect(owner).pause()
-      await expect(
-        membership.safeMint(otherAccount.address, 1),
-      ).to.be.revertedWith('Pausable: paused')
+      await expect(membership.safeMint(otherAccount.address, 1)).to.be.revertedWith(
+        'Pausable: paused',
+      )
     })
   })
 
@@ -128,19 +114,38 @@ describe('Membership', function () {
     })
 
     it('Owner can set royalties', async function () {
-      await expect(
-        membership.connect(owner).setDefaultRoyalty(otherAccount.address, 1),
-      ).to.emit(membership, 'DefaultRoyaltySet')
+      await expect(membership.connect(owner).setDefaultRoyalty(otherAccount.address, 1)).to.emit(
+        membership,
+        'DefaultRoyaltySet',
+      )
     })
 
     it('Only owner can set royalties', async function () {
       await expect(
-        membership
-          .connect(otherAccount)
-          .setDefaultRoyalty(otherAccount.address, 10),
+        membership.connect(otherAccount).setDefaultRoyalty(otherAccount.address, 10),
       ).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
+    })
+
+    it('Can change royalties', async function () {
+      const previousRoyaltyInfo = await membership.royaltyInfo(1, ethers.parseEther('100'))
+      expect(previousRoyaltyInfo[0]).to.eql(owner.address)
+      expect(previousRoyaltyInfo[1]).to.eql(ethers.parseEther('10'))
+
+      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 500) // 5%
+      const royaltyInfo = await membership.connect(owner).royaltyInfo(1, ethers.parseEther('100'))
+      expect(royaltyInfo[0]).to.eql(otherAccount.address)
+      expect(royaltyInfo[1]).to.eql(ethers.parseEther('5'))
+    })
+
+    it('Can remove royalties', async function () {
+      await membership.connect(owner).setDefaultRoyalty(otherAccount.address, 0) // 0%
+      const royaltyInfo = await membership
+        .connect(owner)
+        .royaltyInfo(1, ethers.parseEther('100000'))
+      expect(royaltyInfo[0]).to.eql(otherAccount.address)
+      expect(royaltyInfo[1]).to.eql(ethers.parseEther('0'))
     })
   })
 
@@ -176,28 +181,21 @@ describe('Membership', function () {
       await membership.safeMint(owner.address, amount)
       await membership.connect(owner).delegate(otherAccount.address)
 
-      expect(await membership.getVotes(otherAccount.address)).to.be.equal(
-        amount,
-      )
+      expect(await membership.getVotes(otherAccount.address)).to.be.equal(amount)
     })
   })
 
   describe('Base Uri', function () {
     it('Can set token uri', async function () {
       const tokenUri = 'https://example2.com/'
-      await expect(membership.setBaseURI(tokenUri)).to.emit(
-        membership,
-        'BaseURIChanged',
-      )
+      await expect(membership.setBaseURI(tokenUri)).to.emit(membership, 'BaseURIChanged')
 
       expect(await membership.baseURIValue()).to.be.equal(tokenUri)
     })
 
     it('Only admin can set token uri', async function () {
       const tokenUri = 'https://example2.com/'
-      await expect(
-        membership.connect(otherAccount).setBaseURI(tokenUri),
-      ).to.be.revertedWith(
+      await expect(membership.connect(otherAccount).setBaseURI(tokenUri)).to.be.revertedWith(
         `AccessControl: account ${otherAccount.address.toLowerCase()} is missing role ${defaultAdminRole}`,
       )
     })
@@ -217,9 +215,9 @@ describe('Membership', function () {
 
     it('Sets approval for an operator to spend all tokens of an account', async function () {
       await membership.setApprovalForAll(otherAccount.address, true)
-      expect(
-        await membership.isApprovedForAll(owner.address, otherAccount.address),
-      ).to.be.equal(true)
+      expect(await membership.isApprovedForAll(owner.address, otherAccount.address)).to.be.equal(
+        true,
+      )
     })
 
     it('Returns the account approved to spend a token', async function () {
@@ -230,9 +228,9 @@ describe('Membership', function () {
 
     it('Returns whether an operator is approved to spend all tokens of an account', async function () {
       await membership.setApprovalForAll(otherAccount.address, true)
-      expect(
-        await membership.isApprovedForAll(owner.address, otherAccount.address),
-      ).to.be.equal(true)
+      expect(await membership.isApprovedForAll(owner.address, otherAccount.address)).to.be.equal(
+        true,
+      )
     })
 
     it('Transfers a token from one account to another', async function () {

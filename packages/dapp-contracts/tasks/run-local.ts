@@ -3,6 +3,7 @@ import { TASK_COMPILE, TASK_NODE } from 'hardhat/builtin-tasks/task-names'
 import { task } from 'hardhat/config'
 import { writeLogs } from './utils/_write-logs'
 import { WETH_GOERLI_ADDRESS } from './utils/_addresses'
+import dayjs from 'dayjs'
 
 task(
   'run-local',
@@ -66,6 +67,19 @@ task(
   })
 
   await run('unpause-migration')
+
+  const startTime = dayjs().add(1, 'minutes')
+  const startTimeUnix = startTime.unix()
+  const endTimeUnix = startTime.add(10, 'minutes').unix()
+
+  const minBidIncrementInWei = ethers.parseEther('0.2').toString()
+  const startAmountInWei = ethers.parseEther('4.8').toString()
+  await run('set-auction-config', {
+    startTime: startTimeUnix,
+    endTime: endTimeUnix,
+    minBidIncrementInWei,
+    startAmountInWei,
+  })
 
   await new Promise(() => {
     /* keep node alive until this process is killed */

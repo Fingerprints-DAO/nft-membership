@@ -1,77 +1,78 @@
 import { Address, parseEther } from 'viem'
 import { useState } from 'react'
-import BigNumber from 'bignumber.js'
 import useTxToast from 'hooks/use-tx-toast'
-import { useNftMembershipContext } from 'contexts/nft-membership'
 import { prepareWriteContract, waitForTransaction, writeContract } from '@wagmi/core'
-import { printsABI } from '../generated'
+import { useNftMembershipContext } from 'contexts/nft-membership'
+import { auctionABI } from '../generated'
+import { useQueryClient } from 'wagmi'
+import { getAuctionDataKey, getBidsKey, getMinBidValueKey } from './keys'
 
-const usePrintsApprove = (
-  allowance: BigNumber,
-  toAllow: BigNumber,
-  totalAvailableToSpend: BigNumber
-) => {
+const useAuctionBid = () => {
+  const queryClient = useQueryClient()
   const { contracts } = useNftMembershipContext()
   const { showTxErrorToast, showTxExecutedToast, showTxSentToast } = useTxToast()
 
   const [txHash, setTxHash] = useState<Address>()
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isApproved, setIsApproved] = useState(allowance.gte(totalAvailableToSpend))
+  const [isSuccess, setIsSuccess] = useState(false)
 
-  const request = async () => {
+  const request = async (value: string) => {
     try {
-      if (isApproved) {
+      if (isLoading) {
         return
       }
 
       setHasError(false)
       setIsLoading(true)
-      setIsSubmitted(true)
 
       const config = await prepareWriteContract({
-        address: contracts.ERC20.address as Address,
-        abi: printsABI,
-        functionName: 'approve',
-        args: [contracts.Migration.address as Address, parseEther(toAllow.toString())],
+        abi: auctionABI,
+        address: contracts.Auction.address as Address,
+        functionName: 'bid',
+        value: parseEther(value),
       })
 
       const { hash } = await writeContract(config)
 
       if (!!hash) {
         setTxHash(hash)
-        showTxSentToast('approve-submitted', hash)
+        showTxSentToast('bid-submitted', hash)
 
         const { transactionHash } = await waitForTransaction({ hash })
 
         if (!!transactionHash) {
           showTxExecutedToast({
-            title: 'Approved',
+            title: 'You successfully placed your bid',
             txHash: transactionHash,
-            id: 'approve-success',
+            id: 'bid-success',
           })
 
-          setIsApproved(true)
+          setIsSuccess(true)
+
+          queryClient.invalidateQueries(getAuctionDataKey)
+          queryClient.invalidateQueries(getMinBidValueKey)
+          queryClient.invalidateQueries(getBidsKey)
         }
       }
     } catch (error: any) {
+      console.log('error', error)
       setHasError(true)
       showTxErrorToast(error)
-      setIsApproved(false)
+      setIsSuccess(false)
+      throw error
     } finally {
       setIsLoading(false)
     }
   }
 
   return {
-    isApproved,
+    isSuccess,
     isLoading,
-    isSubmitted,
     hasError,
     txHash,
-    approve: request,
+    bid: request,
   }
 }
 
-export default usePrintsApprove
+export default useAuctionBid

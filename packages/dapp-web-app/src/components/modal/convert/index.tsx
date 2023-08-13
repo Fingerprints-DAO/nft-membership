@@ -23,9 +23,6 @@ const ConvertPrintsPage = () => {
   const printsBalance = usePrintsGetBalance()
   const { pricePerMembership } = useNftMembershipContext()
 
-  // console.log('allowance', allowance.toNumber())
-
-  // const [action, setAction] = useState<Action>('top-up')
   const [action, setAction] = useState<Action>('')
 
   const leftovers: BigNumber = useMemo(
@@ -45,8 +42,6 @@ const ConvertPrintsPage = () => {
 
   const render = useMemo(() => {
     if (action === 'top-up') {
-      // console.log(leftovers.toString(), pricePerMembership.toString())
-      // console.log(pricePerMembership.minus(leftovers).toString())
       return (
         <TopUp
           printsBalance={printsBalance}
