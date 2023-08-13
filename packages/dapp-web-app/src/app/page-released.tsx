@@ -308,8 +308,7 @@ const HomePage = () => {
                           fontWeight="normal"
                           mb={6}
                         >
-                          Auction for token #1 available August 15th. Migration available August
-                          16th.
+                          The auction for token #1 is currently live.
                         </Heading>
                       </AnimateComponent>
                       <AnimateComponent
@@ -328,17 +327,16 @@ const HomePage = () => {
                           colorScheme="white"
                           href={'/about'}
                         >
-                          Learn more
+                          Learn More
                         </Button>
                         <Button
                           as={Link}
                           size={{ base: 'md', sm: 'lg' }}
                           colorScheme="white"
                           w={{ base: 'auto', sm: 'auto' }}
-                          href={'https://www.addevent.com/calendar/kZ615607'}
-                          target="_blank"
+                          href={'/auction'}
                         >
-                          Add to Calendar
+                          View Auction
                         </Button>
                         {/* <ConnectKitButton.Custom>
                           {({ isConnected, show }) => {

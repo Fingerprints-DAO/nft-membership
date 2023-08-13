@@ -24,7 +24,7 @@ import Wallet from 'components/wallet'
 import { PageState } from 'types/page'
 
 const nav = [
-  // { href: '/auction', label: 'auction' },
+  { href: '/auction', label: 'auction' },
   // { href: '/', label: 'home' },
   { href: '/about', label: 'about' },
   { href: '/faq', label: 'FAQ' },
@@ -70,7 +70,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                     as={Link}
                     href={item.href}
                     title={item.label}
-                    ml={14}
+                    mr={14}
                     _hover={{ color: 'secondary.500' }}
                     color={isActive ? 'secondary.500' : 'white'}
                     transition="ease"
@@ -83,7 +83,7 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
                   </Box>
                 )
               })}
-              {/* <Wallet variant="header" buttonWidth="auto" /> */}
+              <Wallet variant="header" buttonWidth="auto" />
             </Flex>
           )}
         </GridItem>
@@ -130,9 +130,9 @@ const Header = ({ pageState = PageState.Released }: HeaderProps) => {
               )
             })}
           </DrawerBody>
-          {/* <DrawerFooter px={8} pb={12}>
+          <DrawerFooter px={8} pb={12}>
             <Wallet variant="drawer" />
-          </DrawerFooter> */}
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>
