@@ -90,7 +90,7 @@ const AboutPage = () => {
                 <br />
                 <br />
                 <Link
-                  href="https://fingerprintsdao.xyz/collection"
+                  href="https://fingerprintsdao.xyz/collections"
                   isExternal
                   color="links.500"
                   title="arod.studio"
