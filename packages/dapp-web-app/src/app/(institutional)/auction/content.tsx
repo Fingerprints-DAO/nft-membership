@@ -14,27 +14,19 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tooltip,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react'
 import NftCard from './nft-card'
 import Grid from 'components/grid'
-import { Avatar } from 'connectkit'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import LastBids from 'components/modal/last-bids'
 import useAuctionLastBids from 'services/web3/auction/use-auction-last-bids'
-import { shortenAddress } from 'utils/string'
-import TimeAgo from 'components/timeago'
-import { roundEtherUp } from 'utils/price'
-import { NumberSettings } from 'types/number-settings'
 import { getExternalEtherscanUrl, getExternalOpenseaUrl } from 'utils/getLink'
 import { getContracts } from 'utils/contract-addresses'
 import { useAuctionContext } from 'contexts/auction'
 import { AuctionState } from 'types/auction'
-import { useNftMembershipContext } from 'contexts/nft-membership'
-import Image from 'next/image'
-import logoFP from '/public/images/logo-fp.svg'
+import Bid from './bid'
 
 const LinkButton = ({ text = '', url = '' }) => (
   <Button
@@ -78,7 +70,6 @@ const MAX_LAST_BIDS_COUNT = 4
 
 const AuctionContent = () => {
   const { auctionState } = useAuctionContext()
-  const { address } = useNftMembershipContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { bids, isLoading } = useAuctionLastBids()
@@ -121,90 +112,7 @@ const AuctionContent = () => {
                   {Boolean(lastBids.length) ? (
                     <>
                       {lastBids.map((item, index) => {
-                        return (
-                          <Tr key={index} bg="gray.900">
-                            <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
-                              <Flex alignItems="center">
-                                <Box
-                                  rounded="full"
-                                  border="2px"
-                                  borderColor="gray.700"
-                                  bg="gray.300"
-                                  mr={2}
-                                >
-                                  <Avatar address={item.address} size={28} />
-                                </Box>
-                                {item.address === address ? (
-                                  <Text fontWeight="bold" fontSize={'md'} color="gray.100">
-                                    You
-                                  </Text>
-                                ) : (
-                                  <Tooltip label={item.address} placement="top">
-                                    <Text fontWeight="bold" fontSize={'md'} color="gray.100">
-                                      {shortenAddress(item.address)}
-                                    </Text>
-                                  </Tooltip>
-                                )}
-                                {index === 0 && (
-                                  <Box ml={2}>
-                                    <Tooltip
-                                      label={
-                                        auctionState === AuctionState.ENDED
-                                          ? 'Winner'
-                                          : 'Winning bid'
-                                      }
-                                      placement="top"
-                                    >
-                                      <Image src={logoFP} alt="Winning bid" width={15} />
-                                    </Tooltip>
-                                  </Box>
-                                )}
-                              </Flex>
-                            </Td>
-                            <Td px={2} w={{ base: '10%', md: '15%' }}>
-                              <Text
-                                color="gray.100"
-                                whiteSpace="nowrap"
-                                fontSize={{ md: 'md' }}
-                                hideBelow={'sm'}
-                              >
-                                <TimeAgo timestamp={item.timeAgo} />
-                              </Text>
-                            </Td>
-                            <Td pl={2} pr={4} w={{ base: '25%', md: '20%' }}>
-                              <Button
-                                as="a"
-                                fontWeight="bold"
-                                rightIcon={
-                                  <ExternalLinkIcon
-                                    color="links.500"
-                                    transition="ease"
-                                    transitionProperty="color"
-                                    transitionDuration="0.2s"
-                                    mt={-1}
-                                  />
-                                }
-                                bg="transparent"
-                                variant="link"
-                                href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${item.transactionHash}`}
-                                fontSize={'md'}
-                                title="View in Etherscan"
-                                target="_blank"
-                                color="gray.100"
-                                _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
-                                transition="ease"
-                                transitionProperty="color"
-                                transitionDuration="0.2s"
-                              >
-                                {roundEtherUp(
-                                  item.amount.toString(),
-                                  NumberSettings.DecimalsAuction
-                                )}{' '}
-                                ETH
-                              </Button>
-                            </Td>
-                          </Tr>
-                        )
+                        return <Bid key={index} index={index} {...item} />
                       })}
                     </>
                   ) : (
