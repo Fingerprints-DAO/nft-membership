@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const AboutPage = () => {
   return (
-    <Box as="section" pt="6" flex={1} mb={{ base: 16, sm: '72px' }}>
+    <Box as="section" pt="12" flex={1} mb={{ base: 16, sm: '72px' }}>
       <AnimatePresence mode="wait">
         <Grid gridTemplateColumns="repeat(3, 1fr)" gap={undefined} rowGap={20} columnGap={24}>
           <GridItem colSpan={{ base: 3, sm: 3, md: 3 }}>

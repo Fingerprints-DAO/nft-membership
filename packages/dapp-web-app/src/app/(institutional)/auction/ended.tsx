@@ -66,7 +66,7 @@ const AuctionEnded = () => {
 
         {auctionData.highestBidder === address && (
           <Text color="gray.400" fontStyle="italic" mt={2} fontSize={'sm'}>
-            Fingerprints DAO is settling the auction. Soon, Voxelglyph #1 will be in your wallet.
+            Fingerprints is settling the auction. Soon, Voxelglyph #1 will be in your wallet.
           </Text>
         )}
       </Box>

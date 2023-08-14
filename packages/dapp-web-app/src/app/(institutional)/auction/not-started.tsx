@@ -1,14 +1,12 @@
 import { Box, Flex, Skeleton, Text } from '@chakra-ui/react'
 import Countdown from 'components/countdown'
 import { useAuctionContext } from 'contexts/auction'
-import dayjs from 'dayjs'
-import { formatEther } from 'ethers/lib/utils'
 import useCountdownTime from 'hooks/use-countdown-timer'
 import { NumberSettings } from 'types/number-settings'
 import { roundEtherUp } from 'utils/price'
 
 const AuctionNotStarted = () => {
-  const { auctionConfig, minBidValue } = useAuctionContext()
+  const { minBidValue } = useAuctionContext()
   const { countdown, countdownInMili } = useCountdownTime()
 
   // const start = dayjs.unix(auctionConfig.startTime.toNumber())

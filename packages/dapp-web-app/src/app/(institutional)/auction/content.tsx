@@ -78,7 +78,7 @@ const AuctionContent = () => {
 
   return (
     <>
-      <Grid pt={6} pb="88px" flex={1}>
+      <Grid pt={12} pb="88px" flex={1}>
         <GridItem hideFrom={'sm'} colSpan={4}>
           <PageTitle />
         </GridItem>

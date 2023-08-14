@@ -1,16 +1,15 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon, Icon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react'
 import Timeago from 'components/timeago'
 import { Avatar } from 'connectkit'
 import { useAuctionContext } from 'contexts/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import Image from 'next/image'
 import { AuctionState, Bid } from 'types/auction'
 import { NumberSettings } from 'types/number-settings'
 import { roundEtherUp } from 'utils/price'
 import { shortenAddress } from 'utils/string'
 import { useEnsName } from 'wagmi'
-import logoFP from '/public/images/logo-fp.svg'
+import { GoTrophy } from 'react-icons/go'
 
 type LastBidsRowProps = {
   index: number
@@ -51,7 +50,9 @@ const LastBidsRow = ({
                 label={auctionState === AuctionState.ENDED ? 'Winner' : 'Winning bid'}
                 placement="top"
               >
-                <Image src={logoFP} alt="Winning bid" width={15} />
+                <Box display={'flex'} alignContent={'center'} justifyContent={'center'}>
+                  <Icon as={GoTrophy} boxSize={3} color="gray.500" />
+                </Box>
               </Tooltip>
             </Box>
           )}
@@ -62,7 +63,7 @@ const LastBidsRow = ({
           <Timeago timestamp={timeAgo} />
         </Text>
       </Td>
-      <Td pl={2} pr={2} w={{ base: '25%', md: '20%' }} borderColor={'gray.100'}>
+      <Td pl={2} pr={2} w={{ base: '25%', md: '20%' }} borderColor={'gray.100'} textAlign={'right'}>
         <Button
           as="a"
           fontWeight="bold"

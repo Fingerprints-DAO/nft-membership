@@ -1,16 +1,15 @@
-import { Box, Button, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, Td, Text, Tooltip, Tr } from '@chakra-ui/react'
 import { Avatar } from 'connectkit'
 import { useAuctionContext } from 'contexts/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
-import Image from 'next/image'
 import { AuctionState, type Bid } from 'types/auction'
 import { shortenAddress } from 'utils/string'
 import { useEnsName } from 'wagmi'
-import logoFP from '/public/images/logo-fp.svg'
 import Timeago from 'components/timeago'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { roundEtherUp } from 'utils/price'
 import { NumberSettings } from 'types/number-settings'
+import { GoTrophy } from 'react-icons/go'
 
 type BidProps = {
   index: number
@@ -19,7 +18,7 @@ type BidProps = {
 const Bid = ({ amount, timeAgo, address: bidderAddress, transactionHash, index }: BidProps) => {
   const { auctionState } = useAuctionContext()
   const { address } = useNftMembershipContext()
-  const { data: ensName } = useEnsName({ address: bidderAddress })
+  const { data: ensName } = useEnsName({ address: bidderAddress, chainId: 1 })
 
   return (
     <Tr bg="gray.900">
@@ -45,18 +44,20 @@ const Bid = ({ amount, timeAgo, address: bidderAddress, transactionHash, index }
                 label={auctionState === AuctionState.ENDED ? 'Winner' : 'Winning bid'}
                 placement="top"
               >
-                <Image src={logoFP} alt="Winning bid" width={15} />
+                <Box display={'flex'} alignContent={'center'} justifyContent={'center'}>
+                  <Icon as={GoTrophy} boxSize={3} />
+                </Box>
               </Tooltip>
             </Box>
           )}
         </Flex>
       </Td>
-      <Td px={2} w={{ base: '10%', md: '15%' }}>
+      <Td px={2} w={{ base: '10%', md: '15%' }} textAlign={'right'}>
         <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }} hideBelow={'sm'}>
           <Timeago timestamp={timeAgo} />
         </Text>
       </Td>
-      <Td pl={2} pr={4} w={{ base: '25%', md: '20%' }}>
+      <Td pl={2} pr={4} w={{ base: '25%', md: '20%' }} textAlign={'right'}>
         <Button
           as="a"
           fontWeight="bold"

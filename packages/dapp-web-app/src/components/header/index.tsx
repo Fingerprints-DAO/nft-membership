@@ -70,7 +70,7 @@ const Header = () => {
                     transitionProperty="color"
                     transitionDuration="0.2s"
                   >
-                    <Text as="strong" fontSize="lg">
+                    <Text as="strong" fontSize="20px" lineHeight={'20px'}>
                       {item.label}
                     </Text>
                   </Box>
