@@ -40,3 +40,5 @@ task('set-auction-config', 'Set auction config')
 // endTime: 1692194400,
 // minBidIncrementInWei: 200000000000000000,
 // startAmountInWei: 4800000000000000000
+
+// yarn hardhat set-auction-config --network mainnet --start-time 1692108000 --end-time 1692194400 --min-bid-increment-in-wei 200000000000000000 --start-amount-in-wei 4800000000000000000

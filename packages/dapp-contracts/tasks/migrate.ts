@@ -3,12 +3,7 @@ import { task, types } from 'hardhat/config'
 import { getAddresses } from './utils/_getAddresses'
 
 task('migrate', 'Migrate one')
-  .addOptionalParam(
-    'mintTo',
-    'Mint to address',
-    '0x97CcF8F927045E4C5f936832d14904A68e595380',
-    types.string,
-  )
+  .addOptionalParam('mintTo', 'Mint to address', null, types.string)
   .setAction(async ({ mintTo }, { ethers }) => {
     const contractAddresses = await getAddresses(ethers.provider)
 
@@ -17,7 +12,6 @@ task('migrate', 'Migrate one')
     const erc20Factory = await ethers.getContractFactory('ERC20Mock')
     const erc20Contract = erc20Factory.attach(contractAddresses.ERC20Mock)
     console.log(`Migration contract address: ${contractAddresses.Migration}`)
-    console.table(contractAddresses)
     console.log(`get address ${await migrationContract.getAddress()}`)
 
     // @ts-ignore
