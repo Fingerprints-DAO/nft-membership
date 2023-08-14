@@ -50,10 +50,10 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : accounts,
       chainId: 1,
-      gasMultiplier: 1,
-      gas: 'auto',
+      // gasMultiplier: 1,
+      // gas: 'auto',
       // gasPrice: 20000000000,
     },
     'base-goerli': {

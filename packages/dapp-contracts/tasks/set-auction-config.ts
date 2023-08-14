@@ -35,3 +35,8 @@ task('set-auction-config', 'Set auction config')
       console.log(`Transaction confirmed!`)
     },
   )
+// Setting auction config with
+// startTime: 1692108000,
+// endTime: 1692194400,
+// minBidIncrementInWei: 200000000000000000,
+// startAmountInWei: 4800000000000000000

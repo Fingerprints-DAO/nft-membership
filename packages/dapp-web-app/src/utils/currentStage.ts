@@ -13,14 +13,14 @@ export enum PageState {
   Migration = 'Migration',
 }
 
-const EST = 'America/New_York'
-const currentDate = dayjs().tz(EST)
+const ET = 'America/New_York'
+const currentDate = dayjs().tz(ET)
 
 const stageDates: Record<PageState, dayjs.Dayjs | undefined> = {
-  [PageState.Soon]: dayjs.tz('2023-08-10 22:00:00', EST),
-  [PageState.Released]: dayjs.tz('2023-08-14 22:00:00', EST),
-  [PageState.PreAuction]: dayjs.tz('2023-08-15 10:00:00', EST),
-  [PageState.Auction]: dayjs.tz('2023-08-16 10:00:00', EST),
+  [PageState.Soon]: dayjs.tz('2023-08-10 22:00:00', ET),
+  [PageState.Released]: dayjs.tz('2023-08-14 22:00:00', ET),
+  [PageState.PreAuction]: dayjs.tz('2023-08-15 10:00:00', ET),
+  [PageState.Auction]: dayjs.tz('2023-08-16 10:00:00', ET),
   [PageState.Migration]: undefined,
 }
 
