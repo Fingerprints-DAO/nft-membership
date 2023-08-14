@@ -82,10 +82,10 @@ const AuctionContent = () => {
         <GridItem hideFrom={'sm'} colSpan={4}>
           <PageTitle />
         </GridItem>
-        <GridItem colSpan={{ base: 4, sm: 2, md: 4 }}>
+        <GridItem colSpan={{ base: 4, sm: 2, md: 4, xxl: 3 }}>
           <NftCard />
         </GridItem>
-        <GridItem colSpan={{ base: 4, sm: 4, md: 8 }}>
+        <GridItem colSpan={{ base: 4, sm: 4, md: 8, xxl: 9 }}>
           <Box hideBelow={'sm'}>
             <PageTitle />
           </Box>
