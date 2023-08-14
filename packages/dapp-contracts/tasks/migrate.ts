@@ -9,7 +9,6 @@ task('migrate', 'Migrate one')
     '0x97CcF8F927045E4C5f936832d14904A68e595380',
     types.string,
   )
-  .addOptionalParam('amount', 'Amount to mint', '100000', types.string)
   .setAction(async ({ mintTo }, { ethers }) => {
     const contractAddresses = await getAddresses(ethers.provider)
 

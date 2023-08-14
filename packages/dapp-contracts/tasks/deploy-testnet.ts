@@ -26,7 +26,7 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
       waitForConfirmation: true,
     },
     Membership: {
-      args: [baseUri, deployer.address, deployer.address, 1000],
+      args: [baseUri, deployer.address, deployer.address, 500],
       waitForConfirmation: true,
     },
     Migration: {
@@ -40,7 +40,7 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
           const address = await contracts.ERC20Mock?.instance?.getAddress()
           return address || ''
         },
-        5000,
+        ethers.parseEther('5000').toString(),
       ],
       waitForConfirmation: true,
     },
@@ -69,9 +69,7 @@ task('deploy-testnet', 'Deploy contracts to testnet').setAction(async (_, { ethe
     }
     contracts[name as LocalContractName].instance = deployedContract
 
-    console.log(
-      `${name} contract deployed to ${await deployedContract.getAddress()}`,
-    )
+    console.log(`${name} contract deployed to ${await deployedContract.getAddress()}`)
   }
 
   writeLogs(
