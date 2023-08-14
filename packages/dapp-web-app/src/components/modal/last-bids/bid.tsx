@@ -16,26 +16,32 @@ type LastBidsRowProps = {
   index: number
 } & Bid
 
-const LastBidsRow = ({ amount, index, timeAgo, address, transactionHash }: LastBidsRowProps) => {
+const LastBidsRow = ({
+  amount,
+  index,
+  timeAgo,
+  address: bidderAddress,
+  transactionHash,
+}: LastBidsRowProps) => {
   const { auctionState } = useAuctionContext()
-  const { data: ensName } = useEnsName({ address })
-  const { address: userAddress } = useNftMembershipContext()
+  const { address } = useNftMembershipContext()
+  const { data: ensName } = useEnsName({ address: bidderAddress })
 
   return (
     <Tr>
       <Td py={3} pl={2} pr={2} w={{ md: '65%' }} borderColor={'gray.100'}>
         <Flex alignItems="center">
           <Box rounded="full" border="2px" borderColor="gray.700" bg="gray.300" mr={2}>
-            <Avatar address={address} size={28} />
+            <Avatar address={bidderAddress} size={28} />
           </Box>
-          {address === userAddress ? (
+          {bidderAddress === address ? (
             <Text fontWeight="bold" fontSize={'md'} color="gray.500">
               You
             </Text>
           ) : (
-            <Tooltip label={address} placement="top">
+            <Tooltip label={bidderAddress} placement="top">
               <Text fontWeight="bold" fontSize={'md'} color="gray.500">
-                {ensName || shortenAddress(address, 8, 8)}
+                {ensName || shortenAddress(bidderAddress, 8, 8)}
               </Text>
             </Tooltip>
           )}
