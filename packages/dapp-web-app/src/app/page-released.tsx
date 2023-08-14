@@ -348,7 +348,10 @@ const HomePage = () => {
                           <Button
                             as={Link}
                             size={{ base: 'md', sm: 'lg' }}
-                            colorScheme="white"
+                            colorScheme={
+                              getEffectiveStage() === PageState.PreAuction ? 'white' : 'secondary'
+                            }
+                            color={getEffectiveStage() === PageState.PreAuction ? 'black' : 'white'}
                             w={{ base: 'auto', sm: 'auto' }}
                             href={'/auction'}
                           >
