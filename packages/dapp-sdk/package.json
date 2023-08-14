@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "build": "tsc -p tsconfig.json",
-    "prepare": "yarn build"
+    "prepare": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@dapp/contracts": "^1.0.0",

@@ -10,8 +10,12 @@ import duration from 'dayjs/plugin/duration'
 import AuctionNotStarted from './not-started'
 import AuctionStarted from './started'
 import AuctionEnded from './ended'
+import { getExternalOpenseaUrl } from 'utils/getLink'
+import { getContracts } from 'utils/contract-addresses'
 
 dayjs.extend(duration)
+
+const openSeaCollectionLink = getExternalOpenseaUrl(getContracts().Membership.address, '1')
 
 const NftCard = () => {
   const { auctionState } = useAuctionContext()
@@ -45,7 +49,7 @@ const NftCard = () => {
           borderTopRadius={8}
           overflow="hidden"
         >
-          <Link href="#" target="_blank">
+          <Link href={openSeaCollectionLink} target="_blank">
             <Box
               as={Image}
               alt="Voxelglyph #1"

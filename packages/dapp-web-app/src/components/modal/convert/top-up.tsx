@@ -175,18 +175,10 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
   const onApproveWETH = useCallback(async () => {
     if (!quote?.sellAmount) return
 
-    const roundedWethToApprove = BigNumber(
-      parseEther(
-        formatBigNumberUp(
-          formatToEtherString((Number(quote?.sellAmount) * (1 + slippage)).toString()),
-          5
-        ),
-        'wei'
-      ).toString()
-    )
+    const roundedWethToApprove = BigNumber(parseEther(wethBalance.formatted, 'wei').toString())
 
     wethApprove.approve(roundedWethToApprove)
-  }, [quote?.sellAmount, wethApprove])
+  }, [quote?.sellAmount, wethApprove, wethBalance.formatted])
 
   return (
     <Box bgColor={'white'}>
@@ -333,7 +325,7 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
               }
               loadingText={swapLink ? 'Waiting order transaction' : 'Sign the order'}
             >
-              Buy 3.000 $PRINTS
+              Buy {formatToEtherStringBN(quote?.buyAmount)} $PRINTS
             </Button>
           )}
         </>

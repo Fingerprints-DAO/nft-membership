@@ -6,7 +6,7 @@ import Grid from 'components/grid'
 import { BsDiscord } from 'react-icons/bs'
 import { BsTwitter } from 'react-icons/bs'
 import { SiOpensea } from 'react-icons/si'
-import { isAfterPreAuction } from 'utils/currentStage'
+import { PageState, isAfterStage } from 'utils/currentStage'
 
 const Footer = () => {
   // const [isMobile] = useMediaQuery('(max-width: 767px)')
@@ -20,7 +20,7 @@ const Footer = () => {
             flexDirection="column"
             alignItems={{ base: '', sm: 'flex-start' }}
           >
-            <Text fontSize="xs" color="#7a7a7a" textAlign={{ base: 'center', sm: 'left' }}>
+            <Text fontSize="xs" color="whiteAlpha.700" textAlign={{ base: 'center', sm: 'left' }}>
               By Fingerprints DAO, developed by{' '}
               <Link
                 color="links.500"
@@ -50,7 +50,7 @@ const Footer = () => {
               href="https://twitter.com/FingerprintsDAO"
               title="Twitter"
               target="_blank"
-              color="#7a7a7a"
+              color="whiteAlpha.700"
               _hover={{ color: 'white' }}
               transition="ease"
               transitionProperty="color"
@@ -62,7 +62,7 @@ const Footer = () => {
               href="https://discord.gg/Mg7wx36upM"
               title="Discord"
               target="_blank"
-              color="#7a7a7a"
+              color="whiteAlpha.700"
               _hover={{ color: 'white' }}
               transition="ease"
               transitionProperty="color"
@@ -70,12 +70,12 @@ const Footer = () => {
             >
               <Icon as={BsDiscord} w={8} h={8} display="block" />
             </Link>
-            {isAfterPreAuction() && (
+            {isAfterStage(PageState.PreAuction) && (
               <Link
                 href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
                 title="OpenSea"
                 target="_blank"
-                color="#7a7a7a"
+                color="whiteAlpha.700"
                 _hover={{ color: 'white' }}
                 transition="ease"
                 transitionProperty="color"

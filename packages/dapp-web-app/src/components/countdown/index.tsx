@@ -9,7 +9,7 @@ interface CountdownProps {
 }
 
 const Countdown = ({ futureTimestamp }: CountdownProps) => {
-  const [timeLeft, setTimeLeft] = useState('00:00')
+  const [timeLeft, setTimeLeft] = useState('--:--')
 
   useEffect(() => {
     const intervalId = setInterval(() => {
