@@ -1,0 +1,91 @@
+import { Box, Button, Flex, Td, Text, Tooltip, Tr } from '@chakra-ui/react'
+import { Avatar } from 'connectkit'
+import { useAuctionContext } from 'contexts/auction'
+import { useNftMembershipContext } from 'contexts/nft-membership'
+import Image from 'next/image'
+import { AuctionState, type Bid } from 'types/auction'
+import { shortenAddress } from 'utils/string'
+import { useEnsName } from 'wagmi'
+import logoFP from '/public/images/logo-fp.svg'
+import Timeago from 'components/timeago'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { roundEtherUp } from 'utils/price'
+import { NumberSettings } from 'types/number-settings'
+
+type BidProps = {
+  index: number
+} & Bid
+
+const Bid = ({ amount, timeAgo, address, transactionHash, index }: BidProps) => {
+  const { auctionState } = useAuctionContext()
+  const { data: ensName } = useEnsName({ address })
+  const { address: userAddress } = useNftMembershipContext()
+
+  return (
+    <Tr bg="gray.900">
+      <Td py={3} pl={4} pr={2} w={{ md: '65%' }}>
+        <Flex alignItems="center">
+          <Box rounded="full" border="2px" borderColor="gray.700" bg="gray.300" mr={2}>
+            <Avatar address={address} size={28} />
+          </Box>
+          {address === userAddress ? (
+            <Text fontWeight="bold" fontSize={'md'} color="gray.100">
+              You
+            </Text>
+          ) : (
+            <Tooltip label={address} placement="top">
+              <Text fontWeight="bold" fontSize={'md'} color="gray.100">
+                {ensName || shortenAddress(address)}
+              </Text>
+            </Tooltip>
+          )}
+          {index === 0 && (
+            <Box ml={2}>
+              <Tooltip
+                label={auctionState === AuctionState.ENDED ? 'Winner' : 'Winning bid'}
+                placement="top"
+              >
+                <Image src={logoFP} alt="Winning bid" width={15} />
+              </Tooltip>
+            </Box>
+          )}
+        </Flex>
+      </Td>
+      <Td px={2} w={{ base: '10%', md: '15%' }}>
+        <Text color="gray.100" whiteSpace="nowrap" fontSize={{ md: 'md' }} hideBelow={'sm'}>
+          <Timeago timestamp={timeAgo} />
+        </Text>
+      </Td>
+      <Td pl={2} pr={4} w={{ base: '25%', md: '20%' }}>
+        <Button
+          as="a"
+          fontWeight="bold"
+          rightIcon={
+            <ExternalLinkIcon
+              color="links.500"
+              transition="ease"
+              transitionProperty="color"
+              transitionDuration="0.2s"
+              mt={-1}
+            />
+          }
+          bg="transparent"
+          variant="link"
+          href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${transactionHash}`}
+          fontSize={'md'}
+          title="View in Etherscan"
+          target="_blank"
+          color="gray.100"
+          _hover={{ color: 'gray.200', '> span svg': { color: 'gray.200' } }}
+          transition="ease"
+          transitionProperty="color"
+          transitionDuration="0.2s"
+        >
+          {roundEtherUp(amount.toString(), NumberSettings.DecimalsAuction)} ETH
+        </Button>
+      </Td>
+    </Tr>
+  )
+}
+
+export default Bid
