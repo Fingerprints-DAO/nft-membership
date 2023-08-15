@@ -29,6 +29,7 @@ describe('Auction', function () {
       adminAddress,
       payoutAddress,
       royaltyFee,
+      ''
     )
 
     const auctionFactory = (await ethers.getContractFactory(

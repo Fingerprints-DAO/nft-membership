@@ -20,6 +20,11 @@
         "internalType": "uint96",
         "name": "_royaltyFee",
         "type": "uint96"
+      },
+      {
+        "internalType": "string",
+        "name": "_voxelglyphJavaScript",
+        "type": "string"
       }
     ],
     "stateMutability": "nonpayable",
@@ -664,6 +669,25 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getScript",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

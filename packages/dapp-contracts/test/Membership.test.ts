@@ -24,6 +24,7 @@ describe('Membership', function () {
       adminAddress,
       payoutAddress,
       royaltyFee,
+      ''
     )
 
     const minterRole = await membership.MINTER_ROLE()

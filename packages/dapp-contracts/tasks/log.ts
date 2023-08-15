@@ -13,4 +13,5 @@ task('log', 'Log necessary infos')
     console.log(`Membership contract address: ${contractAddresses.Membership}`)
 
     console.log(`BalanceOf: ${await membershipContract.balanceOf(address)}`)
+    // console.log(`script: ${await membershipContract.voxelglyphScriptJava()}`)
   })

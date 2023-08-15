@@ -27,7 +27,7 @@ task('deploy-local', 'Deploy contracts to hardhat').setAction(async (_, { ethers
       args: [deployer.address, 'arod.studio Tokens', '$ARST', 1_000_000],
     },
     Membership: {
-      args: [baseUri, deployer.address, deployer.address, 1000],
+      args: [baseUri, deployer.address, deployer.address, 1000, ''],
     },
     Migration: {
       args: [

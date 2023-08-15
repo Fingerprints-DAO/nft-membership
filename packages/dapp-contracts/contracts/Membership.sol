@@ -1,4 +1,4 @@
-  /**
+/**
  *  /##    /##                              /##           /##                     /##
  * | ##   | ##                             | ##          | ##                    | ##
  * | ##   | ## /######  /##   /##  /###### | ##  /###### | ## /##   /##  /###### | #######
@@ -14,26 +14,18 @@
  *                                             by Larva Labs (Matt Hall and John Watkinson)
  *                                                 in partnership with the Fingerprints DAO
  *
- * The Fingerprints DAO owns Autoglyph #134 and derives their logo from the "hash" figure at its center.
+ * To get the complete Voxelglyph script, simply call function getScript and decode from base64.
+ * To get the co-ordinates for the Voxelglyph structure, save the returned Java script and run with a Java runtime environment.
  *
- *
- *
- * Smart contract developed by:
- *                        _       _             _ _
- *                       | |     | |           | (_)
- *     __ _ _ __ ___   __| |  ___| |_ _   _  __| |_  ___
- *    / _` | '__/ _ \ / _` | / __| __| | | |/ _` | |/ _ \
- *   | (_| | | | (_) | (_| |_\__ \ |_| |_| | (_| | | (_) |
- *    \__,_|_|  \___/ \__,_(_)___/\__|\__,_|\__,_|_|\___/
- *
- *
+ * This ERC721 smart contract is used as the governance contract for Fingerprints DAO.
+ * It was developed by arod.studio in partnership with Fingerprints DAO.
  */
 
 /**
  * @title Voxelglyphs NFT contract - The Fingerprints' Membership NFTs by Larva Labs
  * @author arod.studio and Fingerprints DAO
  * This contract is used to manage ERC721 Membership tokens from Fingerprints DAO.
- * Larva Labs created the art called Voxelglyph to the Fingerprints DAO.
+ * Larva Labs created the Voxelglyph art used as the image in this NFT.
  *
  * SPDX-License-Identifier: MIT
  */
@@ -73,6 +65,9 @@ contract Membership is
   /// @dev The base URI is stored in a public state variable.
   string public baseURIValue;
 
+  /// @notice The Voxelglyph java script in base64.
+  string private voxelglyphScriptJava;
+
   /// @notice The role identifier for users who are allowed to mint tokens.
   /// @dev The role identifier is created by hashing the string 'MINTER_ROLE'.
   bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
@@ -85,12 +80,14 @@ contract Membership is
     string memory _baseURIValue,
     address _adminAddress,
     address _payoutAddress,
-    uint96 _royaltyFee
+    uint96 _royaltyFee,
+    string memory _voxelglyphJavaScript
   ) ERC721('Voxelglyph', '#') EIP712('Voxelglyph', '1') {
     _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
     _grantRole(MINTER_ROLE, _adminAddress);
     _setDefaultRoyalty(_payoutAddress, _royaltyFee);
     baseURIValue = _baseURIValue;
+    voxelglyphScriptJava = _voxelglyphJavaScript;
   }
 
   /// @notice Pauses all token transfers.
@@ -109,7 +106,10 @@ contract Membership is
   /// @dev Only users with the 'MINTER_ROLE' are allowed to call this function.
   /// @param _to The address of the future owner of the token.
   /// @param _amount The amount of tokens to mint.
-  function safeMint(address _to, uint16 _amount) external onlyRole(MINTER_ROLE) {
+  function safeMint(
+    address _to,
+    uint16 _amount
+  ) external onlyRole(MINTER_ROLE) {
     uint256 tokenId = _tokenIdCounter.current();
     if (tokenId + _amount > MAX_SUPPLY) {
       revert MaxSupplyExceeded();
@@ -163,6 +163,13 @@ contract Membership is
       bytes(baseURI).length > 0
         ? string(abi.encodePacked(baseURI, Strings.toString(_tokenId)))
         : '';
+  }
+
+  /// @notice Returns the Voxelglyph Java code
+  /// @dev _tokenId is used to render better the script on etherscan.
+  /// @param _tokenId Any value.
+  function getScript(uint256 _tokenId) public view returns (string memory) {
+    return voxelglyphScriptJava;
   }
 
   // The following functions are overrides required by Solidity.

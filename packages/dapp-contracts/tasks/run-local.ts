@@ -13,7 +13,7 @@ dayjs.extend(timezone)
 
 const ET = 'America/New_York'
 
-const startTime = dayjs.tz('2023-08-15 10:00:00', ET)
+const startTime = dayjs.tz('2023-08-15 11:00:00', ET)
 const startTimeUnix = startTime.unix()
 const endTimeUnix = startTime.add(24, 'hours').unix()
 
