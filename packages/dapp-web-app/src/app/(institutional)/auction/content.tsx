@@ -89,10 +89,10 @@ const AuctionContent = () => {
           <Box hideBelow={'sm'}>
             <PageTitle />
           </Box>
-          <Flex flexDir="column" alignItems="flex-start" mb={8} hideBelow={'sm'}>
+          {/* <Flex flexDir="column" alignItems="flex-start" mb={8} hideBelow={'sm'}>
             <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
             <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
-          </Flex>
+          </Flex> */}
           {auctionState !== AuctionState.NOT_STARTED && (
             <Box rounded="lg" overflow={['auto', 'hidden']} mb={8}>
               <Table>

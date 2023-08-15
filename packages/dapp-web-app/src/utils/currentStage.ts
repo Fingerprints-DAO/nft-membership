@@ -19,8 +19,8 @@ const currentDate = dayjs().tz(ET)
 const stageDates: Record<PageState, dayjs.Dayjs | undefined> = {
   [PageState.Soon]: dayjs.tz('2023-08-10 22:00:00', ET),
   [PageState.Released]: dayjs.tz('2023-08-14 22:00:00', ET),
-  [PageState.PreAuction]: dayjs.tz('2023-08-15 10:00:00', ET),
-  [PageState.Auction]: dayjs.tz('2023-08-16 10:00:00', ET),
+  [PageState.PreAuction]: dayjs.tz('2023-08-15 11:00:00', ET),
+  [PageState.Auction]: dayjs.tz('2023-08-16 11:00:00', ET),
   [PageState.Migration]: undefined,
 }
 

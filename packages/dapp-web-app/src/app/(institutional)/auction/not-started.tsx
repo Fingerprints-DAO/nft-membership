@@ -18,10 +18,11 @@ const AuctionNotStarted = () => {
     <>
       <Skeleton mb={6} isLoaded={countdown > 0}>
         <Text fontSize="md" color="gray.400" mb={2}>
-          Auction starts in
+          Auction starts
         </Text>
         <Text fontSize={{ base: 'xl', md: 'xl' }} fontWeight="bold" color="gray.100">
-          <Countdown futureTimestamp={countdownInMili} />
+          {/* <Countdown futureTimestamp={countdownInMili} /> */}
+          11:00am (ET)
         </Text>
       </Skeleton>
       <Flex>

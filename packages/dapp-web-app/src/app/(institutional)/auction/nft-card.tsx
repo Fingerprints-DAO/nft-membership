@@ -26,7 +26,8 @@ const NftCard = () => {
     }
 
     if (auctionState === AuctionState.STARTED) {
-      return <AuctionStarted />
+      return <AuctionNotStarted />
+      // return <AuctionStarted />
     }
 
     return <AuctionEnded />
