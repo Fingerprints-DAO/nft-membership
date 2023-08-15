@@ -76,7 +76,6 @@ const AuctionProvider = ({ children }: PropsWithChildren) => {
         return
       }
 
-      console.log(new Date())
       if (isCloseToStartOrEnd) {
         clearInterval(intervalRef.current!)
         intervalRef.current = setInterval(checkAndUpdateState, 1000)
@@ -84,6 +83,8 @@ const AuctionProvider = ({ children }: PropsWithChildren) => {
     }
 
     intervalRef.current = setInterval(checkAndUpdateState, 30000)
+
+    checkAndUpdateState()
 
     return () => clearInterval(intervalRef.current!)
   }, [auctionConfig.startTime, auctionConfig.endTime])
