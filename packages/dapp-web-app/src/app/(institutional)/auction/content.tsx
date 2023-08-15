@@ -143,12 +143,12 @@ const AuctionContent = () => {
             <Text color="gray.300" fontWeight="bold" mb="6px" fontSize="lg">
               About
             </Text>
-            <Text fontSize="lg" fontWeight="300" color="gray.300">
+            <Text fontSize="lg" fontWeight="300" color="gray.300" pr={4}>
               After a long process of discussion and consideration by its community, Fingerprints is
               moving its membership token from $PRINTS (ERC-20) to an NFT membership standard.
               <br />
               <br />
-              To design the artwork for the new NFT, Fingerprints has commissioned Larva Labs - the
+              To design the artwork for the new NFT, Fingerprints has commissioned Larva Labs — the
               original creators of Cryptopunks and Autoglyphs — to produce Voxelglyph.
               <br />
               <br />
