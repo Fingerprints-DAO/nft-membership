@@ -143,11 +143,31 @@ const AuctionContent = () => {
             <Text color="gray.300" fontWeight="bold" mb="6px" fontSize="lg">
               About
             </Text>
-            <Text fontSize="lg" fontWeight="300" color="gray.300">
-              Introducing the captivating NFT collection by Larva Labs exclusively for Fingerprints!
-              Experience the fusion of creativity and technology as Larva Labs brings these
-              extraordinary cityscapes to life, offering a truly immersive and unique digital art
-              experience for Fingerprints community members.
+            <Text fontSize="lg" fontWeight="300" color="gray.300" pr={4}>
+              After a long process of discussion and consideration by its community, Fingerprints is
+              moving its membership token from $PRINTS (ERC-20) to an NFT membership standard.
+              <br />
+              <br />
+              To design the artwork for the new NFT, Fingerprints has commissioned Larva Labs — the
+              original creators of Cryptopunks and Autoglyphs — to produce Voxelglyph.
+              <br />
+              <br />
+              Based on Autoglyph #134 (the piece that inspired the current Fingerprints logo),
+              Voxelglyph is a script in Java that produces a 3D structure by generating all of its
+              coordinates. Collectors can then render or build the structure however they prefer (as
+              long as it&apos;s white).
+              <br />
+              <br />
+              As the new governance token of Fingerprints DAO, Voxelglyph also represents a
+              proportional claim on the DAO&apos;s assets (including its renowned collection), which
+              are detailed on the Fingerprints website.
+              <br />
+              <br />
+              To kick off the migration process, the Voxelglyh with token ID #1 will be auctioned to
+              collectors the day before the migration opens.
+              <br />
+              <br />
+              The other Voxelglyphs will be assigned their IDs in order of migration.
             </Text>
           </Box>
           <Flex flexDir="column" alignItems="flex-start" mt={8} hideFrom={'sm'}>

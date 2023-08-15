@@ -1,14 +1,12 @@
-'use client'
+import { Metadata } from 'next'
+import AuctionPageWrapper from './pageWrapper'
 
-import { AuctionProvider } from 'contexts/auction'
-import AuctionContent from './content'
+export const metadata: Metadata = {
+  title: 'Fingerprints Membership Auction',
+}
 
 const AuctionPage = () => {
-  return (
-    <AuctionProvider>
-      <AuctionContent />
-    </AuctionProvider>
-  )
+  return <AuctionPageWrapper />
 }
 
 export default AuctionPage
