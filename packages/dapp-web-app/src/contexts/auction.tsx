@@ -83,6 +83,7 @@ const AuctionProvider = ({ children }: PropsWithChildren) => {
     }
 
     intervalRef.current = setInterval(checkAndUpdateState, 30000)
+    checkAndUpdateState()
 
     checkAndUpdateState()
 
