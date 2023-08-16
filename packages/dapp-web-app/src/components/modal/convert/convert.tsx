@@ -2,6 +2,8 @@ import { Box, Button, CloseButton, Text } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import Link from 'next/link'
 import { Balance } from 'services/web3/prints/use-prints-get-balance'
+import { getContracts } from 'utils/contract-addresses'
+import { getExternalOpenseaUrl } from 'utils/getLink'
 import { pluralize } from 'utils/string'
 
 export type Action = '' | 'top-up' | 'convert'
@@ -79,7 +81,7 @@ const Convert = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }:
         {printsBalance.value.lte(0) && (
           <Button
             as={Link}
-            href="https://opensea.io"
+            href={getExternalOpenseaUrl(getContracts().Membership.address)}
             target="_blank"
             colorScheme="black"
             w="full"
