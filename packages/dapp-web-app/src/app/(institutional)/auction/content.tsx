@@ -43,7 +43,7 @@ const LinkButton = ({ text = '', url = '' }) => (
     bg="transparent"
     variant="link"
     href={url}
-    title="View smart contract in Etherscan"
+    title="View smart contract on Etherscan"
     target="_blank"
     color="links.500"
     _hover={{ color: 'white', '> span svg': { color: 'white' } }}
@@ -90,8 +90,8 @@ const AuctionContent = () => {
             <PageTitle />
           </Box>
           <Flex flexDir="column" alignItems="flex-start" mb={8} hideBelow={'sm'}>
-            <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
-            <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
+            <LinkButton text={'View smart contract on Etherscan'} url={smartContractLink} />
+            <LinkButton text={'View collection on OpenSea'} url={openSeaCollectionLink} />
           </Flex>
           {auctionState !== AuctionState.NOT_STARTED && (
             <Box rounded="lg" overflow={['auto', 'hidden']} mb={8}>
@@ -171,8 +171,8 @@ const AuctionContent = () => {
             </Text>
           </Box>
           <Flex flexDir="column" alignItems="flex-start" mt={8} hideFrom={'sm'}>
-            <LinkButton text={'View smart contract in Etherscan'} url={smartContractLink} />
-            <LinkButton text={'View collection in OpenSea'} url={openSeaCollectionLink} />
+            <LinkButton text={'View smart contract on Etherscan'} url={smartContractLink} />
+            <LinkButton text={'View collection on OpenSea'} url={openSeaCollectionLink} />
           </Flex>
         </GridItem>
       </Grid>
