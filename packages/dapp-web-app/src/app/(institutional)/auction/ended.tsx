@@ -3,13 +3,25 @@ import { Box, Button, Flex, Text, Tooltip } from '@chakra-ui/react'
 import { Avatar } from 'connectkit'
 import { useAuctionContext } from 'contexts/auction'
 import { useNftMembershipContext } from 'contexts/nft-membership'
+import { useMemo } from 'react'
 import { NumberSettings } from 'types/number-settings'
 import { roundEtherUp } from 'utils/price'
 import { shortenAddress } from 'utils/string'
+import { zeroAddress } from 'viem'
+import { useEnsName } from 'wagmi'
 
 const AuctionEnded = () => {
-  const { auctionData } = useAuctionContext()
   const { address } = useNftMembershipContext()
+  const { auctionData, minBidValue } = useAuctionContext()
+  const { data: fpEnsName } = useEnsName({ address: '0xbC49de68bCBD164574847A7ced47e7475179C76B' })
+
+  const minBidValueRoundUp = useMemo(
+    () => roundEtherUp(minBidValue.toString(), NumberSettings.DecimalsAuction),
+    [minBidValue]
+  )
+
+  const hasNoBids = auctionData.highestBidder === zeroAddress
+  const bidWinner = hasNoBids ? minBidValueRoundUp : auctionData.highestBid
 
   return (
     <>
@@ -25,6 +37,12 @@ const AuctionEnded = () => {
             <Text fontWeight="bold" color="gray.100" fontSize="xl">
               You
             </Text>
+          ) : hasNoBids ? (
+            <Tooltip label="0xbC49de68bCBD164574847A7ced47e7475179C76B" placement="top">
+              <Text fontWeight="bold" color="gray.100" fontSize="xl">
+                {shortenAddress(fpEnsName || '0xbC49de68bCBD164574847A7ced47e7475179C76B')}
+              </Text>
+            </Tooltip>
           ) : (
             <Tooltip label={auctionData.highestBidder} placement="top">
               <Button
@@ -61,9 +79,8 @@ const AuctionEnded = () => {
           Bid winner
         </Text>
         <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color="gray.100">
-          {roundEtherUp(auctionData.highestBid.toString(), NumberSettings.DecimalsAuction)} ETH
+          {roundEtherUp(bidWinner.toString(), NumberSettings.DecimalsAuction)} ETH
         </Text>
-
         {auctionData.highestBidder === address && (
           <Text color="gray.400" fontStyle="italic" mt={2} fontSize={'sm'}>
             Fingerprints is settling the auction. Soon, Voxelglyph #1 will be in your wallet.
