@@ -68,7 +68,7 @@ const Convert = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }:
                 Leftover
               </Text>
               <Text color="gray.700" fontWeight="bold">
-                {leftovers.toFormat()} $PRINTS
+                {Number(leftovers.toFormat()).toLocaleString()} $PRINTS
               </Text>
               <Text color="secondary.500" fontSize="xs" mt={4}>
                 Top up your $PRINTS to a multiple of 5,000 for a full conversion.
