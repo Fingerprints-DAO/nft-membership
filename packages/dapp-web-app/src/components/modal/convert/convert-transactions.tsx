@@ -133,7 +133,7 @@ const ConvertTransactions = ({
                 </Link>
               ) : (
                 'approval'
-              )}{' '}
+              )}
               ...
             </Text>
           )}
@@ -191,7 +191,7 @@ const ConvertTransactions = ({
                 </Link>
               ) : (
                 'approval'
-              )}{' '}
+              )}
               ...
             </Text>
           )}

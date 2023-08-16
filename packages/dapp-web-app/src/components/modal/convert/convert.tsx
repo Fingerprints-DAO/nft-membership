@@ -22,7 +22,14 @@ const Convert = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }:
   return (
     <>
       <Box position="relative" py="13px" mb={7}>
-        <Text fontSize="lg" fontWeight="bold" color="gray.900" textAlign="center" lineHeight="24px">
+        <Text
+          fontSize="lg"
+          fontWeight="bold"
+          color="gray.900"
+          textAlign="center"
+          lineHeight="24px"
+          px={10}
+        >
           Convert $PRINTS to Fingerprints membership NFT
         </Text>
         {!!onClose && (

@@ -107,6 +107,7 @@ const ConvertPrintsPage = () => {
         borderRadius={{ base: '1rem 1rem 0 0', sm: '1rem' }}
         maxW={{ base: 'lg', sm: '438px' }}
         p={6}
+        overflowY={'auto'}
       >
         {render}
       </ModalContent>
