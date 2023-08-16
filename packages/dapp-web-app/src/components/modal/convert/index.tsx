@@ -37,7 +37,11 @@ const ConvertPrintsPage = () => {
     [printsBalance.value, pricePerMembership]
   )
 
-  const onStateBack = useCallback(() => setAction(''), [])
+  const onStateBack = useCallback(() => {
+    setAction('')
+    printsBalance.refetch()
+  }, [printsBalance])
+
   const onCloseModal = useCallback(() => push('/'), [push])
 
   const render = useMemo(() => {

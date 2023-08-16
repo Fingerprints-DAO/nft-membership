@@ -21,12 +21,12 @@ export const TxMessage = ({ hash, toastId }: TxMessageProps) => {
       >
         view on Etherscan
       </Link>
-      {(toastId === 'mint-success' || toastId === 'claim-tokens-success') && (
+      {(toastId === 'migrate-success' || toastId === 'claim-tokens-success') && (
         <>
           <Text as={'span'}> or see </Text>
           <Link
             as="a"
-            href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/maschine`}
+            href={`${process.env.NEXT_PUBLIC_OPENSEA_URL}collection/voxelglyph`}
             target="_blank"
             color="gray.900"
             fontSize="lg"
