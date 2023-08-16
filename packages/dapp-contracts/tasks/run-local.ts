@@ -13,13 +13,13 @@ dayjs.extend(timezone)
 
 const ET = 'America/New_York'
 
-const startTime = dayjs.tz('2023-08-15 11:00:00', ET)
-const startTimeUnix = startTime.unix()
-const endTimeUnix = startTime.add(24, 'hours').unix()
-
-// const startTime = dayjs().add(2, 'minutes')
+// const startTime = dayjs.tz('2023-08-15 11:00:00', ET)
 // const startTimeUnix = startTime.unix()
-// const endTimeUnix = startTime.add(10, 'minutes').unix()
+// const endTimeUnix = startTime.add(24, 'hours').unix()
+
+const startTime = dayjs().add(1, 'minutes')
+const startTimeUnix = startTime.unix()
+const endTimeUnix = startTime.add(2, 'minutes').unix()
 
 const minBidIncrementInWei = ethers.parseEther('0.2').toString()
 const startAmountInWei = ethers.parseEther('4.8').toString()
