@@ -320,60 +320,71 @@ const HomePage = () => {
                         voxelAnimationEnded={animationEnded}
                         forceRender={skippedAnimation}
                       >
-                        <Button
-                          as={Link}
-                          size={{ base: 'md', sm: 'lg' }}
-                          w={{ base: 'auto', sm: 'auto' }}
-                          variant={'outline'}
-                          mr={{ base: 7 }}
-                          mb={{ base: 0, sm: 0 }}
-                          colorScheme="white"
-                          href={'/about'}
-                        >
-                          Learn More
-                        </Button>
-                        {getEffectiveStage() === PageState.Released && (
+                        <Flex>
                           <Button
                             as={Link}
-                            size={{ base: 'md', sm: 'lg' }}
+                            flex={1}
+                            variant={'outline'}
+                            h={'unset'}
+                            py={'14px'}
                             colorScheme="white"
-                            w={{ base: 'auto', sm: 'auto' }}
-                            href="https://www.addevent.com/calendar/kZ615607"
-                            target="_blank"
+                            href={'/about'}
                           >
-                            Add to Calendar
+                            Learn More
                           </Button>
-                        )}
-                        {isBeforeStage(PageState.Migration) && isAfterStage(PageState.Released) && (
-                          <Button
-                            as={Link}
-                            size={{ base: 'md', sm: 'lg' }}
-                            colorScheme={
-                              getEffectiveStage() === PageState.PreAuction ? 'white' : 'secondary'
-                            }
-                            color={getEffectiveStage() === PageState.PreAuction ? 'black' : 'white'}
-                            w={{ base: 'auto', sm: 'auto' }}
-                            href={'/auction'}
-                          >
-                            View Auction
-                          </Button>
-                        )}
-                        {getEffectiveStage() === PageState.Migration && (
-                          <ConnectKitButton.Custom>
-                            {({ isConnected, show }) => {
-                              return (
-                                <Button
-                                  size="lg"
-                                  colorScheme="white"
-                                  w={{ base: 'full', sm: 'auto' }}
-                                  onClick={handleCTAClick(isConnected, show)}
-                                >
-                                  Convert your $PRINTS
-                                </Button>
-                              )
-                            }}
-                          </ConnectKitButton.Custom>
-                        )}
+                          {getEffectiveStage() === PageState.Released && (
+                            <Button
+                              as={Link}
+                              colorScheme="white"
+                              w={{ base: 'auto', sm: 'auto' }}
+                              h={'unset'}
+                              py={'14px'}
+                              ml={{ base: 4 }}
+                              href="https://www.addevent.com/calendar/kZ615607"
+                              target="_blank"
+                            >
+                              Add to Calendar
+                            </Button>
+                          )}
+                          {isBeforeStage(PageState.Migration) &&
+                            isAfterStage(PageState.Released) && (
+                              <Button
+                                as={Link}
+                                h={'unset'}
+                                py={'14px'}
+                                ml={{ base: 4 }}
+                                colorScheme={
+                                  getEffectiveStage() === PageState.PreAuction
+                                    ? 'white'
+                                    : 'secondary'
+                                }
+                                color={
+                                  getEffectiveStage() === PageState.PreAuction ? 'black' : 'white'
+                                }
+                                w={{ base: 'auto', sm: 'auto' }}
+                                href={'/auction'}
+                              >
+                                View Auction
+                              </Button>
+                            )}
+                          {getEffectiveStage() === PageState.Migration && (
+                            <ConnectKitButton.Custom>
+                              {({ isConnected, show }) => {
+                                return (
+                                  <Button
+                                    size="lg"
+                                    colorScheme="white"
+                                    flex={2}
+                                    ml={{ base: 4 }}
+                                    onClick={handleCTAClick(isConnected, show)}
+                                  >
+                                    Convert your $PRINTS
+                                  </Button>
+                                )
+                              }}
+                            </ConnectKitButton.Custom>
+                          )}
+                        </Flex>
                       </AnimateComponent>
                     </Flex>
                   </GridItem>
