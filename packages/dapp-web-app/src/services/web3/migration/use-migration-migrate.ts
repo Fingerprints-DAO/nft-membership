@@ -40,7 +40,8 @@ const useMigrationMigrate = (qty: number) => {
 
         if (!!transactionHash) {
           showTxExecutedToast({
-            title: "Congratulations! You've migrated your $PRINTS to the new Membership NFT",
+            title:
+              "Congratulations! You've migrated your $PRINTS to the Fingerprints membership NFT",
             txHash: transactionHash,
             id: 'migrate-success',
           })
