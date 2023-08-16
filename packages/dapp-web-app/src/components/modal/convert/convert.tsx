@@ -102,8 +102,14 @@ const Convert = ({ printsBalance, nftsMintables, leftovers, onAction, onClose }:
         )}
 
         {printsBalance.value.gt(0) && (
-          <Button colorScheme="black" w="full" size="lg" onClick={handleAction('convert')}>
-            Convert $PRINTS to NFT
+          <Button
+            colorScheme="black"
+            w="full"
+            size="lg"
+            onClick={handleAction('convert')}
+            isDisabled={printsBalance.value.lt(5000)}
+          >
+            {printsBalance.value.lt(5000) ? 'Insufficient $PRINTS' : 'Convert $PRINTS to NFT'}
           </Button>
         )}
       </Box>
