@@ -240,9 +240,9 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
             </span>
           </Tooltip>
         </Flex>
-        <Flex alignItems="center" mb={4}>
+        <Flex alignItems="center" mb={2}>
           <Text color="gray.700" fontWeight="bold">
-            {formatToEtherStringBN(quote?.buyAmount)} $PRINTS{' '}
+            {Number(formatToEtherStringBN(quote?.buyAmount)).toLocaleString()} $PRINTS{' '}
             <Text as="span" fontWeight="normal">
               for
             </Text>{' '}
@@ -258,13 +258,9 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
           </Text>
           {loadingQuote && <Spinner color="gray.400" size="sm" ml={2} />}
         </Flex>
-        <Text color="gray.500" fontWeight="bold" mb={4}>
+        <Text color="gray.500" fontWeight="bold" mb={2}>
           You&apos;ll be able to mint {ableToMint} NFTs
         </Text>
-        <Button color="links.500" variant="link" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
-          {isDetailsOpen ? <ChevronUpIcon w={6} h={6} /> : <ChevronDownIcon w={6} h={6} />}
-          {isDetailsOpen ? 'Less' : 'Details'}
-        </Button>
         <Collapse in={isDetailsOpen} animateOpacity>
           <Box>
             <Text color="gray.500">
@@ -289,11 +285,20 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
             <Text color="gray.500">
               Estimated network fees:{' '}
               <Text as="span" color="gray.700">
-                {formatBigNumberUp(formatToEtherString(quote?.feeAmount), 12)} ETH
+                {formatBigNumberUp(formatToEtherString(quote?.feeAmount), 12)} WETH
               </Text>
             </Text>
           </Box>
         </Collapse>
+        <Button
+          color="links.500"
+          variant="link"
+          onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+          mt={4}
+        >
+          {isDetailsOpen ? <ChevronUpIcon w={6} h={6} /> : <ChevronDownIcon w={6} h={6} />}
+          {isDetailsOpen ? 'Less' : 'Details'}
+        </Button>
       </Box>
       {/* <Skeleton isLoaded={status !== TOP_UP_STATUS.LOADING && !loadingQuote}> */}
       {!loadingQuote && (
@@ -325,7 +330,7 @@ const TopUp = ({ printsBalance, onClose, amount, ableToMint = 1 }: TopUpProps) =
               }
               loadingText={swapLink ? 'Waiting order transaction' : 'Sign the order'}
             >
-              Buy {formatToEtherStringBN(quote?.buyAmount)} $PRINTS
+              Buy {Number(formatToEtherStringBN(quote?.buyAmount)).toLocaleString()} $PRINTS
             </Button>
           )}
         </>
