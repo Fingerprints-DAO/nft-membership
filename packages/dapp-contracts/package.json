@@ -14,7 +14,6 @@
     "task:run-local": "hardhat run-local",
     "dev": "hardhat run-local",
     "coverage": "TS_NODE_TRANSPILE_ONLY=1 HARDHAT_DEPLOY_FIXTURE=true CONTRACT_SIZER_STRICT_DISABLE=true hardhat coverage --solcoverjs ./.solcover.js",
-    "run:docs": "hardhat compile",
     "compile": "hardhat compile",
     "build": "yarn compile --force && yarn build:ts && yarn build:declarations",
     "build:ts": "tsc -p tsconfig.json",
